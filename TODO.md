@@ -1,0 +1,6 @@
+We need to create a new Astro project. Below are my initial thoughts and questions:
+-I would like to create a detailed build plan together. It will be an iterative process where I provide you with information, you ask me clarifying/probative questions, then you write our final decisions as a roadmap in the BUILD_PLAN.md file located in the root of this project.
+-I have already created a CLAUDE.md file for the intended conventional use, and a TODO.md file I like to use as a scratch pad (we will remove upon final deployment).
+-I would like to spin up an Astro scaffold in the root just so I can get a visual right away of our succesful CI/CD, which is GitHub>Netlify. One thing I really want to make sure of is there isn't a nested root situation--our root is `portage-place`, and I do not want another project root inside this root.
+-I will continually run a dev server at port 4321 to watch the UI and report any errors or other anomalies to you. I will also control all of the commits to the repo, but you are welcome to suggest when we should commit and report any concerns or suggestions in terms of the repo or our CI/CD.
+-Please feel free to ask any questions before we spinup just enough Astro to get a look at the CI/CD.
