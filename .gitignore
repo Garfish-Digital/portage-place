@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# dev reference — never published, never committed
+/reference/
+public/reference-only/

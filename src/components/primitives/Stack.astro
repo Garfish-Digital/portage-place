@@ -1,0 +1,35 @@
+---
+/**
+ * Stack — vertical flow with one consistent gap.
+ *
+ * Replaces per-element `margin-bottom`, which is where vertical rhythm usually
+ * goes wrong: margins collapse unpredictably and the last child always needs a
+ * special case. A flex gap has neither problem.
+ */
+interface Props {
+	space?: '3xs' | '2xs' | 'xs' | 's' | 'm' | 'l' | 'xl' | '2xl' | '3xl';
+	/** Horizontal alignment of children within the stack. */
+	align?: 'start' | 'center' | 'end' | 'stretch';
+	as?: keyof HTMLElementTagNameMap;
+	class?: string;
+}
+
+const { space = 'm', align = 'stretch', as: Tag = 'div', class: className, ...rest } = Astro.props;
+---
+
+<Tag
+	class:list={['stack', className]}
+	style={`--stack-space: var(--pp-space-${space}); --stack-align: ${align};`}
+	{...rest}
+>
+	<slot />
+</Tag>
+
+<style lang="scss">
+	.stack {
+		display: flex;
+		flex-direction: column;
+		gap: var(--stack-space);
+		align-items: var(--stack-align);
+	}
+</style>

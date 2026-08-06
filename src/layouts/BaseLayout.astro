@@ -1,0 +1,96 @@
+---
+// Fontsource stylesheets. `standard` carries the opsz + wght axes for Fraunces
+// (65.7 KB latin); the italic faces declare their own unicode-range so the
+// browser only fetches them when italic text actually renders.
+import '@fontsource-variable/fraunces/standard.css';
+import '@fontsource-variable/fraunces/standard-italic.css';
+import '@fontsource-variable/public-sans/wght.css';
+import '@fontsource-variable/public-sans/wght-italic.css';
+
+// Preload only the two faces needed for first paint. Preloading all four would
+// make the italics compete with the LCP element for bandwidth.
+import frauncesUrl from '@fontsource-variable/fraunces/files/fraunces-latin-standard-normal.woff2?url';
+import publicSansUrl from '@fontsource-variable/public-sans/files/public-sans-latin-wght-normal.woff2?url';
+
+import '../styles/global.scss';
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FloatingCta from '../components/FloatingCta.astro';
+import ContactModal from '../components/ContactModal.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	/** Keep out of search results — scaffolding and internal pages. */
+	noindex?: boolean;
+	/** Path to an OG image in /public. Hand-made per page in Figma (Phase 7). */
+	ogImage?: string;
+}
+
+const { title, description, noindex = false, ogImage } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const ogImageUrl = ogImage ? new URL(ogImage, canonical) : undefined;
+const fullTitle = title === 'Portage Place' ? title : `${title} — Portage Place`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+
+		<title>{fullTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical.href} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+		<!--
+			Preload before the stylesheet link so the font request starts in the same
+			round trip as the CSS rather than after it. crossorigin is required even
+			same-origin: without it the preload is fetched a second time.
+		-->
+		<link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href={publicSansUrl} as="font" type="font/woff2" crossorigin />
+
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="theme-color" content="#322f2c" />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Portage Place" />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical.href} />
+		{ogImageUrl && <meta property="og:image" content={ogImageUrl.href} />}
+		<meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
+
+		<slot name="head" />
+	</head>
+
+	<body>
+		<a class="pp-skip-link" href="#main">Skip to content</a>
+
+		<Header />
+
+		<main id="main" tabindex="-1">
+			<slot />
+		</main>
+
+		<Footer />
+
+		<FloatingCta />
+		<ContactModal />
+	</body>
+</html>
+
+<style lang="scss">
+	// tabindex="-1" makes <main> a valid skip-link target, but Safari and Chrome
+	// both paint a focus ring on it when it receives programmatic focus. The
+	// landmark isn't an interactive control, so the ring is noise.
+	main:focus {
+		outline: none;
+	}
+</style>

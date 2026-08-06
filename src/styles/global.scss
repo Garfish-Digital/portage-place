@@ -1,0 +1,11 @@
+// =============================================================================
+// Global stylesheet — the only CSS entry point.
+// Imported once from BaseLayout; everything else is Astro-scoped per component.
+//
+// Font @font-face rules are NOT here: Sass can't `@use` a plain .css file out of
+// node_modules, so Fontsource's stylesheets are imported from BaseLayout's
+// frontmatter instead (the documented Astro path).
+// =============================================================================
+@use 'tokens';
+@use 'reset';
+@use 'base';

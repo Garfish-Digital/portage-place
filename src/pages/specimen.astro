@@ -1,0 +1,453 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/primitives/Section.astro';
+import Button from '../components/Button.astro';
+
+/**
+ * Design system specimen.
+ *
+ * Two jobs: a working reference while building, and the Phase 1 Instagram
+ * capture (the plan calls for interleaving process shots, and a token sheet is
+ * the best one available before there's a real page to photograph).
+ *
+ * noindex — delete before launch.
+ */
+
+const COLORS = [
+	{
+		group: 'Surfaces',
+		swatches: [
+			{ name: 'Plaster', token: '--pp-plaster', hex: '#F7F5F1', note: 'Page background' },
+			{ name: 'Limestone', token: '--pp-limestone', hex: '#DDD7CF', note: 'Alt sections' },
+			{ name: 'Espresso', token: '--pp-espresso', hex: '#322F2C', note: 'Measured: door framing' },
+			{ name: 'Espresso deep', token: '--pp-espresso-deep', hex: '#26231F', note: 'Layering on dark' },
+		],
+	},
+	{
+		group: 'Building materials',
+		swatches: [
+			{ name: 'Brick light', token: '--pp-brick-light', hex: '#A59078', note: 'Measured: interior brick' },
+			{ name: 'Brick mid', token: '--pp-brick-mid', hex: '#84735E', note: 'Measured: mortar / shadow' },
+			{ name: 'Brick dark', token: '--pp-brick-dark', hex: '#6B4931', note: 'Measured: exterior brick' },
+		],
+	},
+	{
+		group: 'Ink',
+		swatches: [
+			{ name: 'Ink strong', token: '--pp-ink-strong', hex: '#16130F', note: '17.00:1' },
+			{ name: 'Ink', token: '--pp-ink', hex: '#22201C', note: '14.93:1' },
+			{ name: 'Ink muted', token: '--pp-ink-muted', hex: '#5C5449', note: '6.84:1' },
+			{ name: 'Ink inverse muted', token: '--pp-ink-inverse-muted', hex: '#AE9C86', note: '5.00:1 on espresso' },
+		],
+	},
+	{
+		group: 'Action',
+		swatches: [
+			{ name: 'Green', token: '--pp-green', hex: '#2F6F4E', note: '5.99:1 w/ white' },
+			{ name: 'Green hover', token: '--pp-green-hover', hex: '#38835C', note: '4.60:1 w/ white' },
+			{ name: 'Green ring', token: '--pp-green-ring', hex: '#43A36A', note: 'Decorative only' },
+			{ name: 'Green link', token: '--pp-green-link', hex: '#2A6446', note: 'Passes on limestone' },
+			{ name: 'Green on dark', token: '--pp-green-on-dark', hex: '#7FC79B', note: '6.68:1 w/ espresso' },
+		],
+	},
+	{
+		group: 'Ornament & feedback',
+		swatches: [
+			{ name: 'Bronze', token: '--pp-bronze', hex: '#A97A3D', note: 'Focus ring — non-text' },
+			{ name: 'Border', token: '--pp-border', hex: '#8F8476', note: '3.37:1 — inputs' },
+			{ name: 'Rule', token: '--pp-rule', hex: '#C9C1B6', note: 'Hairlines' },
+			{ name: 'Error', token: '--pp-error', hex: '#96322C', note: '6.91:1' },
+		],
+	},
+];
+
+const TYPE_SCALE = [
+	{ token: '--pp-text-display', label: 'Display', px: '49 → 73', sample: 'Where you want to be' },
+	{ token: '--pp-text-h1', label: 'H1', px: '41 → 58', sample: 'A place steeped in history' },
+	{ token: '--pp-text-h2', label: 'H2', px: '34 → 46', sample: 'Room to think, room to work' },
+	{ token: '--pp-text-h3', label: 'H3', px: '29 → 36', sample: 'The Ward Baking Company' },
+	{ token: '--pp-text-h4', label: 'H4', px: '24 → 29', sample: 'Twenty private offices' },
+	{ token: '--pp-text-lede', label: 'Lede', px: '20 → 23', sample: 'Spaces from 200 to 2,000 square feet' },
+	{ token: '--pp-text-base', label: 'Body', px: '17 → 18', sample: 'Abandoned in 2012, rescued and fully renovated.' },
+	{ token: '--pp-text-s', label: 'Small', px: '15 → 16', sample: 'Near Northwest Neighborhood' },
+	{ token: '--pp-text-xs', label: 'Caption', px: '14 → 15', sample: 'Photograph: South Bend Tribune, 2022' },
+];
+---
+
+<BaseLayout title="Specimen" description="Portage Place design system specimen." noindex>
+	<Section>
+		<p class="pp-eyebrow muted">Phase 1</p>
+		<h1>Design system</h1>
+		<p class="lede">
+			Fraunces and Public Sans, a palette measured off the building, and every pairing
+			contrast-verified. Colour values marked <em>measured</em> were sampled from photographs
+			white-balanced against a neutral card in frame.
+		</p>
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section tone="limestone">
+		<h2 class="section-heading">Colour</h2>
+		{
+			COLORS.map((group) => (
+				<div class="group">
+					<h3 class="group__title">{group.group}</h3>
+					<ul class="swatches" role="list">
+						{group.swatches.map((swatch) => (
+							<li class="swatch">
+								<div class="swatch__chip" style={`background-color: ${swatch.hex}`} />
+								<div class="swatch__meta">
+									<span class="swatch__name">{swatch.name}</span>
+									<code class="swatch__hex">{swatch.hex}</code>
+									<span class="swatch__note">{swatch.note}</span>
+								</div>
+							</li>
+						))}
+					</ul>
+				</div>
+			))
+		}
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section>
+		<h2 class="section-heading">Type scale</h2>
+		<p class="muted scale-note">
+			Fluid between 375px and 1440px. Resize the window — every step interpolates. Fraunces
+			carries an <code>opsz</code> axis, so its letterforms are redrawn per size rather than
+			just scaled.
+		</p>
+		<ul class="scale" role="list">
+			{
+				TYPE_SCALE.map((step) => (
+					<li class="scale__row">
+						<div class="scale__meta">
+							<span class="scale__label">{step.label}</span>
+							<code class="scale__px">{step.px}px</code>
+						</div>
+						<p
+							class:list={['scale__sample', step.label === 'Body' || step.label === 'Small' || step.label === 'Caption' ? 'scale__sample--body' : 'scale__sample--display']}
+							style={`font-size: var(${step.token})`}
+						>
+							{step.sample}
+						</p>
+					</li>
+				))
+			}
+		</ul>
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section tone="limestone">
+		<h2 class="section-heading">Both faces</h2>
+		<div class="faces">
+			<div class="face">
+				<p class="pp-eyebrow muted">Fraunces — display</p>
+				<p class="face__sample face__sample--display">
+					Portage Place, <em>where you want to be</em>
+				</p>
+				<p class="face__weights">
+					<span style="font-family: var(--pp-font-display); font-weight: 300">Light 300</span>
+					<span style="font-family: var(--pp-font-display); font-weight: 400">Regular 400</span>
+					<span style="font-family: var(--pp-font-display); font-weight: 600">Semibold 600</span>
+					<span style="font-family: var(--pp-font-display); font-weight: 800">Extrabold 800</span>
+				</p>
+			</div>
+			<div class="face">
+				<p class="pp-eyebrow muted">Public Sans — body</p>
+				<p class="face__sample face__sample--body">
+					Spaces range from 200 to 2,000 square feet, <em>starting at $300 a month</em>.
+				</p>
+				<p class="face__weights">
+					<span style="font-weight: 400">Regular 400</span>
+					<span style="font-weight: 500">Medium 500</span>
+					<span style="font-weight: 600">Semibold 600</span>
+					<span style="font-weight: 900">Black 900</span>
+				</p>
+			</div>
+		</div>
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section>
+		<h2 class="section-heading">Buttons</h2>
+		<p class="muted scale-note">
+			Hover for the lift and the bright ring. Tab to one for the bronze focus ring — the two
+			states are independent, so a focused button that's also hovered shows both.
+		</p>
+		<div class="buttons">
+			<Button iconEnd="lucide:arrow-right">Primary</Button>
+			<Button variant="secondary">Secondary</Button>
+			<Button variant="quiet">Quiet</Button>
+			<Button size="lg" icon="lucide:mail">Large with icon</Button>
+			<Button disabled>Disabled</Button>
+		</div>
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section tone="dark">
+		<h2 class="section-heading">Dark surface context</h2>
+		<p class="muted scale-note">
+			Nothing here is a variant. This section sets <code>.pp-on-dark</code>, which remaps the
+			semantic aliases — the same components read the same tokens and get the right values.
+			The primary button switches to the light-green pairing because mid-green on espresso is
+			2.13:1 and would vanish.
+		</p>
+		<div class="buttons">
+			<Button iconEnd="lucide:arrow-right">Primary</Button>
+			<Button variant="secondary">Secondary</Button>
+			<Button variant="quiet">Quiet</Button>
+		</div>
+		<p class="dark-prose">
+			Body copy on espresso at 12.22:1, with <a href="/">an inline link</a> and
+			<span class="muted">muted supporting text at 5.00:1</span>.
+		</p>
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section tone="limestone">
+		<h2 class="section-heading">Motion</h2>
+		<p class="muted scale-note">
+			Four easings, applied to transform and opacity only — never to layout-triggering
+			properties. Hover a tile.
+		</p>
+		<ul class="eases" role="list">
+			<li class="ease" style="--ease: var(--pp-ease-out)"><code>--pp-ease-out</code><span>Default deceleration</span></li>
+			<li class="ease" style="--ease: var(--pp-ease-in-out)"><code>--pp-ease-in-out</code><span>Symmetric</span></li>
+			<li class="ease" style="--ease: var(--pp-ease-entrance)"><code>--pp-ease-entrance</code><span>Things arriving</span></li>
+			<li class="ease" style="--ease: var(--pp-ease-overshoot)"><code>--pp-ease-overshoot</code><span>Slight spring</span></li>
+		</ul>
+	</Section>
+</BaseLayout>
+
+<style lang="scss">
+	.muted {
+		color: var(--pp-text-muted);
+	}
+
+	.lede {
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-text-muted);
+		max-width: 48ch;
+		margin-block-start: var(--pp-space-s);
+		text-wrap: pretty;
+	}
+
+	.section-heading {
+		margin-block-end: var(--pp-space-l);
+	}
+
+	.scale-note {
+		max-width: var(--pp-measure);
+		margin-block-end: var(--pp-space-l);
+		font-size: var(--pp-text-s);
+	}
+
+	code {
+		font-family: ui-monospace, 'SF Mono', monospace;
+		font-size: 0.9em;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Colour
+	// ---------------------------------------------------------------------------
+	.group {
+		margin-block-end: var(--pp-space-xl);
+	}
+
+	.group__title {
+		@include eyebrow;
+
+		color: var(--pp-text-muted);
+		margin-block-end: var(--pp-space-s);
+	}
+
+	.swatches {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+		gap: var(--pp-space-s);
+		margin: 0;
+		padding: 0;
+	}
+
+	.swatch {
+		display: flex;
+		flex-direction: column;
+		gap: var(--pp-space-2xs);
+	}
+
+	.swatch__chip {
+		height: 4.5rem;
+		border: 1px solid var(--pp-border);
+		border-radius: var(--pp-radius-m);
+	}
+
+	.swatch__meta {
+		display: grid;
+		gap: 1px;
+		font-size: var(--pp-text-xs);
+	}
+
+	.swatch__name {
+		font-weight: var(--pp-weight-semibold);
+		color: var(--pp-text-strong);
+	}
+
+	.swatch__hex {
+		color: var(--pp-text);
+	}
+
+	.swatch__note {
+		color: var(--pp-text-muted);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Type
+	// ---------------------------------------------------------------------------
+	.scale {
+		display: grid;
+		gap: var(--pp-space-m);
+		margin: 0;
+		padding: 0;
+	}
+
+	.scale__row {
+		display: grid;
+		gap: var(--pp-space-2xs);
+		padding-block-end: var(--pp-space-m);
+		border-block-end: 1px solid var(--pp-rule);
+
+		@include from('md') {
+			grid-template-columns: 9rem 1fr;
+			gap: var(--pp-space-l);
+			align-items: baseline;
+		}
+	}
+
+	.scale__meta {
+		display: flex;
+		gap: var(--pp-space-2xs);
+		align-items: baseline;
+		font-size: var(--pp-text-xs);
+
+		@include from('md') {
+			flex-direction: column;
+			gap: 0;
+		}
+	}
+
+	.scale__label {
+		font-weight: var(--pp-weight-semibold);
+		color: var(--pp-text-strong);
+	}
+
+	.scale__px {
+		color: var(--pp-text-muted);
+	}
+
+	.scale__sample {
+		margin: 0;
+		color: var(--pp-text-strong);
+	}
+
+	.scale__sample--display {
+		font-family: var(--pp-font-display);
+		font-weight: var(--pp-weight-semibold);
+		line-height: var(--pp-leading-tight);
+		letter-spacing: var(--pp-tracking-tight);
+	}
+
+	.scale__sample--body {
+		font-family: var(--pp-font-body);
+		line-height: var(--pp-leading-normal);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Faces
+	// ---------------------------------------------------------------------------
+	.faces {
+		display: grid;
+		gap: var(--pp-space-xl);
+
+		@include from('lg') {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.face__sample {
+		margin-block: var(--pp-space-xs) var(--pp-space-s);
+		color: var(--pp-text-strong);
+		text-wrap: balance;
+	}
+
+	.face__sample--display {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h3);
+		line-height: var(--pp-leading-snug);
+	}
+
+	.face__sample--body {
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-normal);
+	}
+
+	.face__weights {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--pp-space-s);
+		font-size: var(--pp-text-s);
+		color: var(--pp-text-muted);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Buttons / dark
+	// ---------------------------------------------------------------------------
+	.buttons {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--pp-space-s);
+	}
+
+	.dark-prose {
+		margin-block-start: var(--pp-space-l);
+		max-width: var(--pp-measure);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Motion
+	// ---------------------------------------------------------------------------
+	.eases {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+		gap: var(--pp-space-s);
+		margin: 0;
+		padding: 0;
+	}
+
+	.ease {
+		display: grid;
+		gap: var(--pp-space-3xs);
+		padding: var(--pp-space-m);
+		font-size: var(--pp-text-xs);
+		color: var(--pp-text-muted);
+		background-color: var(--pp-plaster);
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+		transition: translate var(--pp-duration-slow) var(--ease),
+			box-shadow var(--pp-duration-slow) var(--ease);
+
+		code {
+			color: var(--pp-text-strong);
+			font-weight: var(--pp-weight-semibold);
+		}
+
+		@include hover-capable {
+			&:hover {
+				translate: 0 -8px;
+				box-shadow: var(--pp-shadow-m);
+			}
+		}
+	}
+</style>

@@ -1,0 +1,42 @@
+---
+/**
+ * Container — horizontal centering + gutters.
+ *
+ * The only place page-edge padding is defined. Nothing else should set
+ * padding-inline against the viewport, or the gutters drift out of alignment
+ * between sections.
+ */
+interface Props {
+	/** `narrow` for prose, `wide` for full-bleed media rows. */
+	width?: 'narrow' | 'default' | 'wide';
+	/** Render as something other than a div (e.g. `header`, `nav`). */
+	as?: keyof HTMLElementTagNameMap;
+	class?: string;
+}
+
+const { width = 'default', as: Tag = 'div', class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={['container', `container--${width}`, className]} {...rest}>
+	<slot />
+</Tag>
+
+<style lang="scss">
+	.container {
+		width: 100%;
+		margin-inline: auto;
+		padding-inline: var(--pp-gutter);
+	}
+
+	.container--narrow {
+		max-width: var(--pp-container-narrow);
+	}
+
+	.container--default {
+		max-width: var(--pp-container);
+	}
+
+	.container--wide {
+		max-width: var(--pp-container-wide);
+	}
+</style>

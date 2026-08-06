@@ -1,0 +1,76 @@
+---
+import Container from './Container.astro';
+
+/**
+ * Section — vertical rhythm + surface context.
+ *
+ * `tone="dark"` applies the `.pp-on-dark` class, which remaps the semantic
+ * colour aliases for everything inside. Child components therefore need no
+ * inverse variants of their own — they read --pp-text / --pp-surface and get
+ * the right values automatically.
+ */
+interface Props {
+	tone?: 'plaster' | 'limestone' | 'dark';
+	width?: 'narrow' | 'default' | 'wide';
+	/** Drop the Container wrapper — for full-bleed children that manage their own gutters. */
+	bleed?: boolean;
+	/** Trim vertical padding to half. For sections that butt against each other. */
+	tight?: boolean;
+	as?: keyof HTMLElementTagNameMap;
+	id?: string;
+	class?: string;
+}
+
+const {
+	tone = 'plaster',
+	width = 'default',
+	bleed = false,
+	tight = false,
+	as: Tag = 'section',
+	class: className,
+	...rest
+} = Astro.props;
+---
+
+<Tag
+	class:list={[
+		'section',
+		`section--${tone}`,
+		tight && 'section--tight',
+		tone === 'dark' && 'pp-on-dark',
+		className,
+	]}
+	{...rest}
+>
+	{
+		bleed ? (
+			<slot />
+		) : (
+			<Container width={width}>
+				<slot />
+			</Container>
+		)
+	}
+</Tag>
+
+<style lang="scss">
+	.section {
+		padding-block: var(--pp-space-section);
+		background-color: var(--pp-surface);
+		color: var(--pp-text);
+	}
+
+	.section--tight {
+		padding-block: calc(var(--pp-space-section) / 2);
+	}
+
+	.section--plaster {
+		--pp-surface: var(--pp-plaster);
+	}
+
+	.section--limestone {
+		--pp-surface: var(--pp-limestone);
+	}
+
+	// .section--dark inherits its remap from .pp-on-dark in the token layer.
+</style>

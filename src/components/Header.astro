@@ -1,0 +1,321 @@
+---
+import { Icon } from 'astro-icon/components';
+import Container from './primitives/Container.astro';
+import { NAV_ITEMS } from '../config/nav';
+
+const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+---
+
+<header class="header" data-header>
+	<Container as="div" class="header__inner">
+		<a class="header__brand" href="/">
+			<!-- Placeholder wordmark. Replaced by the Figma PP mark (SVG) in Phase 7. -->
+			<span class="header__mark" aria-hidden="true">PP</span>
+			<span class="header__wordmark">Portage Place</span>
+		</a>
+
+		<nav class="header__nav" aria-label="Primary">
+			<ul class="header__list" role="list">
+				{
+					NAV_ITEMS.map((item) => (
+						<li>
+							<a
+								class="header__link"
+								href={item.href}
+								aria-current={isCurrent(item.href) ? 'page' : undefined}
+							>
+								{item.shortLabel ?? item.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<button
+			class="header__toggle"
+			type="button"
+			aria-expanded="false"
+			aria-controls="header-mobile-nav"
+			data-nav-toggle
+		>
+			<Icon name="lucide:menu" class="header__toggle-icon header__toggle-icon--open" aria-hidden="true" />
+			<Icon name="lucide:x" class="header__toggle-icon header__toggle-icon--close" aria-hidden="true" />
+			<span class="pp-visually-hidden">Menu</span>
+		</button>
+	</Container>
+
+	<!--
+		Mobile nav is a sibling panel rather than a duplicate <nav aria-label="Primary">
+		— two nav landmarks with the same name is a screen-reader smell. It's hidden
+		with `hidden` (not just CSS) so it stays out of the tab order when closed.
+	-->
+	<div class="header__panel" id="header-mobile-nav" hidden data-nav-panel>
+		<Container as="div">
+			<ul class="header__panel-list" role="list">
+				{
+					NAV_ITEMS.map((item) => (
+						<li>
+							<a
+								class="header__panel-link"
+								href={item.href}
+								aria-current={isCurrent(item.href) ? 'page' : undefined}
+							>
+								{item.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</Container>
+	</div>
+</header>
+
+<script>
+	// Progressive enhancement: without JS the panel stays hidden and the desktop
+	// nav is still reachable at >=1024px. Phase 2 should add a no-JS fallback for
+	// narrow viewports (a <details> disclosure) before this ships to production.
+	const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+	const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+	const header = document.querySelector<HTMLElement>('[data-header]');
+
+	if (toggle && panel && header) {
+		const setOpen = (open: boolean) => {
+			toggle.setAttribute('aria-expanded', String(open));
+			panel.hidden = !open;
+			header.classList.toggle('is-nav-open', open);
+			// Lock the page behind the panel, but only while it's actually open.
+			document.documentElement.style.overflow = open ? 'hidden' : '';
+		};
+
+		toggle.addEventListener('click', () => {
+			setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+		});
+
+		// Esc closes and returns focus to the control that opened it.
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+				setOpen(false);
+				toggle.focus();
+			}
+		});
+
+		// Closing on resize past the desktop breakpoint prevents the panel being
+		// left open-but-invisible, which strands focus in hidden content.
+		const desktop = window.matchMedia('(min-width: 1024px)');
+		desktop.addEventListener('change', (event) => {
+			if (event.matches) setOpen(false);
+		});
+	}
+
+	// Shadow appears only once the page has actually scrolled, so the header sits
+	// flat against the hero at rest.
+	const onScroll = () => {
+		document.querySelector('[data-header]')?.classList.toggle('is-scrolled', window.scrollY > 8);
+	};
+	onScroll();
+	window.addEventListener('scroll', onScroll, { passive: true });
+</script>
+
+<style lang="scss">
+	.header {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: var(--pp-z-header);
+		background-color: color-mix(in srgb, var(--pp-plaster) 88%, transparent);
+		backdrop-filter: blur(12px);
+		border-block-end: 1px solid transparent;
+		transition: border-color var(--pp-duration-base) var(--pp-ease-out),
+			box-shadow var(--pp-duration-base) var(--pp-ease-out);
+	}
+
+	.header.is-scrolled {
+		border-block-end-color: var(--pp-rule);
+		box-shadow: var(--pp-shadow-s);
+	}
+
+	:global(.header__inner) {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--pp-space-m);
+		min-height: 72px;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Brand
+	// ---------------------------------------------------------------------------
+	.header__brand {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+		text-decoration: none;
+		color: var(--pp-ink-strong);
+
+		@include focusable;
+	}
+
+	.header__mark {
+		display: grid;
+		place-items: center;
+		width: 34px;
+		height: 34px;
+		font-family: var(--pp-font-display);
+		font-size: 0.9rem;
+		font-weight: var(--pp-weight-bold);
+		letter-spacing: 0.02em;
+		color: var(--pp-plaster);
+		background-color: var(--pp-espresso);
+		border-radius: var(--pp-radius-s);
+	}
+
+	.header__wordmark {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+		letter-spacing: 0.01em;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Desktop nav
+	// ---------------------------------------------------------------------------
+	.header__nav {
+		display: none;
+
+		@include from('lg') {
+			display: block;
+		}
+	}
+
+	.header__list {
+		display: flex;
+		align-items: center;
+		gap: var(--pp-space-m);
+		margin: 0;
+		padding: 0;
+	}
+
+	.header__link {
+		@include eyebrow;
+
+		position: relative;
+		display: block;
+		padding-block: var(--pp-space-2xs);
+		color: var(--pp-ink);
+		text-decoration: none;
+		transition: color var(--pp-duration-fast) var(--pp-ease-out);
+
+		@include focusable;
+
+		// Bronze underline as the active/hover marker. Bronze can't carry text
+		// (3.48:1), but as a 2px rule it's non-text UI and clears 3:1 comfortably —
+		// which is why the label itself stays ink.
+		&::after {
+			content: '';
+			position: absolute;
+			inset-block-end: -2px;
+			inset-inline: 0;
+			height: 2px;
+			background-color: var(--pp-bronze);
+			scale: 0 1;
+			transform-origin: left center;
+			transition: scale var(--pp-duration-base) var(--pp-ease-out);
+		}
+
+		@include hover-capable {
+			&:hover::after {
+				scale: 1 1;
+			}
+		}
+
+		&[aria-current='page'] {
+			color: var(--pp-ink-strong);
+
+			&::after {
+				scale: 1 1;
+			}
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Mobile toggle + panel
+	// ---------------------------------------------------------------------------
+	.header__toggle {
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		margin-inline-end: calc(var(--pp-space-2xs) * -1);
+		color: var(--pp-ink-strong);
+		border-radius: var(--pp-radius-m);
+
+		@include focusable;
+
+		@include from('lg') {
+			display: none;
+		}
+	}
+
+	.header__toggle-icon {
+		grid-area: 1 / 1;
+		width: 22px;
+		height: 22px;
+		transition: opacity var(--pp-duration-fast) var(--pp-ease-out),
+			rotate var(--pp-duration-base) var(--pp-ease-out);
+	}
+
+	.header__toggle-icon--close {
+		opacity: 0;
+		rotate: -45deg;
+	}
+
+	.header.is-nav-open {
+		.header__toggle-icon--open {
+			opacity: 0;
+			rotate: 45deg;
+		}
+
+		.header__toggle-icon--close {
+			opacity: 1;
+			rotate: 0deg;
+		}
+	}
+
+	.header__panel {
+		border-block-start: 1px solid var(--pp-rule);
+		background-color: var(--pp-plaster);
+		padding-block: var(--pp-space-s) var(--pp-space-l);
+
+		@include from('lg') {
+			display: none;
+		}
+	}
+
+	.header__panel-list {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+	}
+
+	.header__panel-link {
+		display: block;
+		padding-block: var(--pp-space-s);
+		border-block-end: 1px solid var(--pp-rule);
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h4);
+		color: var(--pp-ink-strong);
+		text-decoration: none;
+
+		@include focusable(-2px);
+
+		&[aria-current='page'] {
+			color: var(--pp-green-link);
+		}
+	}
+
+	.header__panel-list li:last-child .header__panel-link {
+		border-block-end: 0;
+	}
+</style>

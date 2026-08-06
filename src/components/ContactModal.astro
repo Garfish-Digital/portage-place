@@ -1,0 +1,453 @@
+---
+import { Icon } from 'astro-icon/components';
+import Button from './Button.astro';
+
+/**
+ * Contact modal — the site's one conversion point.
+ *
+ * Built on <dialog showModal()>, which gives focus trapping, inertness of the
+ * background, Esc-to-close and focus restoration natively. Hand-rolling those
+ * four things is where most custom modals fail, so we don't.
+ *
+ * Fields: email (required) + message (optional). No name field — many visitors
+ * will drop an address and nothing else, and that has to feel like a complete,
+ * successful action rather than an abandoned form.
+ */
+---
+
+<dialog class="modal" id="contact-modal" aria-labelledby="contact-modal-title" data-contact-modal>
+	<form method="dialog" class="modal__dismiss">
+		<button class="modal__close" type="submit" value="dismiss">
+			<Icon name="lucide:x" aria-hidden="true" />
+			<span class="pp-visually-hidden">Close</span>
+		</button>
+	</form>
+
+	<div class="modal__body" data-modal-body>
+		<p class="pp-eyebrow modal__eyebrow">Get in touch</p>
+		<h2 class="modal__title" id="contact-modal-title">Email us so we can talk</h2>
+		<p class="modal__lede">
+			Tell us as much or as little as you like. An address on its own is plenty — we'll take
+			it from there.
+		</p>
+
+		<!--
+			Netlify Forms: `data-netlify` registers the form at build time, and the
+			hidden form-name field is what identifies it on submit. The honeypot is a
+			decoy field — bots fill it, humans never see it — which keeps spam down
+			without a CAPTCHA. At <=10 submissions/month a CAPTCHA would add friction
+			and a third-party script to solve a problem we don't have.
+		-->
+		<form
+			class="modal__form"
+			name="contact"
+			method="POST"
+			data-netlify="true"
+			netlify-honeypot="bot-field"
+			data-contact-form
+		>
+			<input type="hidden" name="form-name" value="contact" />
+			<p class="modal__honeypot">
+				<label>
+					Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" />
+				</label>
+			</p>
+
+			<div class="field">
+				<label class="field__label" for="contact-email">Email address</label>
+				<input
+					class="field__input"
+					id="contact-email"
+					name="email"
+					type="email"
+					autocomplete="email"
+					inputmode="email"
+					required
+					aria-describedby="contact-email-error"
+				/>
+				<!--
+					aria-live so the message is announced when it appears. It stays in
+					the DOM empty rather than being inserted, because content added to a
+					live region at the same moment the region appears is unreliably read.
+				-->
+				<p class="field__error" id="contact-email-error" role="alert" data-error-for="email"></p>
+			</div>
+
+			<div class="field">
+				<label class="field__label" for="contact-message">
+					Message <span class="field__optional">(optional)</span>
+				</label>
+				<textarea
+					class="field__input field__input--textarea"
+					id="contact-message"
+					name="message"
+					rows="4"
+					placeholder="What kind of space are you looking for?"></textarea>
+			</div>
+
+			<Button type="submit" size="lg" fullWidth iconEnd="lucide:arrow-right" data-submit>Send</Button>
+
+			<p class="modal__form-error" role="alert" data-form-error></p>
+		</form>
+	</div>
+
+	<!--
+		Success replaces the modal contents in place. Redirecting to Netlify's
+		default success page would break the low-commitment feel entirely — the
+		visitor would leave the site to be told their email was received.
+	-->
+	<div class="modal__success" data-modal-success hidden>
+		<div class="modal__success-mark" aria-hidden="true">
+			<Icon name="lucide:check" />
+		</div>
+		<h2 class="modal__title">Thanks — we've got it</h2>
+		<p class="modal__lede">
+			We'll be in touch soon. If it's urgent, you're always welcome to stop by.
+		</p>
+		<Button variant="quiet" data-modal-close-success>Close</Button>
+	</div>
+</dialog>
+
+<script>
+	const modal = document.querySelector<HTMLDialogElement>('[data-contact-modal]');
+	const form = modal?.querySelector<HTMLFormElement>('[data-contact-form]');
+	const body = modal?.querySelector<HTMLElement>('[data-modal-body]');
+	const success = modal?.querySelector<HTMLElement>('[data-modal-success]');
+	const formError = modal?.querySelector<HTMLElement>('[data-form-error]');
+	const emailInput = modal?.querySelector<HTMLInputElement>('#contact-email');
+	const emailError = modal?.querySelector<HTMLElement>('[data-error-for="email"]');
+
+	if (modal && form && body && success && emailInput && emailError && formError) {
+		// -- open / close ---------------------------------------------------------
+		// showModal() is what makes the rest of the page inert and traps focus.
+		// Opening with .open = true or a plain class toggle gets neither.
+		const open = () => {
+			resetToForm();
+			modal.showModal();
+		};
+
+		document.querySelectorAll<HTMLElement>('[data-open-contact]').forEach((trigger) => {
+			trigger.addEventListener('click', (event) => {
+				event.preventDefault();
+				open();
+			});
+		});
+
+		// Clicking the backdrop closes. The check compares against the dialog's own
+		// box because the backdrop is painted by ::backdrop, which isn't a separate
+		// event target — a click outside the content lands on <dialog> itself.
+		modal.addEventListener('click', (event) => {
+			if (event.target !== modal) return;
+			const box = modal.getBoundingClientRect();
+			const outside =
+				event.clientX < box.left ||
+				event.clientX > box.right ||
+				event.clientY < box.top ||
+				event.clientY > box.bottom;
+			if (outside) modal.close();
+		});
+
+		modal
+			.querySelector('[data-modal-close-success]')
+			?.addEventListener('click', () => modal.close());
+
+		const resetToForm = () => {
+			body.hidden = false;
+			success.hidden = true;
+			formError.textContent = '';
+			clearEmailError();
+		};
+
+		// -- validation -----------------------------------------------------------
+		// Custom messaging rather than the browser bubble: the native bubble is
+		// unstyleable, vanishes on the next interaction, and isn't reliably
+		// announced. `noValidate` hands us the check without losing the semantics —
+		// the input keeps type="email" and required for assistive tech.
+		form.noValidate = true;
+
+		const clearEmailError = () => {
+			emailError.textContent = '';
+			emailInput.removeAttribute('aria-invalid');
+		};
+
+		const showEmailError = (message: string) => {
+			emailError.textContent = message;
+			emailInput.setAttribute('aria-invalid', 'true');
+			emailInput.focus();
+		};
+
+		emailInput.addEventListener('input', () => {
+			if (emailInput.getAttribute('aria-invalid') === 'true') clearEmailError();
+		});
+
+		// -- submit ---------------------------------------------------------------
+		form.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			formError.textContent = '';
+
+			const value = emailInput.value.trim();
+			if (!value) return showEmailError('Please enter your email address.');
+			if (!emailInput.checkValidity()) {
+				return showEmailError("That doesn't look like an email address — mind checking it?");
+			}
+
+			const submit = form.querySelector<HTMLButtonElement>('[data-submit]');
+			if (submit) {
+				submit.disabled = true;
+				submit.dataset.busy = 'true';
+			}
+
+			try {
+				// Netlify parses url-encoded bodies posted back to the same path.
+				const response = await fetch('/', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: new URLSearchParams(new FormData(form) as unknown as Record<string, string>),
+				});
+
+				if (!response.ok) throw new Error(`Netlify responded ${response.status}`);
+
+				body.hidden = true;
+				success.hidden = false;
+				// Move focus into the success panel or it stays on a now-hidden
+				// button, which strands screen-reader and keyboard users.
+				success.querySelector<HTMLElement>('h2')?.setAttribute('tabindex', '-1');
+				success.querySelector<HTMLElement>('h2')?.focus();
+				form.reset();
+			} catch {
+				// Never lose the visitor's intent on a network failure — give them
+				// the address so they can send it themselves.
+				formError.textContent =
+					"Something went wrong sending that. Please email us directly and we'll pick it up.";
+			} finally {
+				if (submit) {
+					submit.disabled = false;
+					delete submit.dataset.busy;
+				}
+			}
+		});
+	}
+</script>
+
+<style lang="scss">
+	.modal {
+		width: min(32rem, calc(100vw - var(--pp-space-l)));
+		max-height: min(90dvh, 44rem);
+		padding: 0;
+		margin: auto;
+		overflow: visible;
+		color: var(--pp-ink);
+		background-color: var(--pp-plaster);
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-l);
+		box-shadow: var(--pp-shadow-l);
+
+		&::backdrop {
+			background-color: rgb(22 19 15 / 0.55);
+			backdrop-filter: blur(3px);
+		}
+
+		// `display` can't be transitioned directly, so @starting-style + allow-discrete
+		// is what lets a dialog animate *in* rather than appearing instantly.
+		opacity: 0;
+		scale: 0.97;
+		translate: 0 8px;
+		transition: opacity var(--pp-duration-base) var(--pp-ease-entrance),
+			scale var(--pp-duration-base) var(--pp-ease-entrance),
+			translate var(--pp-duration-base) var(--pp-ease-entrance),
+			display var(--pp-duration-base) allow-discrete,
+			overlay var(--pp-duration-base) allow-discrete;
+
+		&[open] {
+			opacity: 1;
+			scale: 1;
+			translate: 0 0;
+
+			@starting-style {
+				opacity: 0;
+				scale: 0.97;
+				translate: 0 8px;
+			}
+		}
+
+		&::backdrop {
+			opacity: 0;
+			transition: opacity var(--pp-duration-base) var(--pp-ease-out),
+				display var(--pp-duration-base) allow-discrete,
+				overlay var(--pp-duration-base) allow-discrete;
+		}
+
+		&[open]::backdrop {
+			opacity: 1;
+
+			@starting-style {
+				opacity: 0;
+			}
+		}
+	}
+
+	.modal__body,
+	.modal__success {
+		padding: var(--pp-space-xl) var(--pp-space-l) var(--pp-space-l);
+		max-height: inherit;
+		overflow-y: auto;
+	}
+
+	.modal__success {
+		text-align: center;
+		display: grid;
+		justify-items: center;
+		gap: var(--pp-space-s);
+	}
+
+	.modal__success-mark {
+		display: grid;
+		place-items: center;
+		width: 48px;
+		height: 48px;
+		color: #fff;
+		background-color: var(--pp-green);
+		border-radius: var(--pp-radius-full);
+
+		:global(svg) {
+			width: 26px;
+			height: 26px;
+		}
+	}
+
+	.modal__dismiss {
+		position: absolute;
+		inset-block-start: var(--pp-space-xs);
+		inset-inline-end: var(--pp-space-xs);
+		margin: 0;
+	}
+
+	.modal__close {
+		display: grid;
+		place-items: center;
+		width: 40px;
+		height: 40px;
+		color: var(--pp-ink-muted);
+		border-radius: var(--pp-radius-m);
+		transition: color var(--pp-duration-fast) var(--pp-ease-out),
+			background-color var(--pp-duration-fast) var(--pp-ease-out);
+
+		@include focusable(0);
+
+		:global(svg) {
+			width: 20px;
+			height: 20px;
+		}
+
+		@include hover-capable {
+			&:hover {
+				color: var(--pp-ink-strong);
+				background-color: var(--pp-limestone);
+			}
+		}
+	}
+
+	.modal__eyebrow {
+		color: var(--pp-ink-muted);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.modal__title {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h3);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-strong);
+		margin-block-end: var(--pp-space-2xs);
+
+		&:focus-visible {
+			outline: none;
+		}
+	}
+
+	.modal__lede {
+		color: var(--pp-ink-muted);
+		font-size: var(--pp-text-s);
+		margin-block-end: var(--pp-space-m);
+		text-wrap: pretty;
+	}
+
+	.modal__form {
+		display: grid;
+		gap: var(--pp-space-m);
+	}
+
+	.modal__honeypot {
+		@include visually-hidden;
+	}
+
+	.modal__form-error:empty {
+		display: none;
+	}
+
+	.modal__form-error {
+		font-size: var(--pp-text-s);
+		color: var(--pp-error);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Fields
+	// ---------------------------------------------------------------------------
+	.field {
+		display: grid;
+		gap: var(--pp-space-3xs);
+	}
+
+	.field__label {
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+		color: var(--pp-ink-strong);
+	}
+
+	// Optionality has to be obvious at a glance, not discovered by submitting.
+	.field__optional {
+		font-weight: var(--pp-weight-normal);
+		color: var(--pp-ink-muted);
+	}
+
+	.field__input {
+		width: 100%;
+		min-height: 48px;
+		padding: var(--pp-space-xs) var(--pp-space-s);
+		font-size: max(16px, var(--pp-text-base)); // <16px makes iOS Safari zoom on focus
+		color: var(--pp-ink);
+		background-color: #fff;
+		border: 1px solid var(--pp-border); // 3.37:1 — WCAG 1.4.11
+		border-radius: var(--pp-radius-m);
+		transition: border-color var(--pp-duration-fast) var(--pp-ease-out),
+			box-shadow var(--pp-duration-fast) var(--pp-ease-out);
+
+		&::placeholder {
+			color: var(--pp-ink-muted);
+			opacity: 1; // Firefox dims placeholders by default, dropping them below AA
+		}
+
+		&:hover {
+			border-color: var(--pp-brick-mid);
+		}
+
+		&[aria-invalid='true'] {
+			border-color: var(--pp-error);
+			box-shadow: 0 0 0 1px var(--pp-error);
+		}
+	}
+
+	.field__input--textarea {
+		resize: vertical;
+		min-height: 7rem;
+		line-height: var(--pp-leading-normal);
+	}
+
+	.field__error:empty {
+		display: none;
+	}
+
+	.field__error {
+		font-size: var(--pp-text-xs);
+		color: var(--pp-error);
+	}
+</style>

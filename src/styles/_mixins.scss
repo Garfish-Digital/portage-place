@@ -1,0 +1,158 @@
+// =============================================================================
+// Mixins — compile-time only, emits nothing until called
+// =============================================================================
+@use 'sass:map';
+@use 'functions' as *;
+
+// -----------------------------------------------------------------------------
+// Breakpoints
+// -----------------------------------------------------------------------------
+// Mobile-first. These are layout breakpoints, not device names — the design
+// should break where it needs to, not where a phone happens to be.
+$breakpoints: (
+	'xs': 480px,
+	'sm': 640px,
+	'md': 768px,
+	'lg': 1024px,
+	'xl': 1280px,
+	'2xl': 1440px,
+);
+
+@mixin from($name) {
+	@if not map.has-key($breakpoints, $name) {
+		@error "Unknown breakpoint `#{$name}`. Available: #{map.keys($breakpoints)}.";
+	}
+	@media (min-width: map.get($breakpoints, $name)) {
+		@content;
+	}
+}
+
+@mixin until($name) {
+	@if not map.has-key($breakpoints, $name) {
+		@error "Unknown breakpoint `#{$name}`. Available: #{map.keys($breakpoints)}.";
+	}
+	// 0.0625px avoids the overlap you get from a naive `- 1px` on fractional
+	// viewport widths (common on Android at non-integer DPR).
+	@media (max-width: #{map.get($breakpoints, $name) - 0.0625px}) {
+		@content;
+	}
+}
+
+// The ThinkPad E14 problem from the brief: a wide but *short* desktop viewport.
+// Anything sized against vh — hero sections especially — needs checking here.
+@mixin short-viewport {
+	@media (min-width: 1024px) and (max-height: 720px) {
+		@content;
+	}
+}
+
+@mixin reduced-motion {
+	@media (prefers-reduced-motion: reduce) {
+		@content;
+	}
+}
+
+@mixin hover-capable {
+	@media (hover: hover) and (pointer: fine) {
+		@content;
+	}
+}
+
+// -----------------------------------------------------------------------------
+// Accessibility
+// -----------------------------------------------------------------------------
+
+// Visually hidden but present for screen readers and still focusable.
+@mixin visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+// One focus treatment across the whole site. Bronze is the only accent clearing
+// 3:1 against BOTH plaster (3.48) and espresso (3.51), so a single ring token
+// works on every surface — no per-context overrides, no missed states.
+//
+// Deliberately `outline` and not `box-shadow`: outline doesn't participate in
+// layout, follows border-radius in every current engine, and — the reason that
+// matters here — leaves box-shadow free for the buttons' hover ring and lift,
+// so a focused *and* hovered button shows both states instead of one clobbering
+// the other. The offset gap exposes the surface behind the control, which is
+// what keeps the ring visible even on a bronze or mid-brick element.
+@mixin focus-ring($offset: 3px) {
+	outline: 2px solid var(--pp-focus-ring);
+	outline-offset: $offset;
+}
+
+// Apply to :focus-visible only, so pointer users never see a ring but keyboard
+// users always do.
+@mixin focusable($offset: 3px) {
+	&:focus-visible {
+		@include focus-ring($offset);
+	}
+}
+
+// WCAG 2.2 SC 2.5.8 Target Size (Minimum) — 24×24 CSS px. Applied as a
+// pseudo-element so a visually small control still has a large hit area.
+@mixin min-target($size: 44px) {
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 50% auto auto 50%;
+		translate: -50% -50%;
+		width: max(100%, #{$size});
+		height: max(100%, #{$size});
+	}
+}
+
+// -----------------------------------------------------------------------------
+// Type
+// -----------------------------------------------------------------------------
+
+// Letter-spaced small caps. With Fraunces/Public Sans carrying no period
+// character of their own, this treatment plus geometric rules is what carries
+// the art-deco heritage. Used for eyebrows, section labels, and nav.
+@mixin eyebrow {
+	font-family: var(--pp-font-body);
+	font-size: var(--pp-text-xs);
+	font-weight: var(--pp-weight-semibold);
+	letter-spacing: var(--pp-tracking-caps);
+	text-transform: uppercase;
+	line-height: 1.2;
+}
+
+// Optical sizing is automatic on Fraunces (it exposes an opsz axis), so heading
+// levels get correctly-drawn letterforms at every size for free. This mixin
+// only sets what optical sizing does not.
+@mixin display-type($size, $leading: var(--pp-leading-tight)) {
+	font-family: var(--pp-font-display);
+	font-size: $size;
+	line-height: $leading;
+	letter-spacing: var(--pp-tracking-tight);
+	font-weight: var(--pp-weight-semibold);
+	text-wrap: balance;
+}
+
+// -----------------------------------------------------------------------------
+// Layout
+// -----------------------------------------------------------------------------
+
+@mixin container($max: var(--pp-container)) {
+	width: 100%;
+	max-width: $max;
+	margin-inline: auto;
+	padding-inline: var(--pp-gutter);
+}
+
+// Clamp long-form text to a readable measure without a wrapper element.
+@mixin measure($width: var(--pp-measure)) {
+	max-width: $width;
+}

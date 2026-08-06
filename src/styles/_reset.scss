@@ -1,0 +1,144 @@
+// =============================================================================
+// Reset
+// =============================================================================
+@use 'abstracts' as *;
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+* {
+	margin: 0;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	// Not `scroll-behavior: smooth` globally — it hijacks every in-page jump
+	// including skip links, which is disorienting for keyboard users. Applied
+	// per-interaction instead, and only when motion is allowed.
+	scroll-padding-block-start: var(--pp-scroll-offset, 6rem);
+}
+
+body {
+	min-height: 100svh;
+	line-height: var(--pp-leading-normal);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+// Media defaults. `display: block` prevents the inline-descender gap; the
+// max-width guard keeps an oversized asset from forcing a horizontal scrollbar
+// before its explicit dimensions are honoured.
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+// Astro's <Image /> supplies width/height on everything, which is what actually
+// holds CLS at ~0. This is the safety net for hand-authored markup.
+img,
+video {
+	object-fit: cover;
+	background-repeat: no-repeat;
+}
+
+input,
+button,
+textarea,
+select {
+	font: inherit;
+	color: inherit;
+	letter-spacing: inherit;
+}
+
+button {
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+}
+
+// Headings are set individually in _base.scss; this just stops the browser's
+// bold/size defaults from leaking into components that reset them.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+ul[role='list'],
+ol[role='list'] {
+	list-style: none;
+	padding: 0;
+}
+
+// `list-style: none` silently strips list semantics in Safari + VoiceOver.
+// Restoring the marker as an empty string keeps the list announced as a list.
+ul[role='list'] > li::marker,
+ol[role='list'] > li::marker {
+	content: '';
+}
+
+a {
+	color: inherit;
+	text-decoration-thickness: max(0.08em, 1px);
+	text-underline-offset: 0.18em;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+:target {
+	scroll-margin-block-start: var(--pp-scroll-offset, 6rem);
+}
+
+// Reduced motion is handled in ONE place — the token layer, which collapses the
+// duration tokens. Every transition in this codebase reads a duration token, so
+// shortening the tokens is sufficient and keeps the brief's intent: reduce, don't
+// remove. Short opacity fades survive; the site still feels alive.
+//
+// A blanket `* { transition-duration: 0.01ms !important }` here would override
+// those tokens and strip the page bare — two mechanisms fighting, with the
+// cruder one winning. So this block deliberately covers only what the token
+// layer can't reach: looping/infinite animations and native smooth scrolling.
+@include reduced-motion {
+	*,
+	*::before,
+	*::after {
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+	}
+
+	// Parallax and scroll-driven transforms come off entirely — those are the
+	// effects that actually trigger vestibular symptoms, unlike a 120ms fade.
+	[data-parallax],
+	[data-scroll-effect] {
+		animation: none !important;
+		transform: none !important;
+		translate: none !important;
+		scale: none !important;
+	}
+}

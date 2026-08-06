@@ -1,0 +1,183 @@
+// =============================================================================
+// Base element styles
+// =============================================================================
+@use 'abstracts' as *;
+
+body {
+	font-family: var(--pp-font-body);
+	font-size: var(--pp-text-base);
+	font-weight: var(--pp-weight-normal);
+	color: var(--pp-text);
+	background-color: var(--pp-surface);
+}
+
+// -----------------------------------------------------------------------------
+// Headings
+// -----------------------------------------------------------------------------
+// Fraunces exposes an opsz axis, so `font-optical-sizing: auto` (the browser
+// default) redraws the letterforms per size — thinner hairlines and tighter
+// spacing at display sizes, sturdier at small ones. That's most of why this
+// pairing holds up across the scale.
+//
+// WONK is not in the loaded subset (we ship the `standard` file: opsz + wght
+// only), which is deliberate — the wonky single-storey `g` and swashes read as
+// artisanal-coffee-brand rather than restored-landmark. If we ever want SOFT,
+// switch the import to `full.css` at +53KB.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--pp-font-display);
+	font-weight: var(--pp-weight-semibold);
+	line-height: var(--pp-leading-snug);
+	color: var(--pp-text-strong);
+	text-wrap: balance;
+}
+
+h1 {
+	font-size: var(--pp-text-h1);
+	line-height: var(--pp-leading-tight);
+	letter-spacing: var(--pp-tracking-tight);
+}
+
+h2 {
+	font-size: var(--pp-text-h2);
+	letter-spacing: var(--pp-tracking-tight);
+}
+
+h3 {
+	font-size: var(--pp-text-h3);
+}
+
+h4 {
+	font-size: var(--pp-text-h4);
+}
+
+// h5/h6 hand off to Public Sans. Below ~24px the serif stops adding character
+// and starts costing legibility, and a letter-spaced sans label reads as
+// deliberate hierarchy rather than a shrunken heading.
+h5,
+h6 {
+	@include eyebrow;
+
+	color: var(--pp-text-muted);
+}
+
+// -----------------------------------------------------------------------------
+// Text
+// -----------------------------------------------------------------------------
+p,
+li,
+dd,
+dt,
+figcaption {
+	text-wrap: pretty;
+}
+
+strong,
+b {
+	font-weight: var(--pp-weight-semibold);
+}
+
+small {
+	font-size: var(--pp-text-xs);
+}
+
+// Both faces carry true italics — the specific reason Prata was ruled out.
+// Never rely on a synthesised oblique.
+em,
+i,
+cite {
+	font-style: italic;
+}
+
+blockquote {
+	font-family: var(--pp-font-display);
+	font-size: var(--pp-text-lede);
+	font-style: italic;
+	line-height: var(--pp-leading-snug);
+	color: var(--pp-text-strong);
+}
+
+hr {
+	height: 1px;
+	border: 0;
+	background-color: var(--pp-rule);
+}
+
+::selection {
+	background-color: var(--pp-green);
+	color: #fff;
+}
+
+// -----------------------------------------------------------------------------
+// Links
+// -----------------------------------------------------------------------------
+// In-prose links only. Nav, buttons and cards opt out via their own classes.
+:where(p, li, dd, blockquote, figcaption) a {
+	color: var(--pp-green-link);
+	text-decoration: underline;
+	text-decoration-color: color-mix(in srgb, var(--pp-green-link) 35%, transparent);
+	transition: text-decoration-color var(--pp-duration-fast) var(--pp-ease-out),
+		color var(--pp-duration-fast) var(--pp-ease-out);
+
+	@include hover-capable {
+		&:hover {
+			text-decoration-color: currentColor;
+		}
+	}
+}
+
+a {
+	@include focusable;
+}
+
+// -----------------------------------------------------------------------------
+// Forms
+// -----------------------------------------------------------------------------
+:where(input, textarea, select) {
+	@include focusable(2px);
+}
+
+button {
+	@include focusable;
+}
+
+// -----------------------------------------------------------------------------
+// Utilities
+// -----------------------------------------------------------------------------
+.pp-visually-hidden {
+	@include visually-hidden;
+}
+
+.pp-eyebrow {
+	@include eyebrow;
+}
+
+.pp-measure {
+	max-width: var(--pp-measure);
+}
+
+// Skip link — first tabbable element on every page. Visible only on focus.
+.pp-skip-link {
+	position: absolute;
+	inset-block-start: var(--pp-space-2xs);
+	inset-inline-start: var(--pp-space-2xs);
+	z-index: var(--pp-z-skip-link);
+	padding: var(--pp-space-xs) var(--pp-space-s);
+	background-color: var(--pp-espresso);
+	color: var(--pp-plaster);
+	border-radius: var(--pp-radius-m);
+	font-size: var(--pp-text-s);
+	font-weight: var(--pp-weight-semibold);
+	text-decoration: none;
+	translate: 0 calc(-100% - var(--pp-space-s));
+	transition: translate var(--pp-duration-base) var(--pp-ease-entrance);
+
+	&:focus-visible {
+		translate: 0 0;
+		@include focus-ring;
+	}
+}

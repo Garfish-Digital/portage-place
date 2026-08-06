@@ -1,0 +1,36 @@
+// =============================================================================
+// Functions — compile-time only, emits nothing
+// =============================================================================
+@use 'sass:math';
+
+// Viewport range the fluid scale interpolates across.
+// 375px is the hard minimum from the brief (iPhone SE / mini class).
+$fluid-min-vw: 375;
+$fluid-max-vw: 1440;
+
+$root-font-size: 16;
+
+@function rem($px) {
+	@return math.div($px, $root-font-size) * 1rem;
+}
+
+// Linear interpolation between two px sizes across the viewport range, emitted
+// as a clamp().
+//
+// The preferred term is written in rem + vw rather than px + vw on purpose: a
+// px-only clamp ignores the user's browser font-size setting, which fails
+// WCAG 1.4.4 (Resize Text). The rem intercept keeps it responsive to both.
+//
+//   fluid(17, 18) => clamp(1.0625rem, 1.0405rem + 0.0939vw, 1.125rem)
+@function fluid($min-px, $max-px, $min-vw: $fluid-min-vw, $max-vw: $fluid-max-vw) {
+	@if $min-px == $max-px {
+		@return rem($min-px);
+	}
+
+	$slope: math.div($max-px - $min-px, $max-vw - $min-vw);
+	$intercept-px: $min-px - ($slope * $min-vw);
+
+	$preferred: calc(#{rem($intercept-px)} + #{math.div(math.round($slope * 10000), 100)}vw);
+
+	@return clamp(#{rem($min-px)}, #{$preferred}, #{rem($max-px)});
+}

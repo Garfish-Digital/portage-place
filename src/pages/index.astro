@@ -1,96 +1,61 @@
 ---
-// Temporary deploy smoke-test page. Replaced once the real build begins.
-// Netlify injects these at build time; they are undefined during local `astro dev`.
-const buildTime = new Date().toISOString();
-const context = process.env.CONTEXT ?? "local";
-const branch = process.env.BRANCH ?? "—";
-const commit = process.env.COMMIT_REF?.slice(0, 7) ?? "—";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/primitives/Section.astro';
+import Stack from '../components/primitives/Stack.astro';
+import Button from '../components/Button.astro';
+
+// Phase 1 shell. Real copy, hero video, use-type grid, stat strip and location
+// module arrive in Phase 3 — this exists so the foundations (layout, header,
+// footer, CTA, surface contexts) are visible and testable at :4321.
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="generator" content={Astro.generator} />
-		<meta name="robots" content="noindex" />
-		<title>Portage Place — deploy check</title>
-	</head>
-	<body>
-		<main>
-			<h1>Portage Place</h1>
-			<p class="lede">Pipeline is live. GitHub → Netlify → this page.</p>
-
-			<dl>
-				<dt>Build context</dt>
-				<dd>{context}</dd>
-				<dt>Branch</dt>
-				<dd>{branch}</dd>
-				<dt>Commit</dt>
-				<dd>{commit}</dd>
-				<dt>Built at</dt>
-				<dd>{buildTime}</dd>
-			</dl>
-
-			<p class="note">
-				This page is scaffolding. It gets deleted before launch.
+<BaseLayout
+	title="Portage Place"
+	description="Commercial and office space for lease in a restored 1920s art-deco landmark in South Bend's Near Northwest Neighborhood. Spaces from 200 to 2,000 sq ft."
+>
+	<Section>
+		<Stack space="m">
+			<p class="pp-eyebrow eyebrow">South Bend, Indiana</p>
+			<h1>Where you want to be.</h1>
+			<p class="lede">
+				A 1920s bakery, rescued and rebuilt. Coffee, yarn, art, medicine, software — twenty
+				businesses under one roof, with room for yours.
 			</p>
-		</main>
-	</body>
-</html>
+			<div class="actions">
+				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+				<Button variant="quiet" size="lg" href="/spaces">Find your space</Button>
+			</div>
+		</Stack>
+	</Section>
 
-<style>
-	:root {
-		color-scheme: light dark;
-	}
+	<Section tone="limestone">
+		<Stack space="s">
+			<h2>Phase 1 foundations</h2>
+			<p class="pp-measure">
+				This page is scaffolding for the token layer, type scale, and layout primitives. The
+				component specimen lives at <a href="/specimen">/specimen</a>.
+			</p>
+		</Stack>
+	</Section>
+</BaseLayout>
 
-	body {
-		margin: 0;
-		min-height: 100dvh;
-		display: grid;
-		place-items: center;
-		font-family: system-ui, sans-serif;
-		line-height: 1.5;
-	}
-
-	main {
-		padding: 2rem;
-		max-width: 34rem;
-	}
-
-	h1 {
-		margin: 0 0 0.25rem;
-		font-size: clamp(2rem, 6vw, 3rem);
-		letter-spacing: -0.02em;
+<style lang="scss">
+	.eyebrow {
+		color: var(--pp-ink-muted);
 	}
 
 	.lede {
-		margin: 0 0 2rem;
-		opacity: 0.75;
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-muted);
+		max-width: 40ch;
+		text-wrap: pretty;
 	}
 
-	dl {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 0.4rem 1.25rem;
-		margin: 0 0 2rem;
-		font-size: 0.9rem;
-	}
-
-	dt {
-		opacity: 0.6;
-	}
-
-	dd {
-		margin: 0;
-		font-family: ui-monospace, monospace;
-		overflow-wrap: anywhere;
-	}
-
-	.note {
-		margin: 0;
-		font-size: 0.8rem;
-		opacity: 0.5;
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--pp-space-s);
+		margin-block-start: var(--pp-space-s);
 	}
 </style>

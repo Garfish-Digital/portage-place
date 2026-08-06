@@ -1,0 +1,180 @@
+---
+import Container from './primitives/Container.astro';
+import Button from './Button.astro';
+import { NAV_ITEMS, CONTACT } from '../config/nav';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer pp-on-dark">
+	<Container>
+		<!-- data-footer-cta is what the floating button watches to get out of the way. -->
+		<div class="footer__cta" data-footer-cta>
+			<div class="footer__cta-text">
+				<p class="pp-eyebrow footer__eyebrow">Space available</p>
+				<h2 class="footer__heading">Room to think, work, create, and play.</h2>
+				<p class="footer__lede">
+					Spaces from 200 to 2,000 square feet in the Near Northwest Neighborhood. Tell us
+					what you're looking for.
+				</p>
+			</div>
+			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+		</div>
+
+		<hr class="footer__rule" />
+
+		<div class="footer__meta">
+			<div class="footer__brand">
+				<span class="footer__mark" aria-hidden="true">PP</span>
+				<span class="footer__wordmark">Portage Place</span>
+			</div>
+
+			<nav class="footer__nav" aria-label="Footer">
+				<ul class="footer__list" role="list">
+					{
+						NAV_ITEMS.map((item) => (
+							<li>
+								<a class="footer__link" href={item.href}>
+									{item.label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+
+			<address class="footer__address">
+				{CONTACT.address.street}<br />
+				{CONTACT.address.city}, {CONTACT.address.region} {CONTACT.address.postalCode}
+			</address>
+		</div>
+
+		<p class="footer__legal">
+			&copy; {year} Portage Place. A restored 1920s landmark in South Bend, Indiana.
+		</p>
+	</Container>
+</footer>
+
+<style lang="scss">
+	.footer {
+		padding-block: var(--pp-space-section) var(--pp-space-l);
+		// Colour comes from .pp-on-dark, which remaps the semantic aliases for
+		// everything inside — including the Button, which switches to its
+		// light-green-on-espresso pairing without being told.
+	}
+
+	.footer__cta {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--pp-space-m);
+
+		@include from('md') {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--pp-space-xl);
+		}
+	}
+
+	.footer__cta-text {
+		max-width: 34rem;
+	}
+
+	.footer__eyebrow {
+		color: var(--pp-bronze);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.footer__heading {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h2);
+		line-height: var(--pp-leading-snug);
+		letter-spacing: var(--pp-tracking-tight);
+		color: var(--pp-text-strong);
+		text-wrap: balance;
+	}
+
+	.footer__lede {
+		margin-block-start: var(--pp-space-xs);
+		color: var(--pp-text-muted);
+		text-wrap: pretty;
+	}
+
+	.footer__rule {
+		margin-block: var(--pp-space-xl);
+		background-color: var(--pp-rule);
+	}
+
+	.footer__meta {
+		display: grid;
+		gap: var(--pp-space-l);
+
+		@include from('md') {
+			grid-template-columns: auto 1fr auto;
+			align-items: start;
+			gap: var(--pp-space-xl);
+		}
+	}
+
+	.footer__brand {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+	}
+
+	.footer__mark {
+		display: grid;
+		place-items: center;
+		width: 34px;
+		height: 34px;
+		font-family: var(--pp-font-display);
+		font-size: 0.9rem;
+		font-weight: var(--pp-weight-bold);
+		color: var(--pp-espresso);
+		background-color: var(--pp-plaster);
+		border-radius: var(--pp-radius-s);
+	}
+
+	.footer__wordmark {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+	}
+
+	.footer__list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--pp-space-xs) var(--pp-space-m);
+		margin: 0;
+		padding: 0;
+	}
+
+	.footer__link {
+		font-size: var(--pp-text-s);
+		color: var(--pp-text-muted);
+		text-decoration: none;
+		transition: color var(--pp-duration-fast) var(--pp-ease-out);
+
+		@include focusable;
+
+		@include hover-capable {
+			&:hover {
+				color: var(--pp-text-strong);
+			}
+		}
+	}
+
+	.footer__address {
+		font-size: var(--pp-text-s);
+		font-style: normal;
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-text-muted);
+	}
+
+	.footer__legal {
+		margin-block-start: var(--pp-space-xl);
+		font-size: var(--pp-text-xs);
+		color: var(--pp-text-muted);
+	}
+</style>

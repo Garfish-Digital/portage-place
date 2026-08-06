@@ -1,0 +1,7 @@
+// =============================================================================
+// Abstracts — the single entry point injected into every component <style>.
+// Functions and mixins only. Nothing here emits CSS, so importing it everywhere
+// costs zero bytes in the bundle.
+// =============================================================================
+@forward 'functions';
+@forward 'mixins';

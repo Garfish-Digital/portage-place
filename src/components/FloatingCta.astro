@@ -1,0 +1,122 @@
+---
+import { Icon } from 'astro-icon/components';
+
+/**
+ * Persistent CTA, lower right, on every page.
+ *
+ * ⚠️ PROVISIONAL — this pattern is deliberately open for revision. It's here to
+ * guarantee "email us" is always one click away, but it is not a client
+ * requirement and it isn't obviously the strongest answer. Alternatives worth
+ * weighing before Phase 7: a sticky footer bar, a header-anchored CTA that
+ * docks after the hero, or per-section contextual CTAs. See BUILD_PLAN.md.
+ */
+---
+
+<div class="cta" data-floating-cta>
+	<button class="cta__button" type="button" data-open-contact>
+		<Icon name="lucide:mail" class="cta__icon" aria-hidden="true" />
+		<span class="cta__label">Email us</span>
+	</button>
+</div>
+
+<script>
+	// The button hides while the footer CTA is on screen — two identical calls to
+	// action competing in the same viewport reads as nagging, and the floating one
+	// is the redundant copy at that moment.
+	const cta = document.querySelector<HTMLElement>('[data-floating-cta]');
+	const footerCta = document.querySelector<HTMLElement>('[data-footer-cta]');
+
+	if (cta && footerCta && 'IntersectionObserver' in window) {
+		new IntersectionObserver(
+			([entry]) => cta.classList.toggle('is-hidden', entry.isIntersecting),
+			{ rootMargin: '0px 0px -10% 0px' },
+		).observe(footerCta);
+	}
+</script>
+
+<style lang="scss">
+	.cta {
+		position: fixed;
+		z-index: var(--pp-z-floating-cta);
+		inset-block-end: var(--pp-space-m);
+		inset-inline-end: var(--pp-space-m);
+
+		// iOS Safari's bottom toolbar overlaps exactly this corner while scrolling.
+		// The safe-area inset is what keeps the button reachable rather than sitting
+		// under the browser chrome — needs verifying on real hardware, not just
+		// DevTools, because the simulator doesn't reproduce the toolbar behaviour.
+		inset-block-end: calc(var(--pp-space-m) + env(safe-area-inset-bottom, 0px));
+
+		transition: opacity var(--pp-duration-base) var(--pp-ease-out),
+			translate var(--pp-duration-base) var(--pp-ease-out),
+			visibility var(--pp-duration-base);
+	}
+
+	.cta.is-hidden {
+		opacity: 0;
+		translate: 0 12px;
+		visibility: hidden;
+	}
+
+	.cta__button {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+		min-height: 52px;
+		padding-inline: var(--pp-space-m);
+
+		font-family: var(--pp-font-body);
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+		line-height: 1;
+		color: #fff;
+		background-color: var(--pp-green); // 5.99:1 with white
+		border-radius: var(--pp-radius-full);
+		box-shadow: var(--pp-shadow-l);
+
+		transition: background-color var(--pp-duration-fast) var(--pp-ease-out),
+			box-shadow var(--pp-duration-base) var(--pp-ease-out),
+			translate var(--pp-duration-base) var(--pp-ease-out);
+
+		@include focusable;
+
+		@include hover-capable {
+			&:hover {
+				background-color: var(--pp-green-hover); // 4.60:1 with white
+				translate: 0 -2px;
+				box-shadow: 0 0 0 2px var(--pp-green-ring), var(--pp-shadow-l);
+			}
+		}
+
+		&:active {
+			translate: 0 0;
+			transition-duration: 60ms;
+		}
+	}
+
+	.cta__icon {
+		width: 18px;
+		height: 18px;
+		flex: none;
+	}
+
+	// Below 480px the label collapses and the button becomes a circle — a 52px
+	// pill with text eats a meaningful share of a 375px viewport. The accessible
+	// name survives because the label is only visually hidden, never removed.
+	@include until('xs') {
+		.cta__button {
+			padding-inline: 0;
+			width: 52px;
+			justify-content: center;
+		}
+
+		.cta__label {
+			@include visually-hidden;
+		}
+
+		.cta__icon {
+			width: 20px;
+			height: 20px;
+		}
+	}
+</style>

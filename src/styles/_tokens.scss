@@ -1,0 +1,232 @@
+// =============================================================================
+// Design tokens — Portage Place
+// =============================================================================
+// Emitted as CSS custom properties so they stay runtime-themeable and survive
+// view transitions. SCSS variables live in _abstracts.scss and are compile-time
+// only (fluid math, breakpoints) — they never reach the browser.
+//
+// COLOR PROVENANCE
+// Values marked "measured" were sampled from photographs of the building and
+// white-balance-corrected against a neutral card held in the same frame. The
+// building's entire material palette falls in hue 22–36°, which is why the
+// neutrals here are warm rather than gray.
+//
+// Every pairing in use is contrast-verified. Ratios in comments are against
+// --pp-plaster unless stated otherwise.
+// =============================================================================
+@use 'abstracts' as *;
+
+:root {
+	// ---------------------------------------------------------------------------
+	// Surfaces — light context
+	// ---------------------------------------------------------------------------
+	--pp-plaster: #f7f5f1; // page background; old paper / plaster wall
+	--pp-limestone: #ddd7cf; // alternating section background
+	--pp-limestone-deep: #d2cabf; // pressed / hovered limestone surfaces
+
+	// Surfaces — dark context
+	// measured: interior door + window framing, hsl(30 6% 18%)
+	--pp-espresso: #322f2c; // footer, hero overlays, inverted sections
+	--pp-espresso-deep: #26231f; // layering *on* espresso (cards, wells)
+	--pp-espresso-raised: #3d3936; // raised elements on espresso
+
+	// ---------------------------------------------------------------------------
+	// Building materials — the mid-tones the neutral ramp was missing
+	// ---------------------------------------------------------------------------
+	--pp-brick-light: #a59078; // measured: interior brick face, hsl(32 20% 56%)
+	--pp-brick-mid: #84735e; // measured: interior brick shadow / mortar   4.20:1
+	--pp-brick-dark: #6b4931; // measured: exterior brick face, hsl(24 35% 31%)
+
+	// ---------------------------------------------------------------------------
+	// Ink
+	// ---------------------------------------------------------------------------
+	--pp-ink-strong: #16130f; // headings                                 17.00:1
+	--pp-ink: #22201c; // body copy                                       14.93:1
+	--pp-ink-muted: #5c5449; // captions, metadata, labels                 6.84:1
+	// on --pp-limestone                                                   5.21:1
+
+	// Ink on dark surfaces
+	--pp-ink-inverse: var(--pp-plaster); // on espresso                   12.22:1
+	--pp-ink-inverse-muted: #ae9c86; // on espresso                        5.00:1
+
+	// ---------------------------------------------------------------------------
+	// Lines
+	// ---------------------------------------------------------------------------
+	--pp-rule: #c9c1b6; // decorative hairlines, section dividers          1.64:1
+	--pp-border: #8f8476; // input borders, meaningful edges — WCAG 1.4.11 3.37:1
+	--pp-rule-inverse: #4a4541; // hairlines on espresso
+	--pp-border-inverse: #7c7266; // input borders on espresso
+
+	// ---------------------------------------------------------------------------
+	// Green — action. Botanical, not eco-marketing.
+	// ---------------------------------------------------------------------------
+	--pp-green: #2f6f4e; // button rest, white text on it               5.99:1
+	--pp-green-hover: #38835c; // button hover, white text on it         4.60:1
+	--pp-green-active: #275c41; // pressed
+	--pp-green-ring: #43a36a; // bright ring on hover — DECORATIVE ONLY.
+	// 2.88:1 vs plaster: it is never the component boundary (the solid fill is,
+	// at 5.50:1) and never the focus indicator (bronze is). If it ever has to
+	// stand alone as an edge, swap to #419f67 (3.02:1).
+	--pp-green-link: #2a6446; // link text — passes on plaster (6.41) AND
+	// limestone (4.88). --pp-green itself fails on limestone at 4.19.
+	--pp-green-on-dark: #7fc79b; // CTA fill on espresso; espresso text  6.68:1
+
+	// ---------------------------------------------------------------------------
+	// Bronze — ornament. Never a text color.
+	// ---------------------------------------------------------------------------
+	// 3.48:1 on plaster and 3.51:1 on espresso: the one accent that clears the
+	// 3:1 non-text threshold on BOTH surfaces, which makes it the focus ring.
+	--pp-bronze: #a97a3d;
+	--pp-bronze-text: #8f6530; // only if bronze must carry text        4.74:1
+
+	// ---------------------------------------------------------------------------
+	// Feedback
+	// ---------------------------------------------------------------------------
+	// Deliberately darker and less orange than the building's brick so a
+	// validation error never reads as decoration.
+	--pp-error: #96322c; //                                              6.91:1
+	--pp-success: var(--pp-green);
+
+	// ---------------------------------------------------------------------------
+	// Semantic aliases — components consume these, not the raw ramp above
+	// ---------------------------------------------------------------------------
+	--pp-surface: var(--pp-plaster);
+	--pp-surface-alt: var(--pp-limestone);
+	--pp-text: var(--pp-ink);
+	--pp-text-strong: var(--pp-ink-strong);
+	--pp-text-muted: var(--pp-ink-muted);
+	--pp-focus-ring: var(--pp-bronze);
+
+	// ---------------------------------------------------------------------------
+	// Type
+	// ---------------------------------------------------------------------------
+	--pp-font-display: 'Fraunces Variable', ui-serif, georgia, 'Times New Roman', serif;
+	--pp-font-body: 'Public Sans Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+	// Fluid scale: 375px → 1440px viewport. Preferred values are rem-based so
+	// they still respond to the user's browser font-size setting.
+	--pp-text-2xs: #{fluid(12, 13)}; // legal, credits
+	--pp-text-xs: #{fluid(14, 15)}; // captions, metadata
+	--pp-text-s: #{fluid(15, 16)}; // small UI, labels
+	--pp-text-base: #{fluid(17, 18)}; // body
+	--pp-text-lede: #{fluid(20, 23)}; // intro paragraphs
+	--pp-text-h4: #{fluid(24, 29)};
+	--pp-text-h3: #{fluid(29, 36)};
+	--pp-text-h2: #{fluid(34, 46)};
+	--pp-text-h1: #{fluid(41, 58)};
+	--pp-text-display: #{fluid(49, 73)}; // hero only
+
+	--pp-leading-tight: 1.08; // display
+	--pp-leading-snug: 1.18; // headings
+	--pp-leading-normal: 1.6; // body
+	--pp-leading-loose: 1.75; // long-form prose
+
+	--pp-tracking-tight: -0.02em; // large display sizes
+	--pp-tracking-normal: 0;
+	--pp-tracking-wide: 0.06em;
+	--pp-tracking-caps: 0.14em; // letter-spaced small caps — the deco carrier
+
+	--pp-weight-normal: 400;
+	--pp-weight-medium: 500;
+	--pp-weight-semibold: 600;
+	--pp-weight-bold: 700;
+	--pp-weight-black: 900; // Public Sans reaches 900
+
+	// Measure — long-form text should never exceed this
+	--pp-measure: 68ch;
+	--pp-measure-narrow: 46ch;
+
+	// ---------------------------------------------------------------------------
+	// Space — 4px grid, fluid where it affects rhythm
+	// ---------------------------------------------------------------------------
+	--pp-space-3xs: 0.25rem; //  4px
+	--pp-space-2xs: 0.5rem; //  8px
+	--pp-space-xs: 0.75rem; // 12px
+	--pp-space-s: 1rem; // 16px
+	--pp-space-m: 1.5rem; // 24px
+	--pp-space-l: 2rem; // 32px
+	--pp-space-xl: 3rem; // 48px
+	--pp-space-2xl: 4rem; // 64px
+	--pp-space-3xl: 6rem; // 96px
+	--pp-space-section: #{fluid(56, 120)}; // vertical section rhythm
+	--pp-gutter: #{fluid(20, 40)}; // page side padding
+
+	--pp-container: 75rem; // 1200px — general content
+	--pp-container-wide: 90rem; // 1440px — full-bleed media sections
+	--pp-container-narrow: 44rem; //  704px — prose
+
+	// ---------------------------------------------------------------------------
+	// Radius — restrained. A 1920s building does not have pill-shaped windows.
+	// ---------------------------------------------------------------------------
+	--pp-radius-s: 2px;
+	--pp-radius-m: 4px;
+	--pp-radius-l: 8px;
+	--pp-radius-full: 999px; // floating CTA only
+
+	// ---------------------------------------------------------------------------
+	// Elevation — warm-tinted, never neutral gray
+	// ---------------------------------------------------------------------------
+	--pp-shadow-s: 0 1px 2px rgb(34 32 28 / 0.06), 0 2px 6px rgb(34 32 28 / 0.05);
+	--pp-shadow-m: 0 2px 4px rgb(34 32 28 / 0.06), 0 8px 20px rgb(34 32 28 / 0.09);
+	--pp-shadow-l: 0 4px 8px rgb(34 32 28 / 0.07), 0 18px 44px rgb(34 32 28 / 0.14);
+
+	// ---------------------------------------------------------------------------
+	// Motion — the "$15k feel" lives here
+	// ---------------------------------------------------------------------------
+	--pp-duration-instant: 90ms;
+	--pp-duration-fast: 160ms; // micro-interactions
+	--pp-duration-base: 240ms; // most transitions
+	--pp-duration-slow: 420ms; // modals, reveals
+	--pp-duration-slower: 680ms; // scroll reveals
+
+	--pp-ease-out: cubic-bezier(0.22, 1, 0.36, 1); // decelerate — default
+	--pp-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); // symmetric
+	--pp-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1); // things arriving
+	--pp-ease-overshoot: cubic-bezier(0.34, 1.4, 0.64, 1); // slight spring
+
+	// ---------------------------------------------------------------------------
+	// Layers
+	// ---------------------------------------------------------------------------
+	--pp-z-base: 0;
+	--pp-z-raised: 10;
+	--pp-z-sticky: 100;
+	--pp-z-header: 200;
+	--pp-z-floating-cta: 300;
+	--pp-z-modal-backdrop: 400;
+	--pp-z-modal: 401;
+	--pp-z-skip-link: 500;
+}
+
+// -----------------------------------------------------------------------------
+// Dark surface context
+// -----------------------------------------------------------------------------
+// Not a dark *mode* — the site is light. This remaps the semantic aliases for
+// any region rendered on espresso (footer, hero overlay, inverted sections), so
+// components need no `.is-inverse` variants of their own.
+.pp-on-dark {
+	--pp-surface: var(--pp-espresso);
+	--pp-surface-alt: var(--pp-espresso-deep);
+	--pp-text: var(--pp-ink-inverse);
+	--pp-text-strong: var(--pp-plaster);
+	--pp-text-muted: var(--pp-ink-inverse-muted);
+	--pp-rule: var(--pp-rule-inverse);
+	--pp-border: var(--pp-border-inverse);
+	--pp-green-link: var(--pp-green-on-dark);
+
+	color: var(--pp-text);
+	background-color: var(--pp-surface);
+}
+
+// -----------------------------------------------------------------------------
+// Reduced motion
+// -----------------------------------------------------------------------------
+// Reduce, don't remove. Transforms and parallax go; short opacity fades stay so
+// the site still feels alive rather than inert.
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--pp-duration-fast: 1ms;
+		--pp-duration-base: 1ms;
+		--pp-duration-slow: 120ms;
+		--pp-duration-slower: 120ms;
+	}
+}

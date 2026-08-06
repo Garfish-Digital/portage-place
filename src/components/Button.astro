@@ -1,0 +1,225 @@
+---
+import { Icon } from 'astro-icon/components';
+
+/**
+ * Button — renders an <a> when `href` is set, a <button> otherwise.
+ *
+ * That distinction is not cosmetic: links navigate and buttons act, and screen
+ * readers announce them differently. A <div onclick> or an <a> with no href is
+ * unreachable by keyboard.
+ *
+ * No ghost variant, per the style guide. Every variant has a solid fill.
+ */
+interface Props {
+	variant?: 'primary' | 'secondary' | 'quiet';
+	size?: 'md' | 'lg';
+	href?: string;
+	type?: 'button' | 'submit' | 'reset';
+	/** Lucide icon name, rendered before the label. */
+	icon?: string;
+	/** Lucide icon name, rendered after the label. */
+	iconEnd?: string;
+	/** Required when the button has no visible text. */
+	label?: string;
+	disabled?: boolean;
+	fullWidth?: boolean;
+	class?: string;
+	[key: string]: unknown;
+}
+
+const {
+	variant = 'primary',
+	size = 'md',
+	href,
+	type = 'button',
+	icon,
+	iconEnd,
+	label,
+	disabled = false,
+	fullWidth = false,
+	class: className,
+	...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+
+const tagProps = href
+	? { href, ...(disabled ? { 'aria-disabled': 'true', tabindex: -1 } : {}) }
+	: { type, disabled };
+---
+
+<Tag
+	class:list={['btn', `btn--${variant}`, `btn--${size}`, fullWidth && 'btn--full', className]}
+	aria-label={label}
+	{...tagProps}
+	{...rest}
+>
+	{icon && <Icon name={icon} class="btn__icon" aria-hidden="true" />}
+	<span class="btn__label"><slot /></span>
+	{iconEnd && <Icon name={iconEnd} class="btn__icon btn__icon--end" aria-hidden="true" />}
+</Tag>
+
+<style lang="scss">
+	.btn {
+		--btn-bg: var(--pp-green);
+		--btn-bg-hover: var(--pp-green-hover);
+		--btn-bg-active: var(--pp-green-active);
+		--btn-fg: #fff;
+		--btn-ring: var(--pp-green-ring);
+		--btn-border: transparent;
+
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--pp-space-2xs);
+
+		// 44px floor even at size="md", so the target clears WCAG 2.2 SC 2.5.8
+		// without a pseudo-element hack.
+		min-height: 44px;
+		padding-inline: var(--pp-space-m);
+
+		font-family: var(--pp-font-body);
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+		line-height: 1;
+		letter-spacing: 0.01em;
+		text-align: center;
+		text-decoration: none;
+		white-space: nowrap;
+
+		color: var(--btn-fg);
+		background-color: var(--btn-bg);
+		border: 1px solid var(--btn-border);
+		border-radius: var(--pp-radius-m);
+		cursor: pointer;
+
+		// Only transform, opacity, background-color and box-shadow are animated —
+		// none of them trigger layout. Animating padding or width here would cost
+		// a reflow on every frame of the hover.
+		transition: background-color var(--pp-duration-fast) var(--pp-ease-out),
+			box-shadow var(--pp-duration-base) var(--pp-ease-out),
+			translate var(--pp-duration-base) var(--pp-ease-out),
+			color var(--pp-duration-fast) var(--pp-ease-out);
+
+		@include focusable;
+
+		// The lift and the bright ring are hover-only. On touch there is no hover
+		// state to reveal them, and applying them on tap makes the button feel
+		// sticky — the pressed state below handles touch instead.
+		@include hover-capable {
+			&:hover:not(:disabled):not([aria-disabled='true']) {
+				background-color: var(--btn-bg-hover);
+				translate: 0 -1px;
+				box-shadow: 0 0 0 2px var(--btn-ring), var(--pp-shadow-m);
+			}
+		}
+
+		&:active:not(:disabled):not([aria-disabled='true']) {
+			background-color: var(--btn-bg-active);
+			translate: 0 0;
+			box-shadow: 0 0 0 2px var(--btn-ring);
+			// Pressing should feel like pressing. 60ms is below the threshold where
+			// it reads as lag but above where it reads as nothing happening.
+			transition-duration: 60ms;
+		}
+
+		&:disabled,
+		&[aria-disabled='true'] {
+			cursor: not-allowed;
+			opacity: 0.5;
+			// Disabled controls are exempt from contrast minimums, but they still
+			// have to be legible enough to read what you can't click.
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Variants
+	// ---------------------------------------------------------------------------
+
+	// primary — white on green, 5.99:1 at rest and 4.60:1 on hover. The bright
+	// ring (#43A36A) never carries text and is never the component boundary, so
+	// its 2.88:1 against plaster is decorative rather than a failure.
+	.btn--primary {
+		// Inside a dark section the mid-green collapses to 2.13:1 against
+		// espresso and the button all but disappears. The light-green fill with
+		// espresso text is the dark-context pairing: 6.68:1 both ways.
+		:global(.pp-on-dark) & {
+			--btn-bg: var(--pp-green-on-dark);
+			--btn-bg-hover: #93d1ab;
+			--btn-bg-active: #6fbb8c;
+			--btn-fg: var(--pp-espresso);
+			--btn-ring: var(--pp-plaster);
+		}
+	}
+
+	.btn--secondary {
+		--btn-bg: var(--pp-espresso);
+		--btn-bg-hover: var(--pp-espresso-raised);
+		--btn-bg-active: var(--pp-espresso-deep);
+		--btn-fg: var(--pp-plaster);
+		--btn-ring: var(--pp-bronze);
+
+		:global(.pp-on-dark) & {
+			--btn-bg: var(--pp-plaster);
+			--btn-bg-hover: #fff;
+			--btn-bg-active: var(--pp-limestone);
+			--btn-fg: var(--pp-espresso);
+			--btn-ring: var(--pp-bronze);
+		}
+	}
+
+	// quiet — still a solid fill, not a ghost. The border is what makes the
+	// boundary meet 1.4.11 (3.37:1); the limestone fill is what keeps it a button.
+	.btn--quiet {
+		--btn-bg: var(--pp-limestone);
+		--btn-bg-hover: var(--pp-limestone-deep);
+		--btn-bg-active: #c7bfb3;
+		--btn-fg: var(--pp-ink);
+		--btn-border: var(--pp-border);
+		--btn-ring: var(--pp-bronze);
+
+		:global(.pp-on-dark) & {
+			--btn-bg: var(--pp-espresso-raised);
+			--btn-bg-hover: #474340;
+			--btn-bg-active: var(--pp-espresso-deep);
+			--btn-fg: var(--pp-plaster);
+			--btn-border: var(--pp-border-inverse);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Sizes
+	// ---------------------------------------------------------------------------
+	.btn--lg {
+		min-height: 52px;
+		padding-inline: var(--pp-space-l);
+		font-size: var(--pp-text-base);
+	}
+
+	.btn--full {
+		display: flex;
+		width: 100%;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Icons
+	// ---------------------------------------------------------------------------
+	.btn__icon {
+		flex: none;
+		width: 1.15em;
+		height: 1.15em;
+		// The icon leads the motion by a hair. Same duration, different easing —
+		// enough to read as crafted, not enough to notice as two things moving.
+		transition: translate var(--pp-duration-base) var(--pp-ease-overshoot);
+	}
+
+	@include hover-capable {
+		.btn:hover .btn__icon--end {
+			translate: 2px 0;
+		}
+	}
+
+	.btn__label:empty {
+		display: none;
+	}
+</style>
