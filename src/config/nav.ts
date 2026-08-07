@@ -45,18 +45,25 @@ export const NAV_ITEMS: NavItem[] = [
 /**
  * The single conversion action. One address, one low-friction ask.
  *
- * ⚠️ EVERY VALUE BELOW IS A PLACEHOLDER — do not ship without confirming.
- * The real recipient address is the one already live on portageplacesb.com and
- * has to be carried over deliberately (see the DNS/MX cutover checklist in
- * BUILD_PLAN.md — breaking that mailbox is the highest-risk item in the build).
- * The street address needs to come from the client, not from a search result.
+ * Address: confirmed by the client.
+ *
+ * 🚨 `email` IS A DEV ALIAS, NOT THE PRODUCTION RECIPIENT.
+ * Production is `tyler@regensb.com`. Swap it at launch — and note the recipient
+ * is on **regensb.com**, a different domain from portageplacesb.com. That may
+ * mean the DNS cutover carries far less email risk than BUILD_PLAN.md currently
+ * assumes, but it has to be confirmed rather than inferred: there may still be a
+ * separate mailbox on portageplacesb.com. See the cutover checklist.
+ *
+ * The Netlify Forms recipient is configured in the Netlify UI, not here — this
+ * constant is only for what the site itself renders or links to.
  */
 export const CONTACT = {
-	email: 'PLACEHOLDER@portageplacesb.com',
+	/** Dev alias. Production: tyler@regensb.com */
+	email: 'testing@garfishdigital.com',
 	address: {
-		street: 'PLACEHOLDER — confirm with client',
+		street: '908 Portage Avenue',
 		city: 'South Bend',
 		region: 'IN',
-		postalCode: 'PLACEHOLDER',
+		postalCode: '46616',
 	},
 } as const;

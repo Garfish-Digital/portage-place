@@ -165,71 +165,212 @@ Portage Place is modeled on Monte Anderson’s Taylor Station in Duncanville, TX
 
 =====
 
-Phase 1 is complete and building clean. Here's what came out of it.
+-This is a great start with , and I have commited the Phase 1 changes to the repo.
 
-What the photos changed
+-For the Home page: I captured all 4:5 shots from the desktop and ~20:9 shots from mobile for the IG progression slides, and they are located in the IG project files.
 
-The white card in every frame made these measurable rather than impressionistic. One finding drove everything:
+-For the /specimen page: I captured all 4:5 shots from the desktop and ~20:9 shots from mobile for the IG progression slides, and they are located in the IG project files.
 
-Every material in the building sits in hue 22–36°. Nothing is neutral gray.
+-The /specimen is extremely helpful, and this will surely serve as a valuable guiding hand throughout this build. 
 
-┌─────────────────┬─────────────────────────┬────────────────────────────┐
-│    Material     │ Measured (WB-corrected) │            HSL             │
-├─────────────────┼─────────────────────────┼────────────────────────────┤
-│ Exterior brick  │ #694933 · #724828       │ hsl(24–26, 35–48%, 30–31%) │
-├─────────────────┼─────────────────────────┼────────────────────────────┤
-│ Exterior mortar │ #6C4F37 · #735442       │ hsl(22–27, 27–35%, 27–35%) │
-├─────────────────┼─────────────────────────┼────────────────────────────┤
-│ Interior brick  │ #A59078 · #84735E       │ hsl(32–33, 17–20%, 44–56%) │
-├─────────────────┼─────────────────────────┼────────────────────────────┤
-│ Interior mortar │ #767164 · #857C6C       │ hsl(36–43, 8–11%, 43–47%)  │
-├─────────────────┼─────────────────────────┼────────────────────────────┤
-│ Framing         │ #322F2C                 │ hsl(30, 6%, 18%)           │
-└─────────────────┴─────────────────────────┴────────────────────────────┘
+-The street address is `Portage Place, 908 Portage Avenue, South Bend, Indiana 46616` and the contact email as of right now is `tyler@regensb.com`. I updated the placeholder address, but I used our tesing email address (alias) for testing during the dev (see more below).
 
-Three consequences:
+-So far I feel real good about the directions and the decisions we have made in regards to design and accessibility. In regards to the situation where the reset was interfering with the transitions brings up a good point. I imagine there might be moments we have to make decisions about whether the trade off falls on luxury or accessibility. We will make those types of calls as they come, but I can tell you two things that may help guide us:
+-1. The client never mentioned accessibility, WCAG, or anything of that nature. I always set out to comply as well as I can at the beginning of a new build in an effort to be as accommodating as I can without sacrificing the build the client truly wants.
+-2. I cannot stress the importance of this site being an attention-grabber; not only for potential tenants, but potential future clients of mine for web dev jobs. The property group that owns Portage Place is very well connected with other investors, politicians, and town planners--it could be a big boost to my career (which is a tiny 2-man operation in need of clients).
 
-Your espresso guess was the building. Proposed #35322F vs. measured framing #322F2C — two points of lightness apart. I adopted the measured value, so the footer is literally the color of the door frames.
+-I agree that the floating CTA probably isn't going to be the best implementation-- just a starting point, really. As we flesh out the sections of each page, you are welcome to place CTAs at the relevant areas. By 'relevant' I mean those sections and placements that are time-tested and/or psychologically determined to be effective CTA placements. And now, after seeing the specimen of button selections and their impact on the light and dark surface colors we've chosen, I feel really good about having CTAs that are contextual (which in my mind means various button BG colors on various surface BG colors). To me this will appeal in different ways to different types of users.
 
-Terracotta doesn't survive contact with the actual brick. The real exterior brick is hsl(25, 40%, 31%) — much darker and less red than #B66A4A (hsl 17, 43%, 50%), which is a Southwestern adobe color this building doesn't have. Correcting it to match lands it in the espresso family, at which point it isn't a bright secondary accent anymore. It was also colliding with the error red. I dropped it.
+-I have not done anything in Netlify yet to set up the form to receive emails. For testing purposes, let's use our dev address at `testing@garfishdigital.com` (I updated the placeholder to reflect this). I assume I will need to go into Netlify at this time to set up the "contact" form for our testing. Please inform me of the basic steps and any quirks or details I need to be mindful of during the process.
 
-The interior brick filled a gap I hadn't spotted. The ramp ran plaster L96 → limestone L84 → nothing → espresso L20. Interior brick and mortar sit right in that hole at L43–56, so the mid-tones came off the building rather than being invented.
+-Below is the Node version where my dev server is running:
+```bash
+robchambers@Mac portage-place % node --version
+v22.23.2
+```
 
-Your framing is worth knowing about too: you described it as "dark, rich brown," but measured it's a near-black with a brown undertone at 18% lightness — much darker than "brown" suggests. Good thing to have caught before it became a mid-tone somewhere.
+-Let me know if there's anything else that must be done (or should be done) before we proceed with Phase 2.
 
-What shipped
+=====
 
-src/styles/     _functions _mixins _abstracts _tokens _reset _base global
-src/components/ Button Header Footer FloatingCta ContactModal
-                primitives/ Container Section Stack
-src/layouts/    BaseLayout
-src/config/     nav.ts
-src/pages/      index  specimen  deploy-check
+-I provided tyler's email at `tyler@regensb.com` because the email listed on the currently-deployed site is Mike's personal email (which I will advise against him using). I will have the conversation with the client next week about an email that needs to be properly setup with MX records, etc.
 
-A few decisions inside that are worth knowing:
+-I followed all 4 of your Netlify Forms setup steps with success--all 3 fields were detected (bot field included). I will provide a copy of the full log for you below not only for contact form confirmation, but in case you see any red flags in other areas of the build & deployment that need attention.
+```txt
+5:42:44 AM: build-image version: 969defd95f3977f8de9cb1f48802a7e6f3d8c0b3 (noble-new-builds)
+5:42:44 AM: buildbot version: 2aca7e86d0b37a7dabcc6c9662e9f7cffdfc48ef
+5:42:44 AM: Fetching cached dependencies
+5:42:44 AM: Starting to download cache of 70.4MB (Last modified: 2026-08-06 18:03:06 +0000 UTC)
+5:42:44 AM: Downloaded cache in 319ms
+5:42:45 AM: Extracted cache in 764ms
+5:42:45 AM: Fetched cache in 1.126s
+5:42:45 AM: Starting to prepare the repo for build
+5:42:45 AM: Preparing Git Reference refs/heads/main
+5:42:46 AM: Custom publish path detected. Proceeding with the specified path: 'dist'
+5:42:46 AM: Custom build command detected. Proceeding with the specified command: 'npm run build'
+5:42:47 AM: Installing dependencies
+5:42:47 AM: mise ~/.config/mise/config.toml tools: python@3.14.3
+5:42:47 AM: mise ~/.config/mise/config.toml tools: ruby@3.4.8
+5:42:47 AM: mise ~/.config/mise/config.toml tools: go@1.26.2
+5:42:47 AM: Attempting Node.js version '22' from .nvmrc
+5:42:47 AM: Downloading and installing node v22.23.2...
+5:42:47 AM: Downloading https://nodejs.org/dist/v22.23.2/node-v22.23.2-linux-x64.tar.xz...
+5:42:48 AM: Computing checksum with sha256sum
+5:42:48 AM: Checksums matched!
+5:42:51 AM: Now using node v22.23.2 (npm v10.9.8)
+5:42:51 AM: Enabling Node.js Corepack
+5:42:51 AM: No npm workspaces detected
+5:42:51 AM: Installing npm packages using npm version 10.9.8
+5:42:51 AM: up to date in 541ms
+5:42:51 AM: npm packages installed
+5:42:52 AM: Successfully installed dependencies
+5:42:52 AM: Detected 1 framework(s)
+5:42:52 AM: "astro" at version "7.1.6"
+5:42:52 AM: Starting build script
+5:42:53 AM: Section completed: initializing
+5:42:55 AM: ​
+5:42:55 AM: Netlify Build                                                 
+5:42:55 AM: ────────────────────────────────────────────────────────────────
+5:42:55 AM: ​
+5:42:55 AM: ❯ Version
+5:42:55 AM:   @netlify/build 36.2.4
+5:42:55 AM: ​
+5:42:55 AM: ❯ Flags
+5:42:55 AM:   accountId: 6842b61e52627c950f9b2641
+5:42:55 AM:   baseRelDir: true
+5:42:55 AM:   buildId: 6a75a89343448e70a29acf2b
+5:42:55 AM:   deployId: 6a75a89343448e70a29acf2d
+5:42:55 AM: ​
+5:42:55 AM: ❯ Current directory
+5:42:55 AM:   /opt/build/repo
+5:42:55 AM: ​
+5:42:55 AM: ❯ Config file
+5:42:55 AM:   /opt/build/repo/netlify.toml
+5:42:55 AM: ​
+5:42:55 AM: ❯ Context
+5:42:55 AM:   production
+5:42:55 AM: ​
+5:42:55 AM: build.command from netlify.toml                               
+5:42:55 AM: ────────────────────────────────────────────────────────────────
+5:42:55 AM: ​
+5:42:55 AM: $ npm run build
+5:42:55 AM: > portage-place@0.1.0 build
+5:42:55 AM: > astro build
+5:42:56 AM: 09:42:56 [types] Generated 51ms
+5:42:56 AM: 09:42:56 [build] output: "static"
+5:42:56 AM: 09:42:56 [build] mode: "static"
+5:42:56 AM: 09:42:56 [build] directory: /opt/build/repo/dist/
+5:42:56 AM: 09:42:56 [build] Collecting build info...
+5:42:56 AM: 09:42:56 [build] ✓ Completed in 87ms.
+5:42:56 AM: 09:42:56 [build] Building static entrypoints...
+5:42:58 AM: Starting post processing
+5:42:58 AM: Post processing - Forms
+5:42:58 AM: Processing form - contact
+5:42:58 AM: Detected form fields:
+ - bot-field
+ - email
+ - message
+5:42:58 AM: Post processing - header rules
+5:42:58 AM: Post processing - redirect rules
+5:42:58 AM: Post processing done
+5:42:58 AM: Section completed: postprocessing
+5:42:57 AM: 09:42:57 [vite] ✓ built in 861ms
+5:42:57 AM: 09:42:57 [vite] ✓ built in 21ms
+5:42:57 AM: 09:42:57 [build] Rearranging server assets...
+5:42:57 AM:  generating static routes 
+5:42:57 AM: 09:42:57   ├─ /deploy-check/index.html (+9ms)
+5:42:57 AM: 09:42:57   ├─ /specimen/index.html (+33ms)
+5:42:57 AM: 09:42:57   ├─ /index.html (+5ms)
+5:42:57 AM: 09:42:57 ✓ Completed in 65ms.
+5:42:57 AM: 
+5:42:57 AM: 09:42:57 [build] ✓ Completed in 988ms.
+5:42:57 AM: 09:42:57 [build] 3 page(s) built in 1.08s
+5:42:57 AM: 09:42:57 [build] Complete!
+5:42:57 AM: ​
+5:42:57 AM: (build.command completed in 2.2s)
+5:42:58 AM: ​
+5:42:58 AM: Deploy site                                                   
+5:42:58 AM: ────────────────────────────────────────────────────────────────
+5:42:58 AM: ​
+5:42:58 AM: Starting to deploy site from 'dist'
+5:42:58 AM: Calculating files to upload
+5:42:58 AM: 1 new file(s) to upload
+5:42:58 AM: 0 new function(s) to upload
+5:42:58 AM: Section completed: deploying
+5:42:58 AM: Site deploy was successfully initiated
+5:42:58 AM: ​
+5:42:58 AM: (Deploy site completed in 319ms)
+5:42:58 AM: ​
+5:42:58 AM: Netlify Build Complete                                        
+5:42:58 AM: ────────────────────────────────────────────────────────────────
+5:42:58 AM: ​
+5:42:58 AM: (Netlify Build completed in 2.7s)
+5:42:58 AM: Caching artifacts
+5:42:58 AM: Section completed: building
+5:43:00 AM: Site is live ✨
+5:42:59 AM: Uploading cache of size 70.5MB
+5:43:00 AM: Section completed: cleanup
+5:43:00 AM: Finished processing build request in 15.834s
+```
 
-- .pp-on-dark is a surface context, not a dark mode. It remaps the semantic aliases, so components read --pp-text/--pp-surface and get correct values on espresso automatically. No component has an inverse variant. The specimen's dark section shows the same <Button> switching to the light-green pairing without being told.
-- Focus uses outline, never box-shadow — which leaves box-shadow free for the button hover ring and lift, so a focused and hovered button shows both states instead of one clobbering the other.
-- The modal is native <dialog> + showModal() — focus trap, background inertness, Esc, and focus restoration all come free. Those four are exactly where hand-rolled modals fail.
-- The fluid scale interpolates in rem, not px — a px-only clamp() ignores browser font-size settings and fails SC 1.4.4.
+-I appreciate the explanation you provided about my misunderstanding in regards to accessibility and luxury tradeoffs. And actually, considering how community-driven these clients are, the sell of "WCAG 2.2 AA, fully keyboard-operable, zero JS on first paint" is quite an impressive thing. I know we will put forth many accessiblity efforts in addition to what we already have (such as semantic tags, alt & ARIA attributes), but will we actually include the Universal Access icon (outstretched arms inside a circle)? When I see one of these out in the wild it usually brings up a menu to toggle text size, dark mode, and even Dyslexia-friendly fonts (albeit rarely the latter). I imagine it could be easy to get lost in the accessiblity weeds, but I figured I'd bring it up because I adopt your perspective that we should remain WCAG-compliant throughout. Hearing you say "I won't let AA veto a striking idea outright. I'll find the compliant version of the idea first, and only if there genuinely isn't one, bring you the trade-off explicitly with what's lost on each side" is reassuring, and I agree it is the right way for us to work through every Phase.
 
-Verified on build: 0 JS bundle files (all three scripts inline as deferred modules), 5.7 KB gzipped CSS, 5.2 KB home HTML, 94 KB critical fonts. Both routes return 200 on your running dev server.
+-I received some history from one of the clients, and I have conducted a bit of research on my own. You will find 2 files at /reference/history/Markdown-files that I think could be of real value to us. There are also some random images I included in /reference/history, but you do not need to read them right now. They might be neat to include if treated with Figma or CSS to look stylish (maybe the older ones could receive slight vignette treatments or overlays).
 
-Two corrections I made to my own work
+-I do not have a definitive list yet of the tenants to feature and/or their quotes (it is on my list of questions for the client, which, by the way, you are free to make client question suggestions to me and I will add them to the list). I am almost certain Counterspell coffee shop will be the big one because they are a flagship tenant. Can we do placeholders here for 10 tenant testimonials?
 
-I invented a street address and email in nav.ts — caught and replaced with explicit PLACEHOLDER values. Fabricated contact details are exactly the kind of thing that ships quietly.
+-As of now, there are 4 owner bios. I will provide them below, but they need to be refined (we are free to rewrite them).
+```text
+**Mike Keen, Mike F Keen, PhD, LEED-AP, Realtor®**
+Mike Keen is President of The Bakery Group LLC, and Managing Partner of Hometowne Development LLC. A LEED-AP with two decades experience as a sustainability professional, he received his PhD in sociology from the University of Notre Dame.  He spent 30 years as a professor at Indiana University South Bend.  In 2008, Mike founded the IU South Bend Center for a Sustainable Future. In 2016, he was awarded a Sagamore of the Wabash, the highest civilian recognition that can be bestowed upon a citizen of the State of Indiana. 
 
-I also had the reset nuking all transitions under prefers-reduced-motion with !important, which overrode the token layer's "reduce, don't remove" intent. Two mechanisms fighting, cruder one winning. Now the token layer is authoritative and the reset only covers what tokens can't reach.
+**Tyler Kanczuzewski, VP of Sustainability, Inovateus Solar**
+Tyler is the Vice President of Sustainability, Board Member and a minority investor of Inovateus Solar, LLC. He also serves as the Sustainability Manager and co-owner of Logistick, Inc., both South Bend based companies. Tyler was recently immersed in the Grand Rapids and West Michigan sustainability community while working on his MBA at Grand Valley State University, with an emphasis in Sustainability, and he graduated in 2019. Tyler has since led company efforts in stewardship and sustainable practices for both Inovateus Solar and Logistick, Inc. He did his undergraduate work at Holy Cross College in Notre Dame, IN, and graduated in 2012 with a Bachelor of Arts, and Major in Business. While there, he played on the varsity golf team. Tyler now also serves as an Advisory Board Member of PVpallet, Inc (reusable pallet concept), Board Member for St. Joseph County Parks Foundation, and sits on a regional leadership council for the Michigan Sustainable Business Forum. He is also a proud member and supporter of 1% for the Planet, Mamoni 100, and Ambassador for Alliance for the Great Lakes. Sustainability, renewable energy and conservation are things Tyler equally loves. He is passionate about making a positive impact on those around him, and to help the world think more about stewardship and sustainability. Tyler currently lives in an eco-friendly and solar powered tiny house in a forward-thinking neighborhood of South Bend, IN. He likes yoga and meditation, fitness, anything outdoors, eco-adventuring the planet, playing drums and music, fishing, mountain biking and golfing.
 
-On the floating CTA
+**Greg Kil, Principal, Kil Architecture**
+Kil attended Ball State University where he earned a Bachelor of Architecture and a Bachelor of Science in Environmental Design at the College of Architecture and Planning in 1982 and became a licensed Architect in the state of Indiana in 1984 and in Michigan in 1994. In 1987 Kil graduated from the University of Notre Dame School of Architecture with a Master of Architecture with a focus on Urban Design. Kil served as an adjunct professor at the Notre Dame School of Architecture and also at Andrews University School of Architecture from 1989 through 1994. He served as a staff architect on an Etruscan excavation at the site of Poggio Civitate (750 BC to 525 BC) for 4 seasons from 1991 through 1994. In 1991, Kil started the firm of Kil Architecture / Planning and presently employs a staff of eleven personnel. Over the years the firm has offered architectural design and planning for a wide range of building types. July 1st2022, Kil Architecture Planning celebrated 31 years in business serving our Community. The firm has extensive experience with new construction as well as historic preservation, rehabilitation and retrofit. Kil is a Qualified Historic Architect Professional as listed with Indiana Department of Historic Preservation and Archaeology. Kil’s list of projects includes multifamily housing, new construction, conversions and renovations, park and recreation, commercial, multi-use buildings, single family residential, school rehabilitation, municipal buildings and museums. Kil has served as a board member of the Southold Dance Theatre for 11 years, and is presently a Board Member of Hemophilia of Indiana, a Board Member of LaSalle Council Boy Scouts of America and a Member of the Ruthmere Foundation Board. For fun, Kil loves to cook, paint watercolors, travel with family, cross country ski in the winter, and camp, kayak, bike, hike and backpack throughout the year.
 
-Noted as provisional in BUILD_PLAN.md, and I've logged the alternatives. My honest read: per-section contextual CTAs are the strongest option on paper — "this space is 480 sq ft, ask about it" converts better than a generic global button because it inherits the context the visitor is already in. A sticky footer bar is second (more room for a real sentence, no collision with iOS chrome). The floating button is third but it's built, it works, and it hides itself when the footer CTA is on screen. Worth revisiting once there's real content to attach CTAs to — probably Phase 4.
+**Dwayne Borkholder, President, Borkholder Buildings**
+Borkholder grew up in the construction industry where his father had a business with multiple construction crews, a lumber yard and truss manufacturing business that he had started in 1962. He learned to love the industry and the people that worked in it. He attended Indiana University South Bend and graduated in 1987 with a BS in Marketing and Management. After working in various areas of the family business he eventually became President in 1995 and purchased the business in 2011. 
 
-Your end
+Borkholder Buildings has always been on the forefront of innovation and development with a dealer network of over 50 dealers using their designs and material packages throughout the Midwest. More recently Borkholder started an area of focus – New Energy Homes, whose goal is to build Zero Energy Homes at market rates. There has been collaboration with the local Habitat for Humanity chapter to build 4 of these homes in the Near Northwest Neighborhood as well as many in other communities. More recently they have introduced their line of Net Zero Tiny Homes which debuted in the NNN as well. 
 
-1. Look at /specimen on :4321 — palette, type scale, both faces, button states, dark context, easings. That's the Phase 1 IG capture, and it's the process-shot media the plan wants interleaved.
-2. Check your dev server is on Node 22. My shell defaulted to v20.19.0; .nvmrc and netlify.toml both say 22, and Astro 7 needs ≥22.12.
-3. Netlify Forms is unverified — the form is inside a <dialog>, and while Netlify's build bot should find it in the static HTML, confirm it appears in the dashboard and send a real test submission on the first deploy preview.
-4. Placeholders to fill: the CONTACT block in src/config/nav.ts.
+Borkholder has been involved in a variety of local and national nonprofits organizations and is a member of Gideons International. His involvement in international relief efforts have provided multiple opportunities to assist in humanitarian projects where the Borkholder Building technology was used in the project. Giving back to the community as well as to those in need is a basic tenant of his belief system. His family, church and travel fill in the leisure time afforded.
+```
 
-Then you're clear to commit — git add -A covers it, and /reference/ will stay out.
+-I checked the following links and have determined that none are dead. Some are better than others, but the sequence can easily be rearranged in the code. I am not so sure they will be the best design choice, as some of these could be best managed with a blurb and good image (of which there are surpisingly quite a few). Nonetheless, we may also include a small link beside or under the blurb so that a user can visit the source if they choose to do so.
+```text
+South Bend - Elkhart Regional Partnership READI Funds - $550k Awarded
+https://southbendelkhart.org/news/40-million-awarded-in-south-bend-elkhart-region-readi-funds/
+
+Century-old building in South Bend to be renovated into commercial center
+https://www.953mnc.com/2022/03/10/century-old-building-in-south-bend-to-be-renovated-into-commercial-center/
+
+Façade work underway on the former Ward Baking Building near downtown
+https://www.southbendtribune.com/story/news/local/2022/03/09/facade-renovation-ward-baking-building-south-bend/9424146002/
+
+$4.2 million renovations underway at old Ward Baking Co. building
+https://www.wndu.com/2022/03/08/42-million-renovations-underway-old-ward-baking-co-building-south-bend/
+
+In economically battered South Bend, Ind., a unique development model
+https://www.jsonline.com/story/news/solutions/2022/02/24/south-bends-micro-scale-developers-changing-indiana-city/6887375001/
+
+South Bend Common Council Approves Tax Abatements for Ward Bakery Building
+https://www.wvpe.org/indiana-news/2021-06-15/south-bend-common-council-approves-tax-abatements-for-ward-bakery-building-redevelopment
+
+New Life for a 102-Year-Old Bakery in South Bend
+https://westsb.com/features/ward?rq=ward
+
+```
+
+-Please take a moment to rewrite AGENTS.md/CLAUDE.md to bring them current. You can build the collection schemas and any other data structure, then report any ongoing needs from me that I may need to retrieve from the owners. All in all, I feel like we are close to ready for running with Phase 2. What are your thoughts?
+
+=====
+=====
+=====
+
+## Notes
+
+- Grain or subtle texture for wide open BGs?
+
+- Should we include "WCAG 2.2 AA compliant" in the footer or somewhere tucked away?

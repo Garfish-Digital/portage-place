@@ -623,6 +623,43 @@ Transferring a registrar adds a 60-day lock and buys nothing.
 **The domain has a working email address on it, plus an email-capture popup.**
 This is the single highest-risk item in the entire build.
 
+### ✅ RESOLVED — the risk is much smaller than assumed (verified 2026-08-06)
+
+The production contact address is **`tyler@regensb.com`** — a *different domain*.
+A DNS check settles what that implies:
+
+```
+portageplacesb.com   MX    → (none)
+portageplacesb.com   TXT   → (none — no SPF)
+_dmarc               TXT   → (none)
+portageplacesb.com   NS    → ns19/ns20.domaincontrol.com   (GoDaddy)
+portageplacesb.com   A     → 76.223.105.230, 13.248.243.5  (GoDaddy builder)
+www                  CNAME → apex
+mail / email / autodiscover → (none)
+
+regensb.com          MX    → aspmx.l.google.com …          (Google Workspace)
+```
+
+**`portageplacesb.com` publishes no MX records at all — nothing receives mail on
+that domain today.** Mail sent to `anything@portageplacesb.com` bounces right
+now. The address on the current site is a `mailto:` pointing at another domain,
+not a mailbox hosted here. `tyler@regensb.com` is a Google Workspace mailbox on
+`regensb.com`, which has its own separate DNS that the Netlify cutover cannot
+touch.
+
+**Consequence: repointing nameservers cannot break the client's email.** The
+scariest item in the build is largely gone. The zone is also trivial — apex A
+records, a `www` CNAME, and nothing else.
+
+Two things that stay true regardless:
+
+- **Still export the zone before cutover.** It costs a minute and it is the
+  rollback artifact. Records can exist that a bare query doesn't reveal.
+- **Still re-verify on the day.** This snapshot is from 2026-08-06; if the client
+  adds Workspace to `portageplacesb.com` between now and launch, the full MX
+  checklist below comes straight back into force. Re-run the `dig` before
+  touching nameservers.
+
 **If we point nameservers at Netlify without first replicating the MX records,
 the client's email stops working immediately** — and mail sent during the outage
 bounces rather than queuing indefinitely. These are friends, and they are
@@ -764,8 +801,10 @@ showing what's available today.
    partner and neighborhood mark.
 3. **Three missing timeline dates:** when did it become the Ford Distribution
    Center, when were the READI funds awarded, and when did Phase 1 complete?
-4. **Which mail provider** serves `portageplacesb.com`? Needed well before
-   cutover, not on the day.
+4. ~~**Which mail provider** serves `portageplacesb.com`?~~ ✅ Answered: none.
+   No MX records exist on that domain. The contact mailbox is
+   `tyler@regensb.com`, on Google Workspace, on separate DNS. Re-verify before
+   cutover in case that changes.
 5. **Whose Instagram account** — Garfish Digital's or Portage Place's? This
    changes the framing completely: an agency audience wants craft and process,
    a South Bend audience wants the building and the community. It may justify
