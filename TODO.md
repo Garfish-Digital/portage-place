@@ -195,7 +195,7 @@ v22.23.2
 
 -I provided tyler's email at `tyler@regensb.com` because the email listed on the currently-deployed site is Mike's personal email (which I will advise against him using). I will have the conversation with the client next week about an email that needs to be properly setup with MX records, etc.
 
--I followed all 4 of your Netlify Forms setup steps with success--all 3 fields were detected (bot field included). I will provide a copy of the full log for you below not only for contact form confirmation, but in case you see any red flags in other areas of the build & deployment that need attention.
+-I followed all 4 of your Netlify Forms setup steps with success--all 3 fields were detected (bot field included). I will provide a copy of the full deployment log for you below not only for contact form confirmation, but in case you see any red flags in other areas of the build & deployment that need attention.
 ```txt
 5:42:44 AM: build-image version: 969defd95f3977f8de9cb1f48802a7e6f3d8c0b3 (noble-new-builds)
 5:42:44 AM: buildbot version: 2aca7e86d0b37a7dabcc6c9662e9f7cffdfc48ef
@@ -313,13 +313,13 @@ v22.23.2
 5:43:00 AM: Finished processing build request in 15.834s
 ```
 
--I appreciate the explanation you provided about my misunderstanding in regards to accessibility and luxury tradeoffs. And actually, considering how community-driven these clients are, the sell of "WCAG 2.2 AA, fully keyboard-operable, zero JS on first paint" is quite an impressive thing. I know we will put forth many accessiblity efforts in addition to what we already have (such as semantic tags, alt & ARIA attributes), but will we actually include the Universal Access icon (outstretched arms inside a circle)? When I see one of these out in the wild it usually brings up a menu to toggle text size, dark mode, and even Dyslexia-friendly fonts (albeit rarely the latter). I imagine it could be easy to get lost in the accessiblity weeds, but I figured I'd bring it up because I adopt your perspective that we should remain WCAG-compliant throughout. Hearing you say "I won't let AA veto a striking idea outright. I'll find the compliant version of the idea first, and only if there genuinely isn't one, bring you the trade-off explicitly with what's lost on each side" is reassuring, and I agree it is the right way for us to work through every Phase.
+-I appreciate the explanation you provided about my misunderstanding in regards to accessibility and luxury tradeoffs. And actually, considering how community-driven these clients are, the sell of "WCAG 2.2 AA, fully keyboard-operable" is quite an impressive thing. I know we will put forth many accessiblity efforts in addition to what we already have (such as semantic tags, alt & ARIA attributes, and so on), but will we actually include the Universal Access icon (outstretched arms inside a circle)? When I see one of these out in the wild it usually brings up a menu to toggle text size, dark mode, and even Dyslexia-friendly fonts (albeit rarely the latter). I imagine it could be easy to get lost in the accessiblity weeds, but I figured I'd bring it up because I adopt your perspective that we should remain WCAG-compliant throughout. It's reassuring to hear you say "I won't let AA veto a striking idea outright. I'll find the compliant version of the idea first, and only if there genuinely isn't one, bring you the trade-off explicitly with what's lost on each side", and I agree it is the right way for us to work through every Phase.
 
--I received some history from one of the clients, and I have conducted a bit of research on my own. You will find 2 files at /reference/history/Markdown-files that I think could be of real value to us. There are also some random images I included in /reference/history, but you do not need to read them right now. They might be neat to include if treated with Figma or CSS to look stylish (maybe the older ones could receive slight vignette treatments or overlays).
+-I received some history from one of the clients, and I have conducted a bit of research on my own. You will find 2 files at /reference/history/Markdown-files that I think could be of real value to us. There are also some random images I included in /reference/history, but you do not need to read them right now. They might be neat to include if treated with Figma or CSS to look stylish (maybe the older ones could receive slight vignette treatments or overlays). I even took modern picture at the same angles, thinking there may be ooprtunity for dissolve overlays or something appropriate you can think of.
 
--I do not have a definitive list yet of the tenants to feature and/or their quotes (it is on my list of questions for the client, which, by the way, you are free to make client question suggestions to me and I will add them to the list). I am almost certain Counterspell coffee shop will be the big one because they are a flagship tenant. Can we do placeholders here for 10 tenant testimonials?
+-I do not have a definitive list yet of the tenants to feature and/or their quotes (it is on my list of questions for the client, which, by the way, you are free to make client question suggestions to me and I will add them to the list). I am almost certain Counterspell coffee shop will be the big one because they are a flagship tenant. So will Alchemy Healing Arts, Rhyme & Reason Ministry, and Cressy & Everett Real Estate. Can we do placeholders here for these tenants and 6 more to give us 10 tenant testimonials total?
 
--As of now, there are 4 owner bios. I will provide them below, but they need to be refined (we are free to rewrite them).
+-As of now, there are 4 owner bios. I will provide them below, but they need to be refined (we are free to rewrite them for clarity and consistency).
 ```text
 **Mike Keen, Mike F Keen, PhD, LEED-AP, Realtor®**
 Mike Keen is President of The Bakery Group LLC, and Managing Partner of Hometowne Development LLC. A LEED-AP with two decades experience as a sustainability professional, he received his PhD in sociology from the University of Notre Dame.  He spent 30 years as a professor at Indiana University South Bend.  In 2008, Mike founded the IU South Bend Center for a Sustainable Future. In 2016, he was awarded a Sagamore of the Wabash, the highest civilian recognition that can be bestowed upon a citizen of the State of Indiana. 
@@ -338,7 +338,7 @@ Borkholder Buildings has always been on the forefront of innovation and developm
 Borkholder has been involved in a variety of local and national nonprofits organizations and is a member of Gideons International. His involvement in international relief efforts have provided multiple opportunities to assist in humanitarian projects where the Borkholder Building technology was used in the project. Giving back to the community as well as to those in need is a basic tenant of his belief system. His family, church and travel fill in the leisure time afforded.
 ```
 
--I checked the following links and have determined that none are dead. Some are better than others, but the sequence can easily be rearranged in the code. I am not so sure they will be the best design choice, as some of these could be best managed with a blurb and good image (of which there are surpisingly quite a few). Nonetheless, we may also include a small link beside or under the blurb so that a user can visit the source if they choose to do so.
+-I checked the following links and have determined that none are dead. Some are better content-wise than others, but the sequence can easily be rearranged in the code. I am not so sure plainly listed links will be the best design choice, as some of these could be best managed with a blurb and good image (of which there are surpisingly quite a few). Nonetheless, we may also include a small link/arrow beside or under the blurb so that a user can visit the source if they choose to do so.
 ```text
 South Bend - Elkhart Regional Partnership READI Funds - $550k Awarded
 https://southbendelkhart.org/news/40-million-awarded-in-south-bend-elkhart-region-readi-funds/
@@ -363,7 +363,47 @@ https://westsb.com/features/ward?rq=ward
 
 ```
 
--Please take a moment to rewrite AGENTS.md/CLAUDE.md to bring them current. You can build the collection schemas and any other data structure, then report any ongoing needs from me that I may need to retrieve from the owners. All in all, I feel like we are close to ready for running with Phase 2. What are your thoughts?
+-Please take a moment to rewrite AGENTS.md/CLAUDE.md to bring those files current. You can build the collection schemas and any other necessary data structures, then report any ongoing needs from me as a task or things I need to ask of the owners. All in all, I feel like we are close to ready for running with Phase 2. What are your thoughts?
+
+=====
+
+-The History page looks great and I love the bronze asides.
+
+
+
+
+
+
+
+Archival image treatment
+
+Bake it into the asset in Figma — agreed. CSS filters apply the same transform to images with very different original casts, so they read as a filt your set ranges from clean scans to a screen grab.
+
+But skip flat sepia. Real prints don't age uniformly — they lose contrast, warm in the highlights, and cool slightly in the shadows. The recipe tha
+
+1. Desaturate to grayscale first.
+2. Split-tone rather than a single-hue wash: highlights toward #DDD7CF (limestone), shadows toward #322F2C (espresso). That's our palette — so the archival images look native to the page instead of dropped into it, which flat sepia never achieves.
+3. Contrast slightly below the modern photos. Age reads as softness.
+4. Grain sparingly, vignette very sparingly. A heavy vignette is the fastest way to make a real archival photo look fake.
+
+Keep the untreated masters in reference/ — this will get revised.
+
+On the then/now dissolve: your matched-angle shots make it genuinely viable, and it argues for keeping the tint subtle. Heavy grading on one side makes the transition read as a filter toggle rather than time passing — the effect comes from the alignment being right, not the grading being dramatic. It'll also need a static side-by-side fallback for keyboard and reduced-motion users.
+
+Where things stand
+
+Phase 2's data layer is done and Phase 5 is built ahead of schedule because its content was ready. What's left is gated on the client:
+
+- Community page — needs the tenant list and testimonials
+- Find Your Space — needs floor plans
+- History images — needs rights confirmation and the interpretive-asset photos
+
+📸 Worth capturing before you commit — /history is the first page with real content, real motion, and the timeline in it. That's a much stronger prpecimen sheet, and the rail-fill reads well even as a still.
+
+Home page (Phase 3) is the one substantial thing I can build without waiting on anyone — hero, use-type grid, stat strip, location module, teasers.?
+
+
+
 
 =====
 =====
@@ -371,6 +411,18 @@ https://westsb.com/features/ward?rq=ward
 
 ## Notes
 
-- Grain or subtle texture for wide open BGs?
+- Archival image treatment
+
+Bake it into the asset in Figma — agreed. CSS filters apply the same transform to images with very different original casts, so they read as a filt your set ranges from clean scans to a screen grab.
+
+But skip flat sepia. Real prints don't age uniformly — they lose contrast, warm in the highlights, and cool slightly in the shadows. The recipe tha
+
+1. Desaturate to grayscale first.
+2. Split-tone rather than a single-hue wash: highlights toward #DDD7CF (limestone), shadows toward #322F2C (espresso). That's our palette — so the archival images look native to the page instead of dropped into it, which flat sepia never achieves.
+3. Contrast slightly below the modern photos. Age reads as softness.
+4. Grain sparingly, vignette very sparingly. A heavy vignette is the fastest way to make a real archival photo look fake.
+
+Keep the untreated masters in reference/ — this will get revised.
+
 
 - Should we include "WCAG 2.2 AA compliant" in the footer or somewhere tucked away?

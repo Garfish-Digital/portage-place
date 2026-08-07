@@ -1,0 +1,88 @@
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+/**
+ * Query helpers.
+ *
+ * Pages should use these rather than calling getCollection directly, so drafts
+ * are filtered and sort order is defined in one place. Sorting inline in a page
+ * template is how two pages end up disagreeing about the order of the same list.
+ */
+
+const notDraft = <T extends { data: { draft?: boolean } }>(entry: T) => !entry.data.draft;
+
+/** Timeline order, oldest first. */
+export async function getMilestones(): Promise<CollectionEntry<'milestones'>[]> {
+	const entries = await getCollection('milestones', notDraft);
+	return entries.sort((a, b) => a.data.sortYear - b.data.sortYear);
+}
+
+/** Owners in explicit order; mentors excluded — they render separately and small. */
+export async function getOwners(): Promise<CollectionEntry<'team'>[]> {
+	const entries = await getCollection('team', (e) => notDraft(e) && e.data.kind === 'owner');
+	return entries.sort((a, b) => a.data.order - b.data.order);
+}
+
+export async function getMentors(): Promise<CollectionEntry<'team'>[]> {
+	const entries = await getCollection('team', (e) => notDraft(e) && e.data.kind === 'mentor');
+	return entries.sort((a, b) => a.data.order - b.data.order);
+}
+
+export async function getTenants(options?: {
+	category?: 'commercial' | 'office' | 'shared';
+	featuredOnly?: boolean;
+}): Promise<CollectionEntry<'tenants'>[]> {
+	const entries = await getCollection('tenants', (entry) => {
+		if (!notDraft(entry)) return false;
+		if (options?.category && entry.data.category !== options.category) return false;
+		if (options?.featuredOnly && !entry.data.featured) return false;
+		return true;
+	});
+	return entries.sort((a, b) => a.data.order - b.data.order);
+}
+
+/** Only tenants who have actually given us a testimonial. */
+export async function getTenantQuotes(): Promise<CollectionEntry<'tenants'>[]> {
+	const entries = await getTenants();
+	return entries.filter((entry) => Boolean(entry.data.quote));
+}
+
+export async function getNeighborhood(relationship?: 'neighbor' | 'partner') {
+	const entries = await getCollection('neighborhood', (entry) =>
+		relationship ? entry.data.relationship === relationship : true,
+	);
+	return entries.sort((a, b) => a.data.order - b.data.order);
+}
+
+/** Newest first — undated entries sort last rather than to 1970. */
+export async function getPress() {
+	const entries = await getCollection('press');
+	return entries.sort((a, b) => {
+		const aTime = a.data.date?.getTime();
+		const bTime = b.data.date?.getTime();
+		if (aTime === undefined && bTime === undefined) return 0;
+		if (aTime === undefined) return 1;
+		if (bTime === undefined) return -1;
+		return bTime - aTime;
+	});
+}
+
+export async function getSpaces(wing?: 'commercial' | 'office' | 'shared') {
+	const entries = await getCollection('spaces', (entry) =>
+		wing ? entry.data.wing === wing : true,
+	);
+	return entries.sort((a, b) => a.data.sqftMin - b.data.sqftMin);
+}
+
+/**
+ * The overall size range quoted in marketing copy, derived from the data rather
+ * than typed into a template. Keeps "200–2,000 sq ft" from going stale silently
+ * when the real floor plans land.
+ */
+export async function getSpaceRange(): Promise<{ min: number; max: number }> {
+	const spaces = await getSpaces();
+	const leasable = spaces.filter((entry) => entry.data.wing !== 'shared');
+	return {
+		min: Math.min(...leasable.map((entry) => entry.data.sqftMin)),
+		max: Math.max(...leasable.map((entry) => entry.data.sqftMax)),
+	};
+}

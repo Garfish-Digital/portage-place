@@ -1,0 +1,282 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	milestones: CollectionEntry<'milestones'>[];
+}
+
+const { milestones } = Astro.props;
+
+// Render each Markdown body up front — Astro components can't await inside a map.
+const entries = await Promise.all(
+	milestones.map(async (entry) => ({
+		entry,
+		Content: (await render(entry)).Content,
+	})),
+);
+---
+
+<div class="timeline">
+	<!--
+		The rail and its fill are decorative; the <ol> already conveys sequence to
+		assistive tech, so aria-hidden keeps a screen reader from announcing two
+		empty divs. It sits OUTSIDE the list on purpose — <ol> only permits <li>,
+		<script> and <template> as children, and a stray <div> is invalid markup.
+	-->
+	<div class="timeline__rail" aria-hidden="true">
+		<div class="timeline__rail-fill"></div>
+	</div>
+
+	<ol class="timeline__list" role="list">
+		{
+			entries.map(({ entry, Content }) => {
+				const { data } = entry;
+				const hedged = data.confidence !== 'documented';
+
+				return (
+					<li class:list={['milestone', data.featured && 'milestone--featured']}>
+						<div class="milestone__marker" aria-hidden="true" />
+
+						<div class="milestone__year-wrap">
+							<p class="milestone__year">{data.year}</p>
+						</div>
+
+						<div class="milestone__body">
+							<h3 class="milestone__title">{data.title}</h3>
+							<p class="milestone__summary">{data.summary}</p>
+
+							<div class="milestone__prose">
+								<Content />
+							</div>
+
+							{
+								hedged && data.confidenceNote && (
+									<p class="milestone__note">
+										<Icon name="lucide:info" aria-hidden="true" />
+										<span>
+											<span class="pp-visually-hidden">
+												Note on sourcing:{' '}
+											</span>
+											{data.confidenceNote}
+										</span>
+									</p>
+								)
+							}
+						</div>
+					</li>
+				);
+			})
+		}
+	</ol>
+</div>
+
+<style lang="scss">
+	.timeline {
+		--rail-x: 9px;
+		--marker-size: 18px;
+
+		position: relative;
+
+		// Names a scroll-progress timeline that descendants can reference. The rail
+		// fill can then drive its animation from the whole timeline's position in
+		// the viewport rather than from its own.
+		view-timeline-name: --timeline;
+		view-timeline-axis: block;
+	}
+
+	.timeline__list {
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: var(--pp-space-2xl);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Rail
+	// ---------------------------------------------------------------------------
+	.timeline__rail {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: var(--rail-x);
+		width: 2px;
+		background-color: var(--pp-rule);
+
+		@include from('lg') {
+			inset-inline-start: calc(9rem + var(--rail-x));
+		}
+	}
+
+	// The bronze line that tracks reading position. Bronze is non-text UI here, so
+	// its 3.48:1 against plaster is the relevant threshold and it clears it.
+	.timeline__rail-fill {
+		position: absolute;
+		inset: 0;
+		background-color: var(--pp-bronze);
+		transform-origin: top center;
+		scale: 1 1;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Milestone
+	// ---------------------------------------------------------------------------
+	.milestone {
+		position: relative;
+		padding-inline-start: calc(var(--rail-x) + var(--pp-space-l));
+
+		@include from('lg') {
+			display: grid;
+			grid-template-columns: 9rem 1fr;
+			gap: var(--pp-space-2xl);
+			padding-inline-start: 0;
+		}
+	}
+
+	.milestone__marker {
+		position: absolute;
+		inset-block-start: 0.45em;
+		inset-inline-start: calc(var(--rail-x) - (var(--marker-size) / 2) + 1px);
+		width: var(--marker-size);
+		height: var(--marker-size);
+		border-radius: var(--pp-radius-full);
+		background-color: var(--pp-plaster);
+		border: 2px solid var(--pp-brick-mid);
+
+		@include from('lg') {
+			inset-inline-start: calc(9rem + var(--rail-x) - (var(--marker-size) / 2) + 1px);
+		}
+	}
+
+	.milestone--featured .milestone__marker {
+		background-color: var(--pp-bronze);
+		border-color: var(--pp-bronze);
+		box-shadow: 0 0 0 4px color-mix(in srgb, var(--pp-bronze) 22%, transparent);
+	}
+
+	.milestone__year-wrap {
+		@include from('lg') {
+			text-align: end;
+			padding-inline-end: var(--pp-space-m);
+		}
+	}
+
+	.milestone__year {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h4);
+		font-weight: var(--pp-weight-semibold);
+		line-height: 1.1;
+		letter-spacing: var(--pp-tracking-tight);
+		color: var(--pp-brick-dark);
+		// Years are the scannable layer — keep them from wrapping mid-range
+		// ("2022–\n2025") on narrow columns.
+		text-wrap: nowrap;
+	}
+
+	.milestone__body {
+		max-width: var(--pp-measure);
+	}
+
+	.milestone__title {
+		font-size: var(--pp-text-h3);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.milestone__summary {
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+		margin-block-end: var(--pp-space-m);
+	}
+
+	.milestone__prose {
+		display: grid;
+		gap: var(--pp-space-s);
+
+		:global(p) {
+			text-wrap: pretty;
+		}
+
+		// Blockquotes carry the factual corrections (the Ford Distributing note,
+		// for one), so they need to read as an aside rather than a pull quote.
+		:global(blockquote) {
+			font-family: var(--pp-font-body);
+			font-size: var(--pp-text-s);
+			font-style: normal;
+			color: var(--pp-ink-muted);
+			padding-inline-start: var(--pp-space-s);
+			border-inline-start: 2px solid var(--pp-brick-light);
+		}
+
+		:global(strong) {
+			color: var(--pp-ink-strong);
+		}
+	}
+
+	// Sourcing hedge. Shown whenever confidence !== documented — the timeline
+	// never asserts a contested date as settled.
+	.milestone__note {
+		display: flex;
+		align-items: start;
+		gap: var(--pp-space-2xs);
+		margin-block-start: var(--pp-space-m);
+		padding: var(--pp-space-xs) var(--pp-space-s);
+		font-size: var(--pp-text-xs);
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-ink-muted);
+		background-color: var(--pp-limestone);
+		border-radius: var(--pp-radius-m);
+
+		:global(svg) {
+			flex: none;
+			width: 15px;
+			height: 15px;
+			margin-block-start: 0.15em;
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Scroll-driven motion
+	// ---------------------------------------------------------------------------
+	// Everything above renders the finished, readable state. Motion is added only
+	// where it is supported AND wanted — so an older engine gets a static
+	// timeline, which is a legitimate design rather than a broken page.
+	//
+	// This is also why the reveal can't live in the token layer's reduced-motion
+	// handling: scroll-driven animations have no duration to collapse.
+	@media (prefers-reduced-motion: no-preference) {
+		@supports (animation-timeline: view()) {
+			.timeline__rail-fill {
+				scale: 1 0;
+				animation: rail-fill linear both;
+				animation-timeline: --timeline;
+				// Track roughly where the reader is rather than the element's full
+				// travel, so the line reaches the bottom as the last entry lands.
+				animation-range: cover 12% cover 88%;
+			}
+
+			.milestone {
+				animation: milestone-in linear both;
+				animation-timeline: view();
+				animation-range: entry 0% entry 55%;
+			}
+		}
+	}
+
+	@keyframes rail-fill {
+		to {
+			scale: 1 1;
+		}
+	}
+
+	@keyframes milestone-in {
+		from {
+			opacity: 0;
+			translate: 0 26px;
+		}
+		to {
+			opacity: 1;
+			translate: 0 0;
+		}
+	}
+</style>

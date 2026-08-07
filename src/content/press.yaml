@@ -1,0 +1,77 @@
+# In the News — foot of the History page.
+#
+# Rendered as outlet name + headline + blurb, NEVER as outlet logos: reproducing
+# news mastheads raises trademark questions and implies endorsement rather than
+# coverage. See BUILD_PLAN.
+#
+# `verifiedOn` is the link-rot guard. Rob confirmed all seven resolve on
+# 2026-08-07. Re-check at cutover — local outlets restructure URLs and paywall
+# archives, and a dead credibility link is worse than no link at all.
+
+# TODO — one worth adding, but only with a real URL:
+#   Inside INdiana Business, 3 Dec 2025, "The Portage Place opens, activating
+#   vacant space and cultivating community". Cited in OPUS_5_HISTORY.md but no
+#   URL was supplied and it is not in Rob's verified set, so it is deliberately
+#   absent rather than guessed. It would be the single most current piece of
+#   coverage on the list — worth tracking down.
+
+- id: westsb-102-year-old-bakery
+  outlet: West.SB
+  headline: New Life for a 102-Year-Old Bakery in South Bend
+  url: https://westsb.com/features/ward?rq=ward
+  blurb: >-
+    Jacob Titus's photo essay — the most complete visual record of the building
+    before renovation began, alongside the fullest account of its bakery years.
+  featured: true
+  verifiedOn: 2026-08-07
+
+- id: jsonline-micro-scale-developers
+  outlet: Milwaukee Journal Sentinel
+  headline: In economically battered South Bend, Ind., a unique development model
+  url: https://www.jsonline.com/story/news/solutions/2022/02/24/south-bends-micro-scale-developers-changing-indiana-city/6887375001/
+  date: 2022-02-24
+  blurb: >-
+    National coverage of the incremental development approach behind Portage
+    Place and its neighbours.
+  featured: true
+  verifiedOn: 2026-08-07
+
+- id: wndu-4-2-million
+  outlet: WNDU
+  headline: $4.2 million renovations underway at old Ward Baking Co. building
+  url: https://www.wndu.com/2022/03/08/42-million-renovations-underway-old-ward-baking-co-building-south-bend/
+  date: 2022-03-08
+  blurb: Broadcast coverage as the façade work began.
+  verifiedOn: 2026-08-07
+
+- id: sbt-facade-work
+  outlet: South Bend Tribune
+  headline: Façade work underway on the former Ward Baking Building near downtown
+  url: https://www.southbendtribune.com/story/news/local/2022/03/09/facade-renovation-ward-baking-building-south-bend/9424146002/
+  date: 2022-03-09
+  blurb: The week the bricks came out of the windows.
+  verifiedOn: 2026-08-07
+
+- id: mnc-century-old-building
+  outlet: 95.3 MNC
+  headline: Century-old building in South Bend to be renovated into commercial center
+  url: https://www.953mnc.com/2022/03/10/century-old-building-in-south-bend-to-be-renovated-into-commercial-center/
+  date: 2022-03-10
+  verifiedOn: 2026-08-07
+
+- id: wvpe-tax-abatements
+  outlet: WVPE
+  headline: South Bend Common Council Approves Tax Abatements for Ward Bakery Building
+  url: https://www.wvpe.org/indiana-news/2021-06-15/south-bend-common-council-approves-tax-abatements-for-ward-bakery-building-redevelopment
+  date: 2021-06-15
+  blurb: The unanimous council vote that made the project financially possible.
+  verifiedOn: 2026-08-07
+
+- id: readi-550k
+  outlet: South Bend–Elkhart Regional Partnership
+  headline: $40 million awarded in South Bend–Elkhart region READI funds
+  url: https://southbendelkhart.org/news/40-million-awarded-in-south-bend-elkhart-region-readi-funds/
+  blurb: >-
+    Portage Place among the projects funded, with a $550,000 award toward the
+    renovation.
+  verifiedOn: 2026-08-07

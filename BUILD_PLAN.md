@@ -7,10 +7,29 @@ Living roadmap. Decisions get promoted here once settled; open items live in
 
 ## The Brief
 
-**Portage Place** is a fully renovated 1920s art-deco building in South Bend's
-Near Northwest Neighborhood — originally the **Ward Baking Company**, later a
-**Ford Distribution Center**, abandoned in 2012, rescued and reopened as
-commercial and office space for lease.
+**Portage Place** is a restored 1919 industrial bakery in South Bend's Near
+Northwest Neighborhood — built by the **Busse Baking Company**, taken over by
+**Ward Baking Company** in the early 1920s, later a warehouse for **Ford
+Distributing**, vacant from 2012, and reopened in December 2025 as commercial and
+office space for lease.
+
+> ⚠️ **This paragraph replaces an earlier version that was wrong in three ways.**
+> The research supplied in `reference/history/` corrects the story the current
+> live site tells, and the corrections matter because the audience includes
+> people who know this building:
+>
+> 1. **Not "originally the Ward Baking Company."** The 1919 plant was built by
+>    **Fred W. Busse's** South Bend firm for $90,000. Ward acquired it around
+>    1922–24 after the price war remembered locally as the *South Bend bread war*.
+> 2. **Not a "Ford Distribution Center."** **Ford Distributing** was a local
+>    wholesaler of vending machines, coffee makers, tobacco and convenience
+>    goods — **not Ford Motor Company**. The current site's phrasing reads as
+>    automotive and flatters the building with a history it doesn't have. Both
+>    research documents flag this independently and emphatically.
+> 3. **"Art deco" is unverified and probably wrong.** A 1919 industrial bakery
+>    predates Art Deco, which reaches the US after the 1925 Paris exposition. Any
+>    deco flavour more likely comes from the c.1940 north addition (Art Moderne).
+>    See Design Direction for what this does and doesn't change.
 
 **Primary goal (client's words, refined):** people should remember the Portage
 Place *name* as a place they can rent space in a great location.
@@ -28,9 +47,37 @@ polish. The design should read **crafted and warm**, not cold-minimal-luxury.
 The art-deco/industrial-bakery heritage is the differentiator no competing
 listing can copy.
 
-**Scale:** Phase 1 (north half) complete — commercial wing + office wing split by
-the restrooms and a dividing door. Phase 2 will renovate near-identically.
-Spaces run **200–2,000 sq ft**. Currently 9 commercial + 11 office tenants.
+**Scale:** Phase 1 opened **December 2025** — roughly **20,000 of the building's
+~56,000 sq ft**. Commercial wing + office wing, split by the restrooms and a
+dividing door. Phase 2 will renovate near-identically. Spaces run
+**200–2,000 sq ft**. Currently 9 commercial + 11 office tenants; the finished
+building is planned for 50–60.
+
+### ⚠️ The "art deco" question — a design decision, not just a fact-check
+
+The heritage framing runs through the whole design direction, so this needs a
+deliberate answer rather than a footnote.
+
+**What we know:** a 1919 sanitary bakery is early-20th-century industrial
+vernacular — brick, big windows, utilitarian. That is a *good* identity and it is
+the one the palette already reflects, since the colours came off the building's
+own brick and mortar.
+
+**Recommendation: stop saying "art deco" and say "1919 industrial bakery."** It is
+defensible, more specific, and more interesting. The differentiator was never the
+style label — it's that this building baked four thousand loaves an hour, had its
+windows bricked shut for forty years, and got them back in 2022.
+
+**Nothing about the visual design has to change.** Letter-spaced small caps,
+geometric rules, restrained ornament and the warm material palette read as
+period-appropriate for an industrial building of this era. We simply stop
+*claiming* a style we can't support.
+
+**Ask the client before changing public copy** — "art deco" is on their current
+site and may be something they're attached to. If they want to keep it, the
+compromise is to attach it to the c.1940 addition rather than the whole building.
+Settling it with the South Bend Historic Preservation Commission or the Indiana
+SHAARD database would cost one email.
 
 ---
 
@@ -295,6 +342,37 @@ The press list resolves most of the History page's content problem:
 
 That's 8–9 milestones, inside the 5–10 target, with hard numbers (**$4.2M**,
 **$550k**, **102 years**) that make the story concrete instead of vague.
+
+### Accessibility overlay widget — ❌ DECIDED AGAINST
+
+The "person in a circle" icon that opens a menu of text-size, contrast and
+dyslexia-font toggles. **We are not shipping one**, and the reasoning is worth
+recording because it looks like the accessible choice.
+
+- **They are opposed by the accessibility community**, not embraced by it.
+  Thousands of disabled users and accessibility professionals have signed a public
+  statement against overlays; screen-reader users report them actively
+  interfering with the assistive tech they already run.
+- **They mostly duplicate the browser.** Text sizing, zoom, contrast and reader
+  modes are all built into the OS and browser, and users who need them have
+  already configured them — better than our widget will.
+- **They increase legal exposure rather than reducing it.** A large and growing
+  share of US web accessibility lawsuits have been filed against sites *running
+  overlays*, because the widget advertises a claim the underlying markup doesn't
+  meet.
+- **They cost the thing this project can't spend.** A third-party script, blocking
+  JS, and a floating badge in the corner — against a build whose stated targets
+  are zero blocking JS and a strictly controlled visual identity.
+
+**What we do instead** is the real version of the same intent, and it's already
+mostly built: semantic markup, genuine keyboard operability, verified contrast,
+`prefers-reduced-motion` honoured, focus never suppressed, targets ≥44px, and
+respecting the user's own browser font-size (which is why the fluid type scale
+interpolates in `rem`).
+
+If the client asks for the icon specifically, the honest answer is that the badge
+signals accessibility while the underlying work provides it — and we're doing the
+work. Worth having ready, since it's a reasonable thing for them to ask about.
 
 ### Implementation notes
 
@@ -599,6 +677,42 @@ rasters that will fall apart at any usable size.
 - All images served as AVIF/WebP through Astro's `<Image />` with explicit
   dimensions and correct `sizes`.
 
+### Archival image treatment
+
+Bake the treatment into the asset in Figma rather than applying a CSS filter.
+CSS `filter: sepia()` applies the same transform to images with wildly different
+original casts, so it reads as *a filter* rather than as age — and the archival
+set here ranges from a clean scan to a screen grab.
+
+**Don't reach for flat sepia.** Real prints don't age uniformly: they lose
+contrast, warm in the highlights, and cool slightly in the shadows. The recipe
+that looks expensive:
+
+1. Desaturate to grayscale first.
+2. Apply a **split tone** rather than a single-hue wash — highlights warm, shadows
+   cool. Use the site palette: highlights toward `--pp-limestone` `#DDD7CF`,
+   shadows toward `--pp-espresso` `#322F2C`. That ties the archival images into
+   the palette we already sampled off the building, so they look native to the
+   page instead of dropped in.
+3. Pull contrast slightly *below* the modern photographs. Age reads as softness.
+4. Grain sparingly. Vignette very sparingly — a heavy vignette is the single
+   fastest way to make a real archival photo look fake.
+
+**Keep untreated masters in `reference/`.** The treatment will get revised.
+
+### The then/now dissolve
+
+Rob shot the modern exteriors at matching angles, which makes a crossfade
+genuinely possible. Two constraints if we build it:
+
+- **Keep the archival treatment subtle.** A heavy tint on one side makes the
+  transition read as a filter toggle rather than as time passing. The stronger
+  effect comes from the *alignment* being right, not from the grading being
+  dramatic.
+- **It must work without the interaction.** A scrubber or hover crossfade needs a
+  static, captioned fallback — both images side by side — for keyboard users,
+  reduced-motion users, and anyone whose engine doesn't support the effect.
+
 ---
 
 ## Deployment & Domain Migration
@@ -761,10 +875,10 @@ Do **not** order the carousel chronologically. Standard structure:
 | **0** | Scaffold, pipeline, Netlify build config | ✅ Complete |
 | **0.5** | 📸 Capture old GoDaddy site + smoke-test page — perishable | ✅ Complete (stored in IG-management structure, outside this repo) |
 | **1** | Foundations: SCSS token layer, type scale (Fraunces / Public Sans), layout primitives, base layout, header/footer, floating CTA + modal + Netlify Forms 📸 **capture the `/specimen` sheet** | ✅ Complete |
-| **2** | Content model + collection schemas; real copy replacing the wall of text | |
+| **2** | Content model + collection schemas; real copy replacing the wall of text | 🔨 Schemas + seed content done; blocked on client inputs for the rest |
 | **3** | Home: hero, use-type grid, stat strip, location module, teasers 📸 | |
 | **4** | Find Your Space: floor plans + interactive SVG + location map 📸 — ⚠️ **confirm static-map decision with client before building this page** | |
-| **5** | History: scroll-driven vertical timeline 📸 | |
+| **5** | History: scroll-driven vertical timeline 📸 | ✅ Built early — content was ready. Archival images still to come |
 | **6** | Community: tenants → owners → neighborhood → partners 📸 | |
 | **7** | Contact page, meta/OG/manifest/icon matrix, QR code | |
 | **8** | Real photography and video swapped in for placeholders 📸 *(biggest visual delta — highest-value capture)* | |
@@ -784,13 +898,27 @@ showing what's available today.
 
 ## Open Decisions
 
-- **Static styled map vs. live interactive** — Rob is confirming with the client
-  that there is no specific reason an interactive map is required. Blocks Phase 4
-  only.
 - Whether the Community merge holds, or Team splits back out.
-- **The floating CTA pattern** — see the callout under Forms & CTA. Provisional.
 - Whether bronze stays at its current saturation, which is higher than any
   material measured in the building.
+- Whether "art deco" stays in client-facing copy, and attached to what. Current
+  reading: the designer is using it as a *signage theme*, and a deco character
+  plausibly arrived with the c.1940 addition. Copy should credit it as something
+  the building acquired over time, not as its origin.
+
+### ✅ Resolved
+
+- ~~**Static styled map vs. live interactive**~~ — **static, confirmed with the
+  client.** It only needs to orient a South Bend resident. Two-map approach:
+  a wide view carrying enough downtown and the river to place the building, and a
+  detail view showing the California Avenue / Rex Street cross streets. Being
+  static means it can be styled to the palette, ships zero JS and zero
+  third-party cookies, and has no layout shift. Unblocks Phase 4.
+- ~~**The floating CTA pattern**~~ — **retired in favour of contextual CTAs.**
+  `<FloatingCta />` is commented out in `BaseLayout`. CTAs now get placed per
+  section at established decision points, using the button variants against
+  whichever surface they sit on. The component is left in the tree rather than
+  deleted, in case a sticky variant earns its place later.
 
 ## Open Questions
 
@@ -799,8 +927,11 @@ showing what's available today.
 2. **City of South Bend mark** — can we get the standard logo rather than the
    official seal, and do we have written permission? Same question for every
    partner and neighborhood mark.
-3. **Three missing timeline dates:** when did it become the Ford Distribution
-   Center, when were the READI funds awarded, and when did Phase 1 complete?
+3. ~~**Three missing timeline dates.**~~ ✅ Largely answered by the research in
+   `reference/history/`: READI **October 2022**, Phase 1 opened **December 2025**.
+   Ford Distributing's arrival remains genuinely contested (fall 1976 vs. the
+   1980s) and is now carried as `confidence: contested` in the milestone data
+   rather than guessed at.
 4. ~~**Which mail provider** serves `portageplacesb.com`?~~ ✅ Answered: none.
    No MX records exist on that domain. The contact mailbox is
    `tyler@regensb.com`, on Google Workspace, on separate DNS. Re-verify before
@@ -815,6 +946,56 @@ showing what's available today.
    slide furniture), or does that need designing too?
 8. **Screenshot masters** — were native-resolution originals kept alongside the
    1080×1350 exports, and are those exports full-page or viewport crops?
+
+---
+
+## Questions for the client — Phase 2 content
+
+Grouped by who can answer. Nothing here blocks schema work; all of it blocks
+finished copy.
+
+### Tenants (blocks the Community page)
+
+1. **Which tenants get surfaced?** ~12 of 20. Confirmed so far: Counterspell
+   Coffee, Alchemy Healing Arts, Rhyme & Reason Ministry, Cressy & Everett.
+2. **Will they give testimonials, and who signs each one?** A quote needs a name
+   and role attached, or it reads as invented. We are holding six placeholder
+   entries rather than writing words for real businesses.
+3. **Logo or portrait for each?** Vector preferred. A photograph of the owner
+   often beats a logo for a building selling community.
+4. **Permission to link to each tenant's own site.**
+
+### The owners
+
+5. **Is it Dwayne or Duane Borkholder?** The supplied bio says Dwayne; the
+   research says Duane. Trivial to fix, embarrassing to ship wrong.
+6. **Portraits for all four**, ideally shot consistently.
+7. **Do they want a standalone Team page**, or is the Community merge fine? Their
+   bios turned out substantial enough that either works.
+8. **Is Monte Anderson happy to be named** as mentor/model?
+
+### History
+
+9. **Is "art deco" something they're attached to?** See The Brief — it appears
+   unsupported for a 1919 building.
+10. **Do they know when Ford Distributing arrived and left?** Sources conflict
+    (1976 vs 1980s). If they have the deed or purchase records, that settles it.
+11. **Archival image rights.** `reference/history/` holds ads, exterior and
+    interior shots, and news images. Which are theirs to license? The Louis Sabo
+    2022 façade photograph and Jacob Titus's West.SB photo essay are both
+    third-party and would need permission.
+12. **The retained bakery fabric** — original oven, yeast-room door, steel levers,
+    fire doors. Can we photograph them? These are the best interpretive assets in
+    the building and nothing on the current site uses them.
+
+### Contact & launch
+
+13. **What email should actually receive form submissions?** Currently Mike's
+    personal address on the live site; Rob is advising against. `tyler@regensb.com`
+    is the interim. A proper `@portageplacesb.com` mailbox would need MX records
+    set up — and note the domain currently has none at all.
+14. **Google Business Profile** — is one claimed and tended? For a "remember the
+    name" goal it does more than anything on the site itself.
 
 ---
 

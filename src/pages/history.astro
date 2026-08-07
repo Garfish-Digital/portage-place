@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/primitives/Section.astro';
+import Timeline from '../components/Timeline.astro';
+import PressList from '../components/PressList.astro';
+import Button from '../components/Button.astro';
+import { getMilestones, getPress } from '../lib/content';
+
+const milestones = await getMilestones();
+const press = await getPress();
+
+// Derived rather than typed in, so the intro can't drift from the data.
+const firstYear = milestones[0]?.data.year ?? '1919';
+---
+
+<BaseLayout
+	title="History"
+	description="A 1919 industrial bakery in South Bend that kept reinventing itself — from Busse and Ward through forty years as a sealed warehouse to Portage Place."
+>
+	<!-- ------------------------------------------------------------------ -->
+	<Section>
+		<div class="intro">
+			<p class="pp-eyebrow intro__eyebrow">Since {firstYear}</p>
+			<h1>A building that kept reinventing itself.</h1>
+			<p class="intro__lede">
+				It began as a neighborhood bread plant, was absorbed into the company that would
+				become Wonder Bread, ran four thousand loaves an hour, spent forty years with its
+				windows bricked shut, sat empty for a decade — and got its light back in 2022.
+			</p>
+		</div>
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section tone="limestone" tight>
+		<div class="note">
+			<h2 class="note__title">A note on the record</h2>
+			<p class="note__body">
+				Published accounts of this building disagree with each other — on when it was
+				built, when Ward took over, and when its last tenant arrived. Where sources
+				conflict, we say so rather than picking the tidier version. Two corrections are
+				worth stating plainly: the 1919 plant was built by <strong>Fred W. Busse</strong>,
+				not by Ward; and <strong>Ford Distributing</strong> was a local wholesaler of
+				vending goods and tobacco — <strong>not Ford Motor Company</strong>.
+			</p>
+		</div>
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section>
+		<h2 class="pp-visually-hidden">Timeline</h2>
+		<Timeline milestones={milestones} />
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<Section tone="limestone">
+		<div class="press-head">
+			<p class="pp-eyebrow press-head__eyebrow">In the news</p>
+			<h2>Others have told this story too.</h2>
+			<p class="press-head__lede">
+				Coverage of the renovation from local and national outlets.
+			</p>
+		</div>
+		<PressList items={press} />
+	</Section>
+
+	<!-- ------------------------------------------------------------------ -->
+	<!--
+		Contextual CTA at the end of the narrative: the reader has just finished the
+		building's whole story, which is the natural decision point on this page.
+	-->
+	<Section tone="dark">
+		<div class="cta">
+			<div>
+				<p class="pp-eyebrow cta__eyebrow">The next chapter</p>
+				<h2 class="cta__title">There's room in it for you.</h2>
+				<p class="cta__lede">
+					Spaces from 200 to 2,000 square feet, in a building that has been useful for a
+					hundred years and intends to stay that way.
+				</p>
+			</div>
+			<div class="cta__actions">
+				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+				<Button variant="quiet" size="lg" href="/spaces">Find your space</Button>
+			</div>
+		</div>
+	</Section>
+</BaseLayout>
+
+<style lang="scss">
+	.intro {
+		max-width: 46rem;
+	}
+
+	.intro__eyebrow {
+		color: var(--pp-ink-muted);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.intro__lede {
+		margin-block-start: var(--pp-space-m);
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	// ---------------------------------------------------------------------------
+	.note {
+		max-width: var(--pp-measure);
+		border-inline-start: 2px solid var(--pp-bronze);
+		padding-inline-start: var(--pp-space-m);
+	}
+
+	.note__title {
+		@include eyebrow;
+
+		color: var(--pp-ink-muted);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.note__body {
+		font-size: var(--pp-text-s);
+		line-height: var(--pp-leading-loose);
+		color: var(--pp-ink);
+		text-wrap: pretty;
+	}
+
+	// ---------------------------------------------------------------------------
+	.press-head {
+		max-width: 40rem;
+		margin-block-end: var(--pp-space-xl);
+	}
+
+	.press-head__eyebrow {
+		color: var(--pp-brick-dark);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.press-head__lede {
+		margin-block-start: var(--pp-space-2xs);
+		color: var(--pp-ink-muted);
+	}
+
+	// ---------------------------------------------------------------------------
+	.cta {
+		display: flex;
+		flex-direction: column;
+		gap: var(--pp-space-l);
+
+		@include from('lg') {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--pp-space-2xl);
+		}
+	}
+
+	.cta__eyebrow {
+		color: var(--pp-bronze);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.cta__title {
+		font-size: var(--pp-text-h2);
+		color: var(--pp-text-strong);
+	}
+
+	.cta__lede {
+		margin-block-start: var(--pp-space-xs);
+		max-width: 34rem;
+		color: var(--pp-text-muted);
+		text-wrap: pretty;
+	}
+
+	.cta__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--pp-space-s);
+	}
+</style>

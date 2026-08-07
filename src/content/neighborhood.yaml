@@ -1,0 +1,70 @@
+# Neighbourhood businesses and goodwill relationships.
+#
+# The three non-placeholder entries come from the supplied research and are real
+# organisations on or beside the Portage corridor — but their blurbs are ours and
+# none has been asked for permission or a logo yet. Confirm before publishing.
+#
+# ⚠️ Partner marks: see BUILD_PLAN. The City of South Bend asset we hold is the
+# official municipal SEAL, which commonly carries usage restrictions and implies
+# endorsement rather than partnership. Request the standard logo instead, and get
+# written permission plus vector source for every mark.
+
+- id: the-portage-collective
+  name: The Portage Collective
+  blurb: >-
+    A co-op of independent, women-owned businesses on the same corridor.
+  relationship: neighbor
+  order: 1
+  placeholder: false
+
+- id: botany
+  name: Botany
+  blurb: Directly across the street at 909 Portage Avenue.
+  address: 909 Portage Avenue
+  relationship: neighbor
+  order: 2
+  placeholder: false
+
+- id: near-northwest-neighborhood
+  name: Near Northwest Neighborhood, Inc.
+  blurb: >-
+    The neighbourhood's community development corporation, which fought for six
+    years to bring this building back before the current partnership formed.
+  address: 1005 Portage Avenue
+  relationship: partner
+  order: 3
+  placeholder: false
+
+- id: city-of-south-bend
+  name: City of South Bend
+  blurb: >-
+    Redevelopment Commission funding toward the façade, and a Revolving Business
+    Enterprise Fund loan.
+  relationship: partner
+  order: 4
+  placeholder: false
+
+- id: readi-partnership
+  name: South Bend–Elkhart Regional Partnership
+  blurb: $550,000 READI grant toward the renovation.
+  relationship: partner
+  order: 5
+  placeholder: false
+
+- id: placeholder-neighbor-1
+  name: 'Placeholder — Neighbouring Business'
+  blurb: >-
+    Invented stand-in so the neighbourhood grid can be built at a realistic item
+    count. Replace once the client supplies the real list.
+  relationship: neighbor
+  order: 90
+  placeholder: true
+
+- id: placeholder-neighbor-2
+  name: 'Placeholder — Neighbouring Business'
+  blurb: >-
+    Invented stand-in so the neighbourhood grid can be built at a realistic item
+    count. Replace once the client supplies the real list.
+  relationship: neighbor
+  order: 91
+  placeholder: true
