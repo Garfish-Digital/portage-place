@@ -31,13 +31,13 @@ import Button from './Button.astro';
 			it from there.
 		</p>
 
-		<!--
+		{/*
 			Netlify Forms: `data-netlify` registers the form at build time, and the
 			hidden form-name field is what identifies it on submit. The honeypot is a
 			decoy field — bots fill it, humans never see it — which keeps spam down
 			without a CAPTCHA. At <=10 submissions/month a CAPTCHA would add friction
 			and a third-party script to solve a problem we don't have.
-		-->
+		*/}
 		<form
 			class="modal__form"
 			name="contact"
@@ -65,11 +65,11 @@ import Button from './Button.astro';
 					required
 					aria-describedby="contact-email-error"
 				/>
-				<!--
+				{/*
 					aria-live so the message is announced when it appears. It stays in
 					the DOM empty rather than being inserted, because content added to a
 					live region at the same moment the region appears is unreliably read.
-				-->
+				*/}
 				<p class="field__error" id="contact-email-error" role="alert" data-error-for="email"></p>
 			</div>
 
@@ -91,11 +91,11 @@ import Button from './Button.astro';
 		</form>
 	</div>
 
-	<!--
+	{/*
 		Success replaces the modal contents in place. Redirecting to Netlify's
 		default success page would break the low-commitment feel entirely — the
 		visitor would leave the site to be told their email was received.
-	-->
+	*/}
 	<div class="modal__success" data-modal-success hidden>
 		<div class="modal__success-mark" aria-hidden="true">
 			<Icon name="lucide:check" />

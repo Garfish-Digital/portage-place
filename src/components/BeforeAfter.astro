@@ -1,0 +1,150 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+/**
+ * A then/now pair, shown side by side.
+ *
+ * Deliberately NOT a drag-slider or a hover crossfade. The two frames are shot
+ * from the same position, so showing both at once lets the eye compare directly —
+ * a slider forces sequential viewing, hides half the content at any moment, is
+ * fiddly on touch, and needs bespoke keyboard handling to be operable at all.
+ * The alignment is doing the work here; an interaction would get in its way.
+ */
+interface Props {
+	then: ImageMetadata;
+	now: ImageMetadata;
+	thenAlt: string;
+	nowAlt: string;
+	thenCaption?: string;
+	nowCaption?: string;
+	/** Layout hint — `stacked` forces one column even on wide screens. */
+	layout?: 'side-by-side' | 'stacked';
+	/** First pair on the page gets eager loading; the rest stay lazy. */
+	priority?: boolean;
+	sizes?: string;
+}
+
+const {
+	then,
+	now,
+	thenAlt,
+	nowAlt,
+	thenCaption,
+	nowCaption,
+	layout = 'side-by-side',
+	priority = false,
+	sizes = '(min-width: 768px) 45vw, 92vw',
+} = Astro.props;
+---
+
+<figure class:list={['ba', `ba--${layout}`]}>
+	<div class="ba__frames">
+		<div class="ba__frame">
+			<Image
+				src={then}
+				alt={thenAlt}
+				sizes={sizes}
+				widths={[440, 700, 880]}
+				loading={priority ? 'eager' : 'lazy'}
+				fetchpriority={priority ? 'high' : 'auto'}
+			/>
+			<span class="ba__tag ba__tag--then">Then</span>
+		</div>
+
+		<div class="ba__frame">
+			<Image
+				src={now}
+				alt={nowAlt}
+				sizes={sizes}
+				widths={[440, 700, 880]}
+				loading={priority ? 'eager' : 'lazy'}
+				fetchpriority={priority ? 'high' : 'auto'}
+			/>
+			<span class="ba__tag ba__tag--now">Now</span>
+		</div>
+	</div>
+
+	{
+		(thenCaption || nowCaption) && (
+			<figcaption class="ba__caption">
+				{thenCaption && <span>{thenCaption}</span>}
+				{nowCaption && <span>{nowCaption}</span>}
+			</figcaption>
+		)
+	}
+</figure>
+
+<style lang="scss">
+	.ba {
+		margin: 0;
+	}
+
+	.ba__frames {
+		display: grid;
+		gap: var(--pp-space-xs);
+
+		.ba--side-by-side & {
+			@include from('md') {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+	}
+
+	.ba__frame {
+		position: relative;
+		overflow: hidden;
+		border-radius: var(--pp-radius-m);
+		background-color: var(--pp-limestone);
+
+		:global(img) {
+			display: block;
+			width: 100%;
+			height: auto;
+			// Both frames are 875×512, so no aspect-ratio juggling is needed — but
+			// the explicit ratio guards against a replacement image of a different
+			// shape silently reintroducing layout shift.
+			aspect-ratio: 875 / 512;
+			object-fit: cover;
+		}
+	}
+
+	// Labels are part of the content, not decoration: without them the pair is
+	// ambiguous, and "then" is not always obviously the older photograph once the
+	// tinting is subtle.
+	.ba__tag {
+		@include eyebrow;
+
+		position: absolute;
+		inset-block-start: var(--pp-space-2xs);
+		inset-inline-start: var(--pp-space-2xs);
+		padding: 0.35em 0.7em;
+		border-radius: var(--pp-radius-s);
+		font-size: var(--pp-text-2xs);
+	}
+
+	.ba__tag--then {
+		color: var(--pp-limestone);
+		background-color: color-mix(in srgb, var(--pp-espresso) 88%, transparent);
+	}
+
+	.ba__tag--now {
+		color: var(--pp-espresso);
+		background-color: color-mix(in srgb, var(--pp-plaster) 92%, transparent);
+	}
+
+	.ba__caption {
+		display: grid;
+		gap: var(--pp-space-3xs);
+		margin-block-start: var(--pp-space-xs);
+		font-size: var(--pp-text-xs);
+		color: var(--pp-text-muted);
+
+		.ba--side-by-side & {
+			@include from('md') {
+				grid-template-columns: 1fr 1fr;
+				gap: var(--pp-space-xs);
+			}
+		}
+	}
+</style>

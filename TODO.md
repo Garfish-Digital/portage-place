@@ -367,41 +367,70 @@ https://westsb.com/features/ward?rq=ward
 
 =====
 
--The History page looks great and I love the bronze asides.
 
 
 
 
 
+A second, independent bug would have bitten you on phones anyway. I had the reveal on animation-range: entry 0% entry 55%. The entry range ends when the element is fully in view — but a milestone with
+a title, summary, and three paragraphs is taller than a 375px viewport, and an elementt is never "fully in view." The range end clamps, stretching the reveal across nearlythe element's whole travel, so text sits faded and offset for most of the time you're reading it. Switched to cover 0% cover 22%, which is measured against element height plus viewport height and so
+degrades gracefully at any ratio.
+
+Both are worth a look on the Chromebook before you capture.
+
+A leak I found while verifying
+
+Chasing an odd <dt> count, I discovered my explanatory HTML comments were shipping to s the site, up to 7% of a page, including "PLACEHOLDER IMAGERY" and internal designrationale. Astro strips {/* */} but emits <!-- -->. Converted 43 comments across 9 files; also moved the tenant Markdown notes into YAML frontmatter, since Markdown has no non-rendering comment syntax
+and those "no invented quote" warnings would have gone public the moment the Community
+
+Home is now 6.5 KB gzipped, down from 7.7 KB. Content verified unchanged: 5 stats, 8 u press links.
+
+Your before/after work — and one correction it forced
+
+These are better than "fine." The alignment on pairs 2 and 4 is genuinely good, and th exactly the way that makes a crossfade viable later.
+
+Historic-1 also proved me partly wrong. The parapet carries a 1919 datestone medallion— and the stepped pedimented parapet with geometric capped pilasters is genuinelydeco-adjacent. I over-corrected earlier. The accurate position isn't "not deco," it's that the building sits in the geometric commercial vernacular Art Deco grew out of. Your designer's instinct has
+support in the brick. I've put usable phrasings in the plan: "geometric brickwork and icipate the deco era."
+
+I also downgraded milestone 1 from documented to contested. The datestone settles the o built it, and the Ward sign isn't evidence of the original owner since Ward would have re-signed a building they bought.
+
+Placement — my recommendation:
+
+┌─────────────────────────┬───────────────┬───────────────────┐
+│          Pair           │     Home      │      History      │
+├─────────────────────────┼───────────────┼───────────────────┤
+│ 1 — parapet / datestone │ —             │ Milestone 1       │
+├─────────────────────────┼───────────────┼───────────────────┤
+│ 2 — full elevation      │ ✅ the teaser │ Milestones 7 & 10 │
+├─────────────────────────┼───────────────┼───────────────────┤
+│ 3 — corner              │ —             │ Then/Now section  │
+├─────────────────────────┼───────────────┼───────────────────┤
+│ 4 — south end           │ —             │ Then/Now section  │
+└─────────────────────────┴───────────────┴───────────────────┘
+
+Not on Spaces. That page answers "does my business fit here" — a before/after dilutes it.
+
+No carousel on the site. Carousels hide content behind an interaction most visitors never perform, and these are the most persuasive artefact we have. Stack them so all four are visible. Instagram is
+where the carousel belongs, and these four pairs are ideal for it.
+
+Side-by-side, not a drag slider. The frames share a camera position, so showing both ae directly. A slider forces sequential viewing, hides half the content, is fiddly ontouch, and needs bespoke keyboard handling.
+
+Home page                                                                                                                                                                                              
+Hero → stat strip → use-type grid → then/now teaser → location → closing CTA. Still zero JS bundles. The wall of text is gone: the ten anaphoric "A place to…" lines are now an eight-item icon grid   answering do I belong here? in three seconds.
+                                                                                                                                                                                                       The hero scrim is set from contrast maths, not by eye. Assuming the photo's brightest  the text, limestone only reached 3.59:1 — a fail. Switched the hero text to--pp-plaster, which holds 4.73:1 even over a blown-out sky, and restopped the gradient. This matters because the photo gets replaced in Phase 8; tuning the scrim to this image would have hidden a    failure that silently returned with the next one.
+                                                                                                                                                                                                       Two things I deliberately did not fake:
+                                                                                                                                                                                                       - No drive times or distances. Your current copy says only "just minutes from." The pr numbers. Real ones would make that module considerably stronger — worth measuring.
+- Hero resolution. Your sources are 875px wide. Fine for the half-width module, too small for a full-bleed hero — it'll look soft on a large display. Acceptable as placeholder; tell the photographer you want the hero frame at 2560px or wider.
+
+📸 Home and History are both worth recapturing — the Home page is unrecognisable from .
+
+Next up is Community, which needs the tenant list, or Find Your Space, which needs flofirst.
 
 
-Archival image treatment
 
-Bake it into the asset in Figma — agreed. CSS filters apply the same transform to images with very different original casts, so they read as a filt your set ranges from clean scans to a screen grab.
 
-But skip flat sepia. Real prints don't age uniformly — they lose contrast, warm in the highlights, and cool slightly in the shadows. The recipe tha
 
-1. Desaturate to grayscale first.
-2. Split-tone rather than a single-hue wash: highlights toward #DDD7CF (limestone), shadows toward #322F2C (espresso). That's our palette — so the archival images look native to the page instead of dropped into it, which flat sepia never achieves.
-3. Contrast slightly below the modern photos. Age reads as softness.
-4. Grain sparingly, vignette very sparingly. A heavy vignette is the fastest way to make a real archival photo look fake.
-
-Keep the untreated masters in reference/ — this will get revised.
-
-On the then/now dissolve: your matched-angle shots make it genuinely viable, and it argues for keeping the tint subtle. Heavy grading on one side makes the transition read as a filter toggle rather than time passing — the effect comes from the alignment being right, not the grading being dramatic. It'll also need a static side-by-side fallback for keyboard and reduced-motion users.
-
-Where things stand
-
-Phase 2's data layer is done and Phase 5 is built ahead of schedule because its content was ready. What's left is gated on the client:
-
-- Community page — needs the tenant list and testimonials
-- Find Your Space — needs floor plans
-- History images — needs rights confirmation and the interpretive-asset photos
-
-📸 Worth capturing before you commit — /history is the first page with real content, real motion, and the timeline in it. That's a much stronger prpecimen sheet, and the rail-fill reads well even as a still.
-
-Home page (Phase 3) is the one substantial thing I can build without waiting on anyone — hero, use-type grid, stat strip, location module, teasers.?
-
+=====
 
 
 
@@ -426,3 +455,7 @@ Keep the untreated masters in reference/ — this will get revised.
 
 
 - Should we include "WCAG 2.2 AA compliant" in the footer or somewhere tucked away?
+
+
+=====
+

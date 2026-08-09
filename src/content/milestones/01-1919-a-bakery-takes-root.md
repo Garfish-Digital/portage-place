@@ -3,11 +3,19 @@ year: '1919'
 sortYear: 1919
 title: A Bakery Takes Root
 summary: The Busse Baking Company builds a $90,000 bread plant on Portage Avenue.
-confidence: documented
+confidence: contested
+confidenceNote: >-
+  The building's own parapet carries a 1919 datestone, which settles the year. Who
+  built it is less certain: one account has Busse erecting the plant and Ward
+  acquiring it in the early 1920s, another has Ward entering South Bend in 1919.
+  The "Ward Baking Co" sign above the door is not evidence of the original owner —
+  Ward would have re-signed a building it bought.
 featured: true
 sources:
   - 'South Bend Tribune feature, c. 1920, reproduced in West.SB (Feb 2021)'
-  - 'OPUS_5_HISTORY.md §II'
+  - 'OPUS_5_HISTORY.md §II — Busse builds, Ward acquires c. 1922'
+  - 'HISTORY_GUIDE.md §1919 — Mike Keen’s account has Ward established in 1919'
+  - '1919 datestone and parapet signage, photographed on site'
 ---
 
 Fred W. Busse's South Bend firm put up a new bread plant at 906 Portage Avenue

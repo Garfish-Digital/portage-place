@@ -14,6 +14,22 @@ export default defineConfig({
 		}),
 	],
 	vite: {
+		build: {
+			// esbuild, not the default lightningcss.
+			//
+			// lightningcss folds `animation-timeline` into the `animation` shorthand:
+			//   animation: linear both milestone-in view()
+			// `animation-timeline` is a RESET-ONLY sub-property — the shorthand resets
+			// it but cannot set it — so that declaration is invalid, gets dropped, and
+			// takes the animation name down with it. The History timeline silently lost
+			// all its scroll-driven motion on Android and ChromeOS, and the bronze rail
+			// was left stuck at `scale: 1 0` — invisible rather than merely static.
+			//
+			// esbuild does not synthesise shorthands, so the longhand survives. Costs
+			// ~1 KB gzipped across the whole site. Revisit only if lightningcss fixes
+			// this; verify against dist/_astro/*.css before switching back.
+			cssMinify: 'esbuild',
+		},
 		css: {
 			preprocessorOptions: {
 				scss: {

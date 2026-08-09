@@ -1,61 +1,414 @@
 ---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/primitives/Section.astro';
-import Stack from '../components/primitives/Stack.astro';
+import Container from '../components/primitives/Container.astro';
 import Button from '../components/Button.astro';
+import StatStrip from '../components/StatStrip.astro';
+import UseTypeGrid from '../components/UseTypeGrid.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
 
-// Phase 1 shell. Real copy, hero video, use-type grid, stat strip and location
-// module arrive in Phase 3 — this exists so the foundations (layout, header,
-// footer, CTA, surface contexts) are visible and testable at :4321.
+import { PROXIMITY, ACCESS } from '../config/site';
+import { getMilestones } from '../lib/content';
+
+// ⚠️ PLACEHOLDER IMAGERY — Rob's phone shots, hand-treated. Professional
+// photography and video replace these in Phase 8. The hero is currently a still;
+// the brief calls for a short silent loop with a poster frame once footage lands.
+import heroImage from '../assets/before-after/now-2.png';
+import then2 from '../assets/before-after/then-2.png';
+import now2 from '../assets/before-after/now-2.png';
+
+const milestones = await getMilestones();
+const milestoneCount = milestones.length;
 ---
 
 <BaseLayout
 	title="Portage Place"
-	description="Commercial and office space for lease in a restored 1920s art-deco landmark in South Bend's Near Northwest Neighborhood. Spaces from 200 to 2,000 sq ft."
+	description="Commercial and office space for lease in a restored 1919 bakery in South Bend's Near Northwest Neighborhood. Spaces from 200 to 2,000 sq ft, starting at $300 a month."
 >
-	<Section>
-		<Stack space="m">
-			<p class="pp-eyebrow eyebrow">South Bend, Indiana</p>
-			<h1>Where you want to be.</h1>
-			<p class="lede">
-				A 1920s bakery, rescued and rebuilt. Coffee, yarn, art, medicine, software — twenty
+	{/* ================================================================== */}
+	{/* Hero */}
+	{/* ================================================================== */}
+	<section class="hero">
+		<div class="hero__media">
+			{/*
+				The LCP element. `loading="eager"` + `fetchpriority="high"` keep it off
+				the lazy queue, and the explicit aspect-ratio holds CLS at zero while it
+				decodes.
+			*/}
+			<Image
+				src={heroImage}
+				alt="The restored Ward Baking Co. building on Portage Avenue, its two storeys of windows reopened behind red brick and pale stone trim."
+				sizes="100vw"
+				widths={[640, 960, 1280, 1600]}
+				loading="eager"
+				fetchpriority="high"
+			/>
+			<div class="hero__scrim" aria-hidden="true"></div>
+		</div>
+
+		<Container class="hero__inner">
+			<p class="pp-eyebrow hero__eyebrow">South Bend · Near Northwest</p>
+			<h1 class="hero__title">Where you want to be.</h1>
+			<p class="hero__lede">
+				A 1919 bakery, brought back. Coffee, yarn, art, medicine, software — twenty
 				businesses under one roof, with room for yours.
 			</p>
-			<div class="actions">
+			<div class="hero__actions">
 				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
-				<Button variant="quiet" size="lg" href="/spaces">Find your space</Button>
+				<Button variant="secondary" size="lg" href="/spaces">Find your space</Button>
 			</div>
-		</Stack>
+		</Container>
+	</section>
+
+	{/* ================================================================== */}
+	{/* Stat strip — immediately under the hero, where the qualifying */}
+	{/* questions actually get asked. */}
+	{/* ================================================================== */}
+	<Section tight>
+		<StatStrip />
 	</Section>
 
+	{/* ================================================================== */}
+	{/* Use types — replaces the wall of text */}
+	{/* ================================================================== */}
 	<Section tone="limestone">
-		<Stack space="s">
-			<h2>Phase 1 foundations</h2>
-			<p class="pp-measure">
-				This page is scaffolding for the token layer, type scale, and layout primitives. The
-				component specimen lives at <a href="/specimen">/specimen</a>.
+		<div class="block-head">
+			<p class="pp-eyebrow block-head__eyebrow">All under one roof</p>
+			<h2>Room to think, work, create, and play.</h2>
+			<p class="block-head__lede">
+				Retailers next to makers next to therapists next to software. The mix is the
+				point — and it's why the building works for businesses that don't fit a
+                standard office park.
 			</p>
-		</Stack>
+		</div>
+
+		<UseTypeGrid />
+	</Section>
+
+	{/* ================================================================== */}
+	{/* Then / Now — the emotional hook, one pair only */}
+	{/* ================================================================== */}
+	<Section>
+		<div class="split">
+			<div class="split__text">
+				<p class="pp-eyebrow block-head__eyebrow">A hundred years in</p>
+				<h2>Its windows were bricked shut for forty years.</h2>
+				<p class="split__body">
+					When the baking stopped, the building became a warehouse and every window
+					was filled in with brick. It sat empty from 2012, and six attempts to
+					rescue it failed. In March 2022 the bricks came back out.
+				</p>
+				<Button variant="quiet" href="/history" iconEnd="lucide:arrow-right">
+					The whole story — {milestoneCount} chapters
+				</Button>
+			</div>
+
+			<div class="split__media">
+				<BeforeAfter
+					then={then2}
+					now={now2}
+					thenAlt="The building before renovation: two storeys of brick with every window opening filled in, under a grey winter sky."
+					nowAlt="The same elevation today: the window openings reopened and glazed, brickwork cleaned, stone trim restored."
+					thenCaption="Vacant, windows bricked in"
+					nowCaption="Restored, 2022"
+					sizes="(min-width: 1024px) 26vw, (min-width: 768px) 44vw, 92vw"
+				/>
+			</div>
+		</div>
+	</Section>
+
+	{/* ================================================================== */}
+	{/* Location */}
+	{/* ================================================================== */}
+	<Section tone="dark">
+		<div class="split split--reverse">
+			<div class="split__text">
+				<p class="pp-eyebrow location__eyebrow">Getting here</p>
+				<h2 class="location__title">Minutes from everywhere that matters.</h2>
+				<p class="split__body">
+					Portage Place anchors Portage Midtown, in the centre of the Near Northwest
+					Neighborhood — a crossroads rather than an outpost.
+				</p>
+
+				<ul class="access" role="list">
+					{
+						ACCESS.map((item) => (
+							<li class="access__item">
+								<Icon name="lucide:check" aria-hidden="true" />
+								<span>{item}</span>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<div class="split__media">
+				{/*
+					Distances deliberately absent — see src/config/site.ts. The current
+					site says only "just minutes from", and inventing drive times would be
+					fabrication. Adding real ones makes this module considerably stronger.
+					A styled static map slots in below this list at Phase 4.
+				*/}
+				<ul class="proximity" role="list">
+					{
+						PROXIMITY.map((place) => (
+							<li class="proximity__item">
+								<span class="proximity__name">{place.name}</span>
+								<span class="proximity__rule" aria-hidden="true" />
+								<span class="proximity__value">Minutes away</span>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+	</Section>
+
+	{/* ================================================================== */}
+	{/* Closing CTA */}
+	{/* ================================================================== */}
+	<Section tone="limestone">
+		<div class="close">
+			<h2 class="close__title">Come see what fits.</h2>
+			<p class="close__lede">
+				Tell us roughly what you're looking for — an email address on its own is
+				plenty. No forms to fill in, no commitment.
+			</p>
+			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+		</div>
 	</Section>
 </BaseLayout>
 
 <style lang="scss">
-	.eyebrow {
-		color: var(--pp-ink-muted);
+	// ---------------------------------------------------------------------------
+	// Hero
+	// ---------------------------------------------------------------------------
+	.hero {
+		position: relative;
+		display: grid;
+		align-items: end;
+		// Not 100dvh. A full-height hero on the ThinkPad E14's short desktop
+		// viewport pushes every piece of qualifying information below the fold,
+		// which is exactly the wrong trade for a leasing page.
+		min-height: min(74svh, 40rem);
+		padding-block: var(--pp-space-3xl) var(--pp-space-2xl);
+		overflow: hidden;
+		isolation: isolate;
+
+		@include short-viewport {
+			min-height: 30rem;
+			padding-block: var(--pp-space-2xl) var(--pp-space-xl);
+		}
 	}
 
-	.lede {
+	.hero__media {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+
+		:global(img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center 42%;
+		}
+	}
+
+	// Graduated scrim rather than a flat overlay: the text sits at the bottom, so
+	// darkening the top uniformly would only mute the building for no benefit.
+	//
+	// The stops are set from worst-case contrast maths, not by eye. Assume the
+	// photograph's brightest possible pixel (a blown-out sky) sits directly behind
+	// the text: at 70% espresso the blend is #706D6B, where white reaches 5.14:1
+	// and --pp-plaster 4.73:1 — both clear AA for normal-size text. Limestone only
+	// manages 3.71:1 there, which is why no hero text uses it.
+	//
+	// This matters because the placeholder photo gets replaced in Phase 8. Tuning
+	// the scrim to *this* image would hide a failure that reappears with the next.
+	.hero__scrim {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			to bottom,
+			color-mix(in srgb, var(--pp-espresso) 18%, transparent) 0%,
+			color-mix(in srgb, var(--pp-espresso) 48%, transparent) 38%,
+			color-mix(in srgb, var(--pp-espresso) 78%, transparent) 66%,
+			color-mix(in srgb, var(--pp-espresso) 92%, transparent) 100%
+		);
+	}
+
+	:global(.hero__inner) {
+		position: relative;
+	}
+
+	// Plaster, not limestone: at the worst-case scrim/photo blend plaster reaches
+	// 4.73:1 and limestone only 3.71:1. Plaster is warm enough not to read as
+	// harsh white.
+	.hero__eyebrow {
+		color: var(--pp-plaster);
+		margin-block-end: var(--pp-space-xs);
+	}
+
+	.hero__title {
+		font-size: var(--pp-text-display);
+		line-height: var(--pp-leading-tight);
+		letter-spacing: var(--pp-tracking-tight);
+		color: #fff;
+		max-width: 16ch;
+	}
+
+	.hero__lede {
+		margin-block-start: var(--pp-space-m);
+		max-width: 44ch;
 		font-size: var(--pp-text-lede);
 		line-height: var(--pp-leading-snug);
-		color: var(--pp-ink-muted);
-		max-width: 40ch;
+		// 20–23px regular is NOT "large text" under WCAG (that needs 24px), so this
+		// carries the full 4.5:1 requirement like body copy.
+		color: var(--pp-plaster);
 		text-wrap: pretty;
 	}
 
-	.actions {
+	.hero__actions {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--pp-space-s);
+		margin-block-start: var(--pp-space-l);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Shared block heading
+	// ---------------------------------------------------------------------------
+	.block-head {
+		max-width: 44rem;
+		margin-block-end: var(--pp-space-xl);
+	}
+
+	.block-head__eyebrow {
+		color: var(--pp-brick-dark);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.block-head__lede {
 		margin-block-start: var(--pp-space-s);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Split rows
+	// ---------------------------------------------------------------------------
+	.split {
+		display: grid;
+		gap: var(--pp-space-xl);
+		align-items: center;
+
+		@include from('lg') {
+			grid-template-columns: 1fr 1fr;
+			gap: var(--pp-space-3xl);
+		}
+	}
+
+	.split--reverse .split__media {
+		@include from('lg') {
+			order: -1;
+		}
+	}
+
+	.split__body {
+		margin-block: var(--pp-space-s) var(--pp-space-l);
+		max-width: 46ch;
+		color: var(--pp-text-muted);
+		text-wrap: pretty;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Location
+	// ---------------------------------------------------------------------------
+	.location__eyebrow {
+		color: var(--pp-bronze);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.location__title {
+		color: var(--pp-text-strong);
+	}
+
+	.access {
+		display: grid;
+		gap: var(--pp-space-2xs);
+		margin: 0;
+		padding: 0;
+	}
+
+	.access__item {
+		display: flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+		font-size: var(--pp-text-s);
+		color: var(--pp-text-muted);
+
+		:global(svg) {
+			flex: none;
+			width: 16px;
+			height: 16px;
+			color: var(--pp-green-on-dark);
+		}
+	}
+
+	.proximity {
+		display: grid;
+		gap: var(--pp-space-s);
+		margin: 0;
+		padding: 0;
+	}
+
+	.proximity__item {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: baseline;
+		gap: var(--pp-space-2xs);
+	}
+
+	.proximity__name {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h4);
+		color: var(--pp-text-strong);
+		text-wrap: balance;
+	}
+
+	// A leader rule, like a table of contents. Costs nothing and makes a plain
+	// list read as designed.
+	.proximity__rule {
+		height: 1px;
+		background-color: var(--pp-rule);
+		translate: 0 -0.3em;
+	}
+
+	.proximity__value {
+		@include eyebrow;
+
+		font-size: var(--pp-text-2xs);
+		color: var(--pp-text-muted);
+		text-wrap: nowrap;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Close
+	// ---------------------------------------------------------------------------
+	.close {
+		display: grid;
+		justify-items: center;
+		text-align: center;
+		gap: var(--pp-space-s);
+		max-width: 40rem;
+		margin-inline: auto;
+	}
+
+	.close__lede {
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
 	}
 </style>

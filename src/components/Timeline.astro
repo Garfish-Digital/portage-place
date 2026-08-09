@@ -18,12 +18,12 @@ const entries = await Promise.all(
 ---
 
 <div class="timeline">
-	<!--
+	{/*
 		The rail and its fill are decorative; the <ol> already conveys sequence to
 		assistive tech, so aria-hidden keeps a screen reader from announcing two
 		empty divs. It sits OUTSIDE the list on purpose — <ol> only permits <li>,
 		<script> and <template> as children, and a stray <div> is invalid markup.
-	-->
+	*/}
 	<div class="timeline__rail" aria-hidden="true">
 		<div class="timeline__rail-fill"></div>
 	</div>
@@ -258,7 +258,21 @@ const entries = await Promise.all(
 			.milestone {
 				animation: milestone-in linear both;
 				animation-timeline: view();
-				animation-range: entry 0% entry 55%;
+
+				// `cover`, not `entry`, and this matters most on phones.
+				//
+				// The `entry` range ends when the subject is fully in view — but a
+				// milestone with a title, summary and three paragraphs is TALLER than a
+				// 375px viewport, and a subject taller than the scrollport is never
+				// "fully in view". The range end then clamps to the point where the
+				// element covers the whole screen, so the reveal stretches across almost
+				// the element's entire travel: text sits faded and offset for most of the
+				// time it's being read.
+				//
+				// `cover` is measured against (element height + viewport height), which
+				// degrades gracefully at any ratio. 22% lands the reveal about 300px into
+				// view on both a phone and a desktop.
+				animation-range: cover 0% cover 22%;
 			}
 		}
 	}

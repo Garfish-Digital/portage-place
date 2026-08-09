@@ -1,0 +1,66 @@
+---
+import { Icon } from 'astro-icon/components';
+import { USE_TYPES } from '../config/site';
+---
+
+<ul class="uses" role="list">
+	{
+		USE_TYPES.map((use) => (
+			<li class="use">
+				{/*
+					Icons are decorative — the label carries the meaning, so aria-hidden
+					stops a screen reader announcing "store, Retail and business".
+				*/}
+				<Icon name={use.icon} class="use__icon" aria-hidden="true" />
+				<span class="use__label">{use.label}</span>
+			</li>
+		))
+	}
+</ul>
+
+<style lang="scss">
+	.uses {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--pp-space-xs);
+		margin: 0;
+		padding: 0;
+
+		@include from('sm') {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		@include from('lg') {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.use {
+		display: flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+		padding: var(--pp-space-s);
+		background-color: var(--pp-plaster);
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+
+		// Not interactive — no href, no handler — so it gets no hover lift and no
+		// pointer cursor. Affording a click that doesn't exist is worse than being
+		// plain.
+	}
+
+	.use__icon {
+		flex: none;
+		width: 20px;
+		height: 20px;
+		color: var(--pp-bronze); // decorative, non-text — 3.48:1 clears the UI threshold
+	}
+
+	.use__label {
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-medium);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink);
+		text-wrap: balance;
+	}
+</style>

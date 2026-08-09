@@ -1,0 +1,72 @@
+---
+import { STATS } from '../config/site';
+---
+
+{/*
+	A <dl> rather than divs: each stat is genuinely a term/description pair, and a
+	screen reader then announces "Space sizes, 200 to 2,000 sq ft" instead of two
+	unrelated fragments. The value comes first visually but second in the DOM —
+	<dt> must precede <dd> — so `flex-direction: column-reverse` does the swap
+	without breaking the reading order.
+*/}
+<dl class="stats">
+	{
+		STATS.map((stat) => (
+			<div class="stat">
+				<dt class="stat__label">{stat.label}</dt>
+				<dd class="stat__value">
+					{stat.value}
+					{'unit' in stat && stat.unit && <span class="stat__unit">{stat.unit}</span>}
+				</dd>
+			</div>
+		))
+	}
+</dl>
+
+<style lang="scss">
+	.stats {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--pp-space-m) var(--pp-space-s);
+		margin: 0;
+		padding-block: var(--pp-space-l);
+		border-block: 1px solid var(--pp-rule);
+
+		@include from('md') {
+			grid-template-columns: repeat(5, auto);
+			justify-content: space-between;
+			gap: var(--pp-space-l);
+		}
+	}
+
+	.stat {
+		display: flex;
+		flex-direction: column-reverse;
+		gap: var(--pp-space-3xs);
+	}
+
+	.stat__value {
+		margin: 0;
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h3);
+		font-weight: var(--pp-weight-semibold);
+		line-height: 1;
+		letter-spacing: var(--pp-tracking-tight);
+		color: var(--pp-ink-strong);
+		text-wrap: nowrap;
+	}
+
+	.stat__unit {
+		font-size: 0.55em;
+		font-weight: var(--pp-weight-normal);
+		color: var(--pp-ink-muted);
+		margin-inline-start: 0.1em;
+	}
+
+	.stat__label {
+		@include eyebrow;
+
+		font-size: var(--pp-text-2xs);
+		color: var(--pp-ink-muted);
+	}
+</style>

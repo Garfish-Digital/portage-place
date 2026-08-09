@@ -53,7 +53,28 @@ dividing door. Phase 2 will renovate near-identically. Spaces run
 **200–2,000 sq ft**. Currently 9 commercial + 11 office tenants; the finished
 building is planned for 50–60.
 
-### ⚠️ The "art deco" question — a design decision, not just a fact-check
+### ⚠️ The "art deco" question — partly walked back after seeing the building
+
+**Correction to what's written below.** The before/after photographs show a real
+decorative programme that the earlier fact-check underrated: a stepped, pedimented
+parapet, a circular **1919 datestone medallion**, and brick pilasters capped with
+stepped geometric blocks. That is genuinely deco-adjacent — geometric,
+stylised, symmetrical — and the designer's instinct has support in the fabric.
+
+The chronological point still stands: 1919 predates Art Deco proper. But the
+accurate description isn't "not deco," it's that the building sits in the
+**geometric commercial vernacular that Art Deco grew out of**, and reads deco to a
+modern eye. Copy should credit the look without claiming the movement.
+
+Usable phrasings: *"geometric brickwork and a stepped parapet that anticipate the
+deco era"* · *"deco-era character"* · *"a 1919 datestone under stepped brick."*
+
+Also note the parapet reads **WARD BAKING CO** — so the Ward name is physically on
+the building regardless of who built it. Copy should not read as though Ward were
+a footnote; the honest framing is that the plant went up in 1919, Ward's name went
+up after they took it over, and Ward's name is what survived.
+
+### The original fact-check, for the record
 
 The heritage framing runs through the whole design direction, so this needs a
 deliberate answer rather than a footnote.
@@ -700,6 +721,41 @@ that looks expensive:
 
 **Keep untreated masters in `reference/`.** The treatment will get revised.
 
+### Where the four then/now pairs go — DECIDED
+
+Four pairs exist, all 875×512, hand-treated. Placement:
+
+| Pair | Subject | Home | History |
+|---|---|---|---|
+| 1 | Parapet: 1919 datestone + WARD BAKING CO | — | Milestone 1 |
+| 2 | Full west elevation, bricked → glazed | ✅ the teaser | Milestone 7 & 10 |
+| 3 | California Ave corner | — | Then/Now section |
+| 4 | South end + adjoining storefront | — | Then/Now section |
+
+**Not on Find Your Space.** That page answers "does my business fit here." A
+before/after doesn't serve it and would dilute a page that needs to stay
+functional.
+
+**Home gets exactly one pair**, as a teaser into History. Home's job is leasing;
+the history is the emotional hook, not the subject.
+
+**No carousel on the website.** Carousels hide content behind an interaction most
+visitors never perform — engagement past the first slide is famously dismal, and
+the pairs are the most persuasive artefact we have. On History they get stacked so
+all four are visible. *Instagram is where the carousel belongs*, and these four
+pairs are ideal for it.
+
+**Presentation is side-by-side, not a drag slider.** The frames are shot from the
+same position, so showing both at once lets the eye compare directly. A slider
+forces sequential viewing, hides half the content at any moment, is fiddly on
+touch, and needs bespoke keyboard handling to be operable at all. The alignment is
+doing the work; an interaction would get in its way.
+
+⚠️ **Resolution ceiling.** The sources are 875px wide — fine for a half-width
+module, **too small for the full-bleed hero**, which will look soft on any large
+display. It is acceptable as placeholder and must be replaced by the professional
+photography in Phase 8. Shoot the hero frame at 2560px or wider.
+
 ### The then/now dissolve
 
 Rob shot the modern exteriors at matching angles, which makes a crossfade
@@ -876,7 +932,7 @@ Do **not** order the carousel chronologically. Standard structure:
 | **0.5** | 📸 Capture old GoDaddy site + smoke-test page — perishable | ✅ Complete (stored in IG-management structure, outside this repo) |
 | **1** | Foundations: SCSS token layer, type scale (Fraunces / Public Sans), layout primitives, base layout, header/footer, floating CTA + modal + Netlify Forms 📸 **capture the `/specimen` sheet** | ✅ Complete |
 | **2** | Content model + collection schemas; real copy replacing the wall of text | 🔨 Schemas + seed content done; blocked on client inputs for the rest |
-| **3** | Home: hero, use-type grid, stat strip, location module, teasers 📸 | |
+| **3** | Home: hero, use-type grid, stat strip, location module, teasers 📸 | ✅ Built. Hero image is placeholder-resolution; proximity drive times still needed |
 | **4** | Find Your Space: floor plans + interactive SVG + location map 📸 — ⚠️ **confirm static-map decision with client before building this page** | |
 | **5** | History: scroll-driven vertical timeline 📸 | ✅ Built early — content was ready. Archival images still to come |
 | **6** | Community: tenants → owners → neighborhood → partners 📸 | |

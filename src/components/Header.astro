@@ -10,7 +10,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 <header class="header" data-header>
 	<Container as="div" class="header__inner">
 		<a class="header__brand" href="/">
-			<!-- Placeholder wordmark. Replaced by the Figma PP mark (SVG) in Phase 7. -->
+			{/* Placeholder wordmark. Replaced by the Figma PP mark (SVG) in Phase 7. */}
 			<span class="header__mark" aria-hidden="true">PP</span>
 			<span class="header__wordmark">Portage Place</span>
 		</a>
@@ -46,11 +46,11 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		</button>
 	</Container>
 
-	<!--
+	{/*
 		Mobile nav is a sibling panel rather than a duplicate <nav aria-label="Primary">
 		— two nav landmarks with the same name is a screen-reader smell. It's hidden
 		with `hidden` (not just CSS) so it stays out of the tab order when closed.
-	-->
+	*/}
 	<div class="header__panel" id="header-mobile-nav" hidden data-nav-panel>
 		<Container as="div">
 			<ul class="header__panel-list" role="list">
