@@ -250,9 +250,25 @@ const entries = await Promise.all(
 				scale: 1 0;
 				animation: rail-fill linear both;
 				animation-timeline: --timeline;
-				// Track roughly where the reader is rather than the element's full
-				// travel, so the line reaches the bottom as the last entry lands.
-				animation-range: cover 12% cover 88%;
+
+				// The full cover range, deliberately — do NOT trim it to something like
+				// `cover 12% cover 88%` to "tighten" the effect.
+				//
+				// Those percentages are proportional to (element height + viewport
+				// height), and the timeline element's height varies enormously with
+				// viewport width: ~5,200px on a desktop, ~11,000px on a 412px-wide
+				// phone where every milestone stacks. A 12% lead-in is ~730px of dead
+				// scroll on desktop but ~1,430px on the phone, which clamps the fill to
+				// the very top edge of the screen for the whole of the first milestone
+				// and pins it to the bottom edge at the last. It reads as broken.
+				//
+				// Across the full range the maths cancels out: the fill line travels
+				// from the bottom of the viewport to the top, at a screen position of
+				// (vh - s·vh/(elH+vh)), which stays on screen at every scroll offset for
+				// any element/viewport ratio. Measured, the line sits 92%→8% down the
+				// screen on a Pixel 9 and 85%→15% on a desktop — near-identical
+				// behaviour, and more of the travel used than the trimmed range gave.
+				animation-range: cover 0% cover 100%;
 			}
 
 			.milestone {

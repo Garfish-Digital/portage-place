@@ -1,11 +1,11 @@
 ---
-name: 'Cressy & Everett Real Estate'
+name: 'Brandmark Marketing Specialists'
 category: office
-type: Real estate
+type: Marketing
 quote: >-
-  The location is convenient, the space works well for our needs, and we’ve had a very positive experience overall.
-featured: true
-order: 4
+  We’ve enjoyed being tenants here and appreciate having a well-kept, professional space for our business.
+featured: false
+order: 9
 placeholder: false
 draft: false
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
@@ -15,4 +15,4 @@ draft: false
 #   · confirmation the tenant approves this wording being published.
 ---
 
-Real estate in the office wing.
+Marketing in the office wing.

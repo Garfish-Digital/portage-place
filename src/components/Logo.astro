@@ -1,0 +1,71 @@
+---
+import lockupSvg from '../assets/logo/lockup.svg?raw';
+import iconSvg from '../assets/logo/icon.svg?raw';
+
+/**
+ * The Portage Place mark.
+ *
+ * Inlined with `?raw` rather than referenced via <img>, because `currentColor`
+ * only resolves against the host document. An <img> gives the SVG its own
+ * document context, where currentColor falls back to black and the mark stays
+ * black on the espresso footer.
+ *
+ * Both variants are derived from `public/logo/logo-master.svg`, which is the
+ * Figma export and the source of truth. Re-export, re-run the transform, done.
+ */
+interface Props {
+	/** `lockup` = icon + PORTAGE + rules + PLACE. `icon` = the interlock alone. */
+	variant?: 'lockup' | 'icon';
+	class?: string;
+	/**
+	 * Keep the element ids (`#icon-left`, `#wordmark-portage`, …).
+	 *
+	 * Off by default and that matters: the lockup and the icon share ids, so two
+	 * instances on one page would emit duplicate ids — invalid HTML, and any
+	 * `#icon-left` selector would silently bind to whichever came first. Only the
+	 * instance that needs animation targets should keep them, and only one
+	 * instance per page may do so.
+	 */
+	keepIds?: boolean;
+}
+
+const { variant = 'lockup', class: className, keepIds = false } = Astro.props;
+
+const raw = variant === 'lockup' ? lockupSvg : iconSvg;
+
+const markup = raw
+	// Let CSS own the size; the intrinsic attributes would win otherwise.
+	.replace(/\s(width|height)="[^"]*"/g, '')
+	// Decorative: the accessible name comes from real text alongside it. The
+	// wordmark here is outlined vector, not readable text, so it cannot serve as
+	// the name on its own. focusable="false" keeps legacy IE/Edge from putting
+	// the <svg> in the tab order.
+	.replace('<svg ', '<svg aria-hidden="true" focusable="false" ')
+	.replace(/\sid="([^"]+)"/g, keepIds ? ' id="$1"' : '');
+---
+
+<span class:list={['logo', `logo--${variant}`, className]} set:html={markup} />
+
+<style lang="scss">
+	.logo {
+		display: block;
+		color: inherit;
+
+		:global(svg) {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	// Aspect ratios are fixed by the artwork: the icon crop is 257.5 × 146
+	// (1.76:1) and the full lockup is 555 × 400. Declaring them reserves the box
+	// before the inline SVG lays out, which keeps CLS at zero.
+	.logo--icon {
+		aspect-ratio: 257.5 / 146;
+	}
+
+	.logo--lockup {
+		aspect-ratio: 555 / 400;
+	}
+</style>

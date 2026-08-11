@@ -1,11 +1,11 @@
 ---
-name: 'Cressy & Everett Real Estate'
+name: 'Garfish Digital'
 category: office
-type: Real estate
+type: Web development
 quote: >-
-  The location is convenient, the space works well for our needs, and we’ve had a very positive experience overall.
-featured: true
-order: 4
+  The space gave us the flexibility we needed as our business grew, and we’ve been pleased with the overall experience.
+featured: false
+order: 5
 placeholder: false
 draft: false
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
@@ -15,4 +15,4 @@ draft: false
 #   · confirmation the tenant approves this wording being published.
 ---
 
-Real estate in the office wing.
+Web development in the office wing.

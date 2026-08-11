@@ -1,11 +1,11 @@
 ---
-name: 'Cressy & Everett Real Estate'
-category: office
-type: Real estate
+name: 'Cloudwalking Bakery'
+category: commercial
+type: Bakery
 quote: >-
-  The location is convenient, the space works well for our needs, and we’ve had a very positive experience overall.
+  It’s a convenient location with a great mix of businesses and services nearby. We’re glad we chose this space.
 featured: true
-order: 4
+order: 7
 placeholder: false
 draft: false
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
@@ -15,4 +15,4 @@ draft: false
 #   · confirmation the tenant approves this wording being published.
 ---
 
-Real estate in the office wing.
+Bakery in the commercial wing.

@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 import Container from './primitives/Container.astro';
+import Logo from './Logo.astro';
 import { NAV_ITEMS } from '../config/nav';
 
 const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
@@ -10,8 +11,14 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 <header class="header" data-header>
 	<Container as="div" class="header__inner">
 		<a class="header__brand" href="/">
-			{/* Placeholder wordmark. Replaced by the Figma PP mark (SVG) in Phase 7. */}
-			<span class="header__mark" aria-hidden="true">PP</span>
+			{/*
+				Icon + live text, not the full lockup: the lockup stacks PORTAGE over
+				PLACE and would need ~90px of height in a 72px bar. The name stays as
+				real text because "remember the name" is the client's stated goal, and
+				because it gives the link its accessible name — the lockup's wordmark is
+				outlined vector, which no screen reader can read.
+			*/}
+			<Logo variant="icon" class="header__mark" />
 			<span class="header__wordmark">Portage Place</span>
 		</a>
 
@@ -149,32 +156,35 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 	.header__brand {
 		display: inline-flex;
 		align-items: center;
-		gap: var(--pp-space-2xs);
+		gap: var(--pp-space-xs);
 		text-decoration: none;
 		color: var(--pp-ink-strong);
 
 		@include focusable;
 	}
 
-	.header__mark {
-		display: grid;
-		place-items: center;
-		width: 34px;
-		height: 34px;
-		font-family: var(--pp-font-display);
-		font-size: 0.9rem;
-		font-weight: var(--pp-weight-bold);
-		letter-spacing: 0.02em;
-		color: var(--pp-plaster);
-		background-color: var(--pp-espresso);
-		border-radius: var(--pp-radius-s);
+	// 38px tall → ~67px wide at the mark's 1.76:1 ratio. Size testing put the
+	// legibility floor at roughly 40px WIDE, where the diagonal channel between
+	// the two forms closes up; 67px is comfortably clear of it. The old 34px
+	// square placeholder was well below that line.
+	:global(.header__mark) {
+		height: 38px;
+		width: auto;
+		flex: none;
+		color: var(--pp-ink-strong);
 	}
 
+	// Public Sans letter-spaced caps rather than Fraunces. The mark's own
+	// lettering is a geometric sans, and setting the name in a serif right next
+	// to it reads as two competing voices. This echoes the logo instead.
 	.header__wordmark {
-		font-family: var(--pp-font-display);
-		font-size: var(--pp-text-s);
+		font-family: var(--pp-font-body);
+		font-size: var(--pp-text-xs);
 		font-weight: var(--pp-weight-semibold);
-		letter-spacing: 0.01em;
+		letter-spacing: var(--pp-tracking-caps);
+		text-transform: uppercase;
+		line-height: 1.2;
+		color: var(--pp-ink-strong);
 	}
 
 	// ---------------------------------------------------------------------------

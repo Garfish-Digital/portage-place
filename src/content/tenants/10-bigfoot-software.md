@@ -1,11 +1,11 @@
 ---
-name: 'Cressy & Everett Real Estate'
+name: 'Bigfoot Software Development'
 category: office
-type: Real estate
+type: Software development
 quote: >-
-  The location is convenient, the space works well for our needs, and we’ve had a very positive experience overall.
-featured: true
-order: 4
+  The building provides a great environment for our business and has everything we need to operate comfortably.
+featured: false
+order: 10
 placeholder: false
 draft: false
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
@@ -15,4 +15,4 @@ draft: false
 #   · confirmation the tenant approves this wording being published.
 ---
 
-Real estate in the office wing.
+Software development in the office wing.

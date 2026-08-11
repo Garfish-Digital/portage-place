@@ -1,11 +1,11 @@
 ---
-name: 'Cressy & Everett Real Estate'
-category: office
-type: Real estate
+name: 'Holly Knit n Things'
+category: commercial
+type: Yarn & fibre arts
 quote: >-
-  The location is convenient, the space works well for our needs, and we’ve had a very positive experience overall.
+  We really enjoy being part of the building. It has a professional atmosphere while still feeling welcoming.
 featured: true
-order: 4
+order: 6
 placeholder: false
 draft: false
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
@@ -15,4 +15,4 @@ draft: false
 #   · confirmation the tenant approves this wording being published.
 ---
 
-Real estate in the office wing.
+Yarn & fibre arts in the commercial wing.

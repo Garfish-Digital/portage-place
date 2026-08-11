@@ -1,6 +1,7 @@
 ---
 import Container from './primitives/Container.astro';
 import Button from './Button.astro';
+import Logo from './Logo.astro';
 import { NAV_ITEMS, CONTACT } from '../config/nav';
 
 const year = new Date().getFullYear();
@@ -24,9 +25,18 @@ const year = new Date().getFullYear();
 		<hr class="footer__rule" />
 
 		<div class="footer__meta">
+			{/*
+				The full lockup lives here and only here. It's the one place a visitor
+				arrives having read the page, and it's where the scroll-triggered draw
+				will go (BUILD_PLAN). `keepIds` is on for exactly one instance per page
+				so the animation has targets without colliding with the header icon.
+
+				The lockup's wordmark is outlined vector, so the visible name it shows
+				is invisible to assistive tech — hence the visually-hidden text.
+			*/}
 			<div class="footer__brand">
-				<span class="footer__mark" aria-hidden="true">PP</span>
-				<span class="footer__wordmark">Portage Place</span>
+				<Logo variant="lockup" class="footer__mark" keepIds />
+				<span class="pp-visually-hidden">Portage Place</span>
 			</div>
 
 			<nav class="footer__nav" aria-label="Footer">
@@ -50,7 +60,7 @@ const year = new Date().getFullYear();
 		</div>
 
 		<p class="footer__legal">
-			&copy; {year} Portage Place. A restored 1920s landmark in South Bend, Indiana.
+			&copy; {year} Portage Place. A restored 1919 bakery in South Bend, Indiana.
 		</p>
 	</Container>
 </footer>
@@ -118,28 +128,14 @@ const year = new Date().getFullYear();
 	}
 
 	.footer__brand {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--pp-space-2xs);
+		display: block;
 	}
 
-	.footer__mark {
-		display: grid;
-		place-items: center;
-		width: 34px;
-		height: 34px;
-		font-family: var(--pp-font-display);
-		font-size: 0.9rem;
-		font-weight: var(--pp-weight-bold);
-		color: var(--pp-espresso);
-		background-color: var(--pp-plaster);
-		border-radius: var(--pp-radius-s);
-	}
-
-	.footer__wordmark {
-		font-family: var(--pp-font-display);
-		font-size: var(--pp-text-s);
-		font-weight: var(--pp-weight-semibold);
+	// Inherits --pp-text from .pp-on-dark, so the mark renders plaster on espresso
+	// with no variant of its own — the whole point of currentColor.
+	:global(.footer__mark) {
+		width: clamp(10.5rem, 18vw, 13rem);
+		color: var(--pp-text-strong);
 	}
 
 	.footer__list {

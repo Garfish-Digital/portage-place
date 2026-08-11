@@ -1005,6 +1005,111 @@ showing what's available today.
 
 ---
 
+## The logo — recommendation
+
+Rob is rebuilding the mark in Figma. The raw exploration is in
+`reference/main-logo/`. Summary of where I'd land, and why.
+
+### The strategic problem first: an entrance animation has nowhere to live
+
+Before choosing *which* animation, ask where it plays. On this site:
+
+- The header mark renders at **34px** in a sticky bar. A two-second architectural
+  draw at 34px is invisible, and repeating it on every page load is an irritant.
+- The hero is a **photograph with a headline**. There is no logo lockup in it, and
+  putting one there would fight the building for attention.
+- The only remaining slot is a **preloader** — which would mean deliberately
+  delaying a site whose stated budget is LCP under 1.5s and zero blocking JS. We
+  would be adding wait time to show off. That is the opposite of expensive.
+
+So the elaborate on-load draw is a great idea with no home. Worth knowing *before*
+spending a day building it in Figma.
+
+### Where the "wow" actually goes: the footer
+
+The footer already carries the mark, it's where a visitor lands having read the
+whole page, and it's the natural place for an identity statement. Render the full
+lockup **large** there and draw it **once, on scroll arrival**:
+
+1. Icon draws — the two interlocking forms, sequenced.
+2. `PORTAGE` reveals.
+3. **The rules draw outward from centre** — note #9, very low cost, and the detail
+   that reads as designed rather than templated.
+4. `PLACE` settles.
+5. **Then nothing.** The stillness afterwards is what sells it.
+
+Total ~1.6–2.0s, `cubic-bezier(0.22, 1, 0.36, 1)`, no bounce, no overshoot.
+
+**No GSAP needed.** `stroke-dasharray`/`stroke-dashoffset` is plain CSS, and we
+already drive scroll-triggered motion with `animation-timeline: view()` on the
+History timeline. This does not reopen the GSAP decision.
+
+### Header: static mark + a 1–2px interlock hover
+
+Note #12 is the right call for a sticky header — the two geometric forms shift
+fractionally apart and back on hover. Almost nobody notices consciously; it gives
+the identity physicality without a header that performs on every page.
+
+### Two things in the notes that contradict each other
+
+The notes' "Top Pick" is *line-draw + metallic gradient sweep*, but the same
+document later says to resist "gold gradients, chrome, glass effects." **The
+second instinct is right.** Additionally, a metallic/bronze logo would collide with
+our palette: bronze is already the ornament and focus-ring colour, and promoting an
+accent to identity level muddies both. **Render the mark in `--pp-espresso` on
+light surfaces and `--pp-plaster` on dark.** The client's official colours are
+black and white; staying monochrome is both truer to the brand and stronger.
+
+### Is SVG line-draw dated?
+
+Not dated, but *extremely* familiar — it was the signature agency effect of
+roughly 2015–2019, and a design-literate viewer reads it as "web animation."
+Restraint and precision are what separate it from that association: slow, single
+occurrence, no easing gimmicks, and complete stillness afterwards. Used once in the
+footer it reads as craft. Used on every page load it reads as a template.
+
+### The constraint the notes miss: small sizes
+
+The current mark has hairline strokes and a thin diagonal sliver through the
+interlock. **That detail will turn to mush below roughly 48px, and is unreadable at
+16px.** A single master exported at every size will look broken in the favicon and
+soft in the header.
+
+Build a **size-tiered set**, which is standard practice for a mark this detailed:
+
+| Tier | Use | Treatment |
+|---|---|---|
+| Full lockup | Footer, OG images, print, QR collateral | Icon + PORTAGE + rules + PLACE |
+| Horizontal lockup | Header at ≥1024px | Icon + wordmark on one line |
+| Icon only | Header on mobile, app icons | Interlock, thickened strokes |
+| Simplified icon | Favicon 16–32px | Drop the inner diagonal entirely |
+
+Draw the small tiers deliberately — thicker strokes, wider counters, less detail —
+rather than scaling the master down.
+
+### Accessibility notes
+
+- **The logo is exempt from contrast requirements.** WCAG 1.4.11 explicitly
+  excludes logotypes, so the mark does not constrain the palette. The *link* around
+  it still needs a visible focus indicator — the existing `focusable()` mixin.
+- If the mark becomes inline SVG, keep `aria-hidden="true"` on the `<svg>` and give
+  the link a real text label (what `Header.astro` already does). More robust than
+  `role="img"` + `<title>`, and it survives SVG-blocking edge cases.
+- Any draw animation must render its **finished state** under
+  `prefers-reduced-motion: reduce` — same pattern as the History timeline.
+- The animation must not be the only way the logo appears. Default state in CSS is
+  the completed mark; the draw is added inside `@supports` + motion queries.
+
+### Do build the motion-ready master
+
+The layer discipline in the notes is correct regardless of how much motion ships:
+named groups for `icon-left`, `icon-bridge`, `icon-right`, `wordmark`, `rule-left`,
+`rule-right`, geometry preserved as open strokes rather than flattened compound
+paths. It costs nothing extra during construction and it is expensive to retrofit.
+Export a clean static SVG alongside it.
+
+---
+
 ## Questions for the client — Phase 2 content
 
 Grouped by who can answer. Nothing here blocks schema work; all of it blocks
@@ -1012,14 +1117,24 @@ finished copy.
 
 ### Tenants (blocks the Community page)
 
-1. **Which tenants get surfaced?** ~12 of 20. Confirmed so far: Counterspell
-   Coffee, Alchemy Healing Arts, Rhyme & Reason Ministry, Cressy & Everett.
-2. **Will they give testimonials, and who signs each one?** A quote needs a name
-   and role attached, or it reads as invented. We are holding six placeholder
-   entries rather than writing words for real businesses.
-3. **Logo or portrait for each?** Vector preferred. A photograph of the owner
+1. ~~**Which tenants get surfaced?**~~ ✅ Ten supplied with quotes, now in the
+   `tenants` collection. No placeholders remain there.
+2. **Who signs each testimonial?** ⚠️ **Still open, and it matters.** The ten
+   quotes carry no attribution. An unattributed testimonial reads as written by
+   the landlord — which is precisely the opposite of what a testimonial is for.
+   Each needs a person's name and role.
+3. **⚠️ The ten quotes are all in the same voice.** Read end to end they are
+   uniformly positive, similar in length, and share a register ("great fit",
+   "very happy", "positive experience overall"). For a site whose whole pitch is
+   an *eclectic, warm, human* community, ten identical corporate sentences will
+   read as fabricated and actively undercut trust. Strong recommendation: go back
+   for shorter, more specific, more idiosyncratic lines — one concrete detail each
+   beats a paragraph of praise. "The morning light in here is unreal" from the
+   coffee shop is worth more than all ten of these combined.
+4. **Logo or portrait for each?** Vector preferred. A photograph of the owner
    often beats a logo for a building selling community.
-4. **Permission to link to each tenant's own site.**
+5. **Permission to link to each tenant's own site**, and confirmation each
+   approves its quote being published.
 
 ### The owners
 

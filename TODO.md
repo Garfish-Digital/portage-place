@@ -367,91 +367,116 @@ https://westsb.com/features/ward?rq=ward
 
 =====
 
+Both concerns are fair, and the second one is the important one. Let me answer the direct question first.
 
+The animation doesn't exist. I never built it.
 
+You're not missing anything. I described the footer draw in BUILD_PLAN.md as a plan, set up the prerequisite for it (keepIds, so the animation would have targets), and then wired in a static logo. When I said "the future scroll-draw has its targets," the word "future" was carrying weight it shouldn't have carried. That reads as though something was delivered. Nothing was.
 
+What was intended
 
+On scroll arrival at the footer, once per page load:
 
-A second, independent bug would have bitten you on phones anyway. I had the reveal on animation-range: entry 0% entry 55%. The entry range ends when the element is fully in view — but a milestone with
-a title, summary, and three paragraphs is taller than a 375px viewport, and an elementt is never "fully in view." The range end clamps, stretching the reveal across nearlythe element's whole travel, so text sits faded and offset for most of the time you're reading it. Switched to cover 0% cover 22%, which is measured against element height plus viewport height and so
-degrades gracefully at any ratio.
+1. #icon-right then #icon-left draw in — stroke-dasharray/stroke-dashoffset animated so the line appears to be drawn by a pen, ~600ms
+2. #wordmark-portage rises and fades in
+3. #rule-left and #rule-right scale outward from centre
+4. #wordmark-place settles
+5. Stops. Never repeats, never loops.
 
-Both are worth a look on the Chromebook before you capture.
+Native CSS via animation-timeline: view() — the same mechanism as the History timeline. No GSAP, no JS. @supports-gated, finished state rendered under prefers-reduced-motion.
 
-A leak I found while verifying
+One technical constraint you should know before Figma
 
-Chasing an odd <dt> count, I discovered my explanatory HTML comments were shipping to s the site, up to 7% of a page, including "PLACEHOLDER IMAGERY" and internal designrationale. Astro strips {/* */} but emits <!-- -->. Converted 43 comments across 9 files; also moved the tenant Markdown notes into YAML frontmatter, since Markdown has no non-rendering comment syntax
-and those "no invented quote" warnings would have gone public the moment the Community
+stroke-dashoffset drawing only works on stroked paths. Your icon and your two rules are strokes — those can genuinely be "drawn." PORTAGE and PLACE are filled outlined letterforms. Filled shapes cannot be drawn that way. They can fade, rise, or wipe via clip-path, but no pen effect.
 
-Home is now 6.5 KB gzipped, down from 7.7 KB. Content verified unchanged: 5 stats, 8 u press links.
+So the honest version is: icon draws, rules draw, wordmark wipes or fades. If you wanted the letters to literally draw, they'd have to be rebuilt as single-stroke paths — a substantial and different piece of Figma work, and the result would look like a monoline sign-painter's font rather than your logo.
 
-Your before/after work — and one correction it forced
+The header: you're right, and it wasn't WCAG
 
-These are better than "fine." The alignment on pairs 2 and 4 is genuinely good, and th exactly the way that makes a crossfade viable later.
+Let me be unambiguous, because you asked directly.
 
-Historic-1 also proved me partly wrong. The parapet carries a 1919 datestone medallion— and the stepped pedimented parapet with geometric capped pilasters is genuinelydeco-adjacent. I over-corrected earlier. The accurate position isn't "not deco," it's that the building sits in the geometric commercial vernacular Art Deco grew out of. Your designer's instinct has
-support in the brick. I've put usable phrasings in the plan: "geometric brickwork and icipate the deco era."
+WCAG 1.4.11 explicitly exempts logotypes from contrast requirements. I told you that myself when we discussed the logo. Your mark can be any colour on any background. Nothing about accessibility required dropping the rules, restructuring the text, or changing the background.
 
-I also downgraded milestone 1 from documented to contested. The datestone settles the o built it, and the Ward sign isn't evidence of the original owner since Ward would have re-signed a building they bought.
+The only genuine accessibility requirement is that the header link has an accessible name — and that is fully satisfied by a visually-hidden <span>Portage Place</span>. It does not require any visible text at all.
 
-Placement — my recommendation:
+So what I did in the header was a design decision I made, and I should have flagged it as one rather than presenting it as wiring-up:
 
-┌─────────────────────────┬───────────────┬───────────────────┐
-│          Pair           │     Home      │      History      │
-├─────────────────────────┼───────────────┼───────────────────┤
-│ 1 — parapet / datestone │ —             │ Milestone 1       │
-├─────────────────────────┼───────────────┼───────────────────┤
-│ 2 — full elevation      │ ✅ the teaser │ Milestones 7 & 10 │
-├─────────────────────────┼───────────────┼───────────────────┤
-│ 3 — corner              │ —             │ Then/Now section  │
-├─────────────────────────┼───────────────┼───────────────────┤
-│ 4 — south end           │ —             │ Then/Now section  │
-└─────────────────────────┴───────────────┴───────────────────┘
+- I used the icon alone because the stacked lockup needs ~90px of height in a 72px bar
+- I re-set the name in Public Sans because I judged a serif beside the geometric mark to be a clash
+- I rendered it espresso-on-plaster for palette coherence
 
-Not on Spaces. That page answers "does my business fit here" — a before/after dilutes it.
+Each was defensible in isolation. Together they produced a header containing your client's icon plus a wordmark I typeset myself in a different typeface, with their rules deleted. That is not their logo. Your instinct is correct, and a client would be right to object.
 
-No carousel on the site. Carousels hide content behind an interaction most visitors never perform, and these are the most persuasive artefact we have. Stack them so all four are visible. Instagram is
-where the carousel belongs, and these four pairs are ideal for it.
+The actual problem underneath
 
-Side-by-side, not a drag slider. The frames share a camera position, so showing both ae directly. A slider forces sequential viewing, hides half the content, is fiddly ontouch, and needs bespoke keyboard handling.
+Their logo exists in exactly one configuration: a vertical lockup on a black field, roughly 1.39:1. A website header is a horizontal strip 64–88px tall on a light background. Those two things cannot be reconciled by scaling.
 
-Home page                                                                                                                                                                                              
-Hero → stat strip → use-type grid → then/now teaser → location → closing CTA. Still zero JS bundles. The wall of text is gone: the ten anaphoric "A place to…" lines are now an eight-item icon grid   answering do I belong here? in three seconds.
-                                                                                                                                                                                                       The hero scrim is set from contrast maths, not by eye. Assuming the photo's brightest  the text, limestone only reached 3.59:1 — a fail. Switched the hero text to--pp-plaster, which holds 4.73:1 even over a blown-out sky, and restopped the gradient. This matters because the photo gets replaced in Phase 8; tuning the scrim to this image would have hidden a    failure that silently returned with the next one.
-                                                                                                                                                                                                       Two things I deliberately did not fake:
-                                                                                                                                                                                                       - No drive times or distances. Your current copy says only "just minutes from." The pr numbers. Real ones would make that module considerably stronger — worth measuring.
-- Hero resolution. Your sources are 875px wide. Fine for the half-width module, too small for a full-bleed hero — it'll look soft on a large display. Acceptable as placeholder; tell the photographer you want the hero frame at 2560px or wider.
+This is a completely normal, extremely common brand situation. Real identity systems carry several lockups: stacked (primary), horizontal, icon-only, and reversed. Portage Place doesn't have a horizontal lockup yet. That's the gap — not a flaw in your reconstruction, and not something accessibility caused.
 
-📸 Home and History are both worth recapturing — the Home page is unrecognisable from .
+That reframe is worth a lot with the client: "your identity needs one more lockup, and we'll build it for you" is an addition to their brand, not an alteration of it.
 
-Next up is Community, which needs the tenant list, or Find Your Space, which needs flofirst.
+Options
 
+┌────────────────────────────────────┬───────────────────────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    │                                  What it is                                   │                                                      Cost                                                       │
+├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ A. Full lockup in the header       │ Their exact asset, scaled                                                     │ Needs a ~140px header for PLACE to be legible at all. Eats the fold, worst on the short ThinkPad viewport       │
+├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ B. Design a horizontal lockup      │ Icon left, PORTAGE/PLACE stacked right, rules kept — all in their letterforms │ Figma work, but an asset they need anyway (email signatures, letterhead, the QR flyer)                          │
+├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ C. Compose one from existing paths │ Same as B, assembled in code from the master                                  │ Fast, no Figma. Optical spacing won't be as good as designed                                                    │
+├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ D. Black plaque in the header      │ Preserve the asset exactly, on its black field, as a small plaque             │ 100% fidelity. Risks looking like a sticker — though "plaque on a building" is a real concept worth considering │
+└────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
+My recommendation is B, with C as an interim if you want something in front of the client this week.
+
+Two questions worth asking the client
+
+1. Is the black rectangle part of the logo, or the field it's shown on?
+
+This resolves more than it looks. Their asset is a plain black rectangle — no rounded corners, no border, no padding system. That reads like "the mark, presented on black" rather than "the mark includes a black container." But it's their call, and the answer changes the palette conversation entirely.
+
+If black is just the field, then rendering the mark in a single dark colour on a light background is standard brand usage — every one-colour/knockout version works this way — and we're on solid ground.
+
+2. May we build a horizontal lockup for the site?
+
+Framed as extending their system, not changing their logo.
+
+One concrete concession worth offering: render the mark in true black #000 rather than espresso on light surfaces. Logos are exempt from our contrast rules, so nothing stops us. It'll read almost identically to espresso, and it lets you tell them their logo appears in their official black.
+
+Should you show them?
+
+I'd say no — not the current header. Not because the work is bad, but because it's an unfinished intermediate that misrepresents where we're heading, and first impressions on identity stick hard.
+
+Better sequence: take them the two questions above before showing any header treatment, then come back with a designed horizontal lockup. That's a stronger professional posture and it puts you in the position of extending their brand rather than defending a change to it.
+
+One sequencing note: the lockup question should settle before I build the footer animation, because the animation targets depend on which lockup ends up there. If a horizontal lockup lands in the header, we may also want the footer to use it rather than the stacked version — and that changes the choreography.
+
+I'd revert the header to something neutral in the meantime rather than leave my invented lockup sitting in the repo. Say the word and I'll do that, or leave it if you'd rather compare directly.
 
 
 
 =====
 
+-Let's not revert yet. I want to talk to the client first. Let's work on some other areas while I get more information.
+
+-I made some changes to the copy in index.astro, but I got stuck on the section starting on line 143. Maybe the information below will help you complete it.
+
+```text
+-1. The Morris Performing Arts CenterArts & Culture~3 mins
+-2. The History Museum & Oliver Mansion (Copshaholm)Architecture & Local History~2–3 mins
+-3. IU South Bend Civil Rights Heritage CenterAfrican American History~3–4 mins
+-4. Studebaker National MuseumIndustrial & Automotive History~4 mins
+-5. Saint Mary’s College (Le Mans Hall)Catholic Higher Education~5 mins
+-6. University of Notre Dame (Golden Dome / Main Building)Religion & Collegiate History~6–7 mins
+```
 
 
-=====
 =====
 =====
 
 ## Notes
-
-- Archival image treatment
-
-Bake it into the asset in Figma — agreed. CSS filters apply the same transform to images with very different original casts, so they read as a filt your set ranges from clean scans to a screen grab.
-
-But skip flat sepia. Real prints don't age uniformly — they lose contrast, warm in the highlights, and cool slightly in the shadows. The recipe tha
-
-1. Desaturate to grayscale first.
-2. Split-tone rather than a single-hue wash: highlights toward #DDD7CF (limestone), shadows toward #322F2C (espresso). That's our palette — so the archival images look native to the page instead of dropped into it, which flat sepia never achieves.
-3. Contrast slightly below the modern photos. Age reads as softness.
-4. Grain sparingly, vignette very sparingly. A heavy vignette is the fastest way to make a real archival photo look fake.
-
-Keep the untreated masters in reference/ — this will get revised.
 
 
 - Should we include "WCAG 2.2 AA compliant" in the footer or somewhere tucked away?

@@ -1,11 +1,11 @@
 ---
-name: 'Cressy & Everett Real Estate'
+name: 'GreenCrest Facility Solutions'
 category: office
-type: Real estate
+type: Facility services
 quote: >-
-  The location is convenient, the space works well for our needs, and we’ve had a very positive experience overall.
-featured: true
-order: 4
+  From the beginning, the process of moving into our space was straightforward and easy. We’ve been very happy here.
+featured: false
+order: 8
 placeholder: false
 draft: false
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
@@ -15,4 +15,4 @@ draft: false
 #   · confirmation the tenant approves this wording being published.
 ---
 
-Real estate in the office wing.
+Facility services in the office wing.
