@@ -6,6 +6,8 @@ titles:
   - 'Licensed Architect — Indiana (1984), Michigan (1994)'
   - 'M.Arch, Urban Design, University of Notre Dame'
   - 'Qualified Historic Architect, Indiana DHPA'
+portrait: ../../assets/team/kil.png
+portraitAlt: Pencil-sketch portrait of Greg Kil.
 order: 3
 kind: owner
 draft: false

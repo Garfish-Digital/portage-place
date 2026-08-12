@@ -67,3 +67,24 @@ export const CONTACT = {
 		postalCode: '46616',
 	},
 } as const;
+
+/**
+ * Google Maps embed for the Contact page's click-to-load map.
+ *
+ * ⚠️ REPLACE WITH THE SHARE→EMBED URL.
+ * In Google Maps: find the building → Share → "Embed a map" → copy the iframe
+ * `src`. That gives `https://www.google.com/maps/embed?pb=…`, which is the
+ * official, free, no-API-key form. Its `pb=` parameter is an opaque blob
+ * encoding the map view and cannot be constructed from an address, which is why
+ * it has to be pasted rather than generated.
+ *
+ * The value below is the constructible `output=embed` form. It works and is
+ * widely used, but it is undocumented, so it is a stopgap — not what should ship.
+ *
+ * Either way the embed is only ever loaded on an explicit click. Google Maps sets
+ * third-party cookies and pulls a large payload the moment it loads, and doing
+ * that to every visitor who happens to open Contact is exactly what the facade
+ * pattern exists to avoid.
+ */
+export const MAP_EMBED_URL =
+	'https://maps.google.com/maps?q=908+Portage+Avenue,+South+Bend,+IN+46616&z=15&output=embed';

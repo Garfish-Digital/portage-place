@@ -1,119 +1,334 @@
-# Floor-plan regions for "Find Your Space".
+# Floor-plan units for "Find Your Space".
 #
-# ⚠️ EVERY ENTRY IS A PLACEHOLDER until the real floor plans arrive. Sizes here
-# are shaped to the known ranges (200–2,000 sq ft, four office sizes, Phase 1 is
-# ~20,000 of the building's ~56,000 sq ft) so the interactive plan and the space
-# list can be built — they are NOT the real suite dimensions.
+# ⚠️ SOURCE: Kil Architecture, "Proposed First Floor Plan", Ward Bakery
+# Rehabilitation Phase I, dated 22 September 2021 — held in
+# reference/floor-plans/. Three cautions:
 #
-# `id` must match the id on the corresponding <path> in the floor-plan SVG. That
-# string is the only join between the graphic and this data; if they drift, the
-# plan silently stops highlighting and nothing errors. Worth a build-time check
-# once the real SVG exists.
+#   1. It is marked PROPOSED and is four years old. These are almost certainly
+#      not as-built dimensions, and some units are now occupied.
+#   2. It covers the FIRST FLOOR ONLY. The basement (~18,976 sq ft gross) and
+#      second floor (~4,642 sq ft gross) are not represented here at all.
+#   3. The drawing carries Kil Architecture's title block with their address and
+#      phone number. It must be cropped or redrawn before anything ships.
 #
-# Note there is no `available` field, by decision rather than omission: the client
-# does not want up-to-the-day vacancy maintenance, and stale vacancy data is worse
-# than none.
+# Everything below is therefore `placeholder: true` until the client supplies a
+# current plan. The numbers are real, but they describe a 2021 proposal.
+#
+# USF = usable square feet (what you occupy). RSF = rentable (what you're billed,
+# including a share of common areas). Both are on the drawing and both matter —
+# quoting one without saying which is how a first conversation goes wrong.
+#
+# `id` must match the id on the corresponding <path> in the floor-plan SVG once
+# that exists. There is no `available` field, by decision: the client does not
+# want up-to-the-day vacancy maintenance and stale vacancy data is worse than
+# none.
 
 # ---------------------------------------------------------------------------
-# Commercial wing — Portage Avenue frontage
+# Portage Avenue frontage — retail and food
 # ---------------------------------------------------------------------------
-- id: retail-01
-  label: Retail Bay 1
+- id: unit-01
+  label: Unit 1
   wing: commercial
   floor: ground
-  sqftMin: 800
-  sqftMax: 1200
-  type: Retail bay
-  notes: Street frontage on Portage Avenue.
+  sqftMin: 1624
+  sqftMax: 2209
+  type: Restaurant
+  notes: Largest frontage unit. 1,624 USF / 2,209 RSF.
   placeholder: true
 
-- id: retail-02
-  label: Retail Bay 2
+- id: unit-02
+  label: Unit 2
   wing: commercial
   floor: ground
-  sqftMin: 1200
-  sqftMax: 2000
-  type: Retail bay
-  notes: Corner exposure.
+  sqftMin: 703
+  sqftMax: 956
+  type: Resale retail
   placeholder: true
 
-- id: retail-03
-  label: Retail Bay 3
+- id: unit-03
+  label: Unit 3
   wing: commercial
   floor: ground
-  sqftMin: 400
-  sqftMax: 700
-  type: Retail bay
+  sqftMin: 1101
+  sqftMax: 1497
+  type: Retail
   placeholder: true
 
-- id: studio-01
-  label: Studio 1
+- id: unit-04
+  label: Unit 4
   wing: commercial
   floor: ground
-  sqftMin: 200
-  sqftMax: 400
-  type: Studio
-  notes: Suited to artists and makers.
+  sqftMin: 1374
+  sqftMax: 1869
+  type: Retail
   placeholder: true
 
-- id: studio-02
-  label: Studio 2
+- id: unit-05
+  label: Unit 5
   wing: commercial
   floor: ground
-  sqftMin: 200
-  sqftMax: 400
-  type: Studio
+  sqftMin: 1114
+  sqftMax: 1515
+  type: Retail
   placeholder: true
 
-# ---------------------------------------------------------------------------
-# Office wing — past the restrooms and the dividing door
-# ---------------------------------------------------------------------------
-- id: office-small
-  label: Private Office — Small
-  wing: office
+- id: unit-06
+  label: Unit 6
+  wing: commercial
   floor: ground
-  sqftMin: 200
-  sqftMax: 300
-  type: Private office
+  sqftMin: 712
+  sqftMax: 970
+  type: Retail
   placeholder: true
 
-- id: office-medium
-  label: Private Office — Medium
-  wing: office
+- id: unit-07
+  label: Unit 7
+  wing: commercial
   floor: ground
-  sqftMin: 300
+  sqftMin: 646
+  sqftMax: 880
+  type: Retail
+  placeholder: true
+
+- id: unit-08
+  label: Unit 8
+  wing: commercial
+  floor: ground
+  sqftMin: 653
+  sqftMax: 868
+  type: Retail
+  placeholder: true
+
+- id: unit-09
+  label: Unit 9
+  wing: commercial
+  floor: ground
+  sqftMin: 333
   sqftMax: 450
-  type: Private office
+  type: Retail
   placeholder: true
 
-- id: office-large
-  label: Private Office — Large
-  wing: office
+- id: unit-10
+  label: Unit 10
+  wing: commercial
   floor: ground
-  sqftMin: 450
-  sqftMax: 700
-  type: Private office
+  sqftMin: 336
+  sqftMax: 457
+  type: Retail
   placeholder: true
 
-- id: office-suite
-  label: Office Suite
-  wing: office
+- id: unit-11
+  label: Unit 11
+  wing: commercial
   floor: ground
-  sqftMin: 700
-  sqftMax: 1100
-  type: Private office
-  notes: Largest of the four office sizes.
+  sqftMin: 608
+  sqftMax: 826
+  type: Restaurant
+  placeholder: true
+
+- id: unit-12
+  label: Unit 12
+  wing: commercial
+  floor: ground
+  sqftMin: 667
+  sqftMax: 907
+  type: Retail
+  placeholder: true
+
+- id: unit-13
+  label: Unit 13
+  wing: commercial
+  floor: ground
+  sqftMin: 336
+  sqftMax: 457
+  type: Retail
+  placeholder: true
+
+- id: unit-14
+  label: Unit 14
+  wing: commercial
+  floor: ground
+  sqftMin: 342
+  sqftMax: 465
+  type: Retail
   placeholder: true
 
 # ---------------------------------------------------------------------------
-# Shared
+# Rear — warehouse, flex, light industrial
 # ---------------------------------------------------------------------------
-- id: kitchenette
-  label: Kitchenette & Dining
-  wing: shared
+- id: unit-15
+  label: Unit 15
+  wing: commercial
   floor: ground
-  sqftMin: 300
+  sqftMin: 1559
+  sqftMax: 2120
+  type: Warehouse
+  placeholder: true
+
+- id: unit-16
+  label: Unit 16
+  wing: commercial
+  floor: ground
+  sqftMin: 1789
+  sqftMax: 2433
+  type: Warehouse
+  notes: Largest unit on the floor. 1,789 USF / 2,433 RSF.
+  placeholder: true
+
+- id: unit-17
+  label: Unit 17
+  wing: commercial
+  floor: ground
+  sqftMin: 937
+  sqftMax: 1275
+  type: Flex
+  placeholder: true
+
+- id: unit-18
+  label: Unit 18
+  wing: commercial
+  floor: ground
+  sqftMin: 1280
+  sqftMax: 1740
+  type: Warehouse
+  placeholder: true
+
+- id: unit-19
+  label: Unit 19
+  wing: commercial
+  floor: ground
+  sqftMin: 968
+  sqftMax: 1317
+  type: Flex
+  placeholder: true
+
+- id: unit-20
+  label: Unit 20
+  wing: office
+  floor: ground
+  sqftMin: 1585
+  sqftMax: 2155
+  type: Office
+  placeholder: true
+
+- id: unit-21
+  label: Unit 21
+  wing: commercial
+  floor: ground
+  sqftMin: 367
   sqftMax: 500
-  type: Shared amenity
-  notes: Serves the office wing.
+  type: Restaurant
+  notes: Smallest food unit on the plan.
+  placeholder: true
+
+# ---------------------------------------------------------------------------
+# Studios — the small end, suited to artists and makers
+# ---------------------------------------------------------------------------
+- id: studio-a
+  label: Studio A
+  wing: office
+  floor: ground
+  sqftMin: 602
+  sqftMax: 819
+  type: Studio
+  placeholder: true
+
+- id: studio-b
+  label: Studio B
+  wing: office
+  floor: ground
+  sqftMin: 602
+  sqftMax: 819
+  type: Studio
+  placeholder: true
+
+- id: studio-c
+  label: Studio C
+  wing: office
+  floor: ground
+  sqftMin: 602
+  sqftMax: 819
+  type: Studio
+  placeholder: true
+
+- id: studio-d
+  label: Studio D
+  wing: office
+  floor: ground
+  sqftMin: 845
+  sqftMax: 1158
+  type: Studio
+  placeholder: true
+
+- id: studio-e
+  label: Studio E
+  wing: office
+  floor: ground
+  sqftMin: 615
+  sqftMax: 837
+  type: Studio
+  placeholder: true
+
+- id: studio-f
+  label: Studio F
+  wing: office
+  floor: ground
+  sqftMin: 420
+  sqftMax: 570
+  type: Studio
+  placeholder: true
+
+- id: studio-g
+  label: Studio G
+  wing: office
+  floor: ground
+  sqftMin: 211
+  sqftMax: 287
+  type: Studio
+  notes: Smallest unit on the plan. 211 USF / 287 RSF.
+  placeholder: true
+
+- id: studio-h
+  label: Studio H
+  wing: office
+  floor: ground
+  sqftMin: 211
+  sqftMax: 287
+  type: Studio
+  placeholder: true
+
+- id: studio-i
+  label: Studio I
+  wing: office
+  floor: ground
+  sqftMin: 211
+  sqftMax: 287
+  type: Studio
+  placeholder: true
+
+- id: studio-j
+  label: Studio J
+  wing: office
+  floor: ground
+  sqftMin: 211
+  sqftMax: 287
+  type: Studio
+  placeholder: true
+
+- id: studio-k
+  label: Studio K
+  wing: office
+  floor: ground
+  sqftMin: 211
+  sqftMax: 287
+  type: Studio
+  placeholder: true
+
+- id: studio-l
+  label: Studio L
+  wing: office
+  floor: ground
+  sqftMin: 211
+  sqftMax: 287
+  type: Studio
   placeholder: true

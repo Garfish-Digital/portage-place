@@ -20,17 +20,32 @@ import { Icon } from 'astro-icon/components';
 </div>
 
 <script>
-	// The button hides while the footer CTA is on screen — two identical calls to
-	// action competing in the same viewport reads as nagging, and the floating one
-	// is the redundant copy at that moment.
+	// The button hides while a page's own CTA is on screen — two identical calls
+	// to action competing in the same viewport reads as nagging, and the floating
+	// one is the redundant copy at that moment.
+	//
+	// Previously this watched `[data-footer-cta]`. That CTA moved out of the footer
+	// and onto the pages, where it can offer a secondary action too, so the hook
+	// now watches every `[data-cta-section]` — there may be more than one per page.
 	const cta = document.querySelector<HTMLElement>('[data-floating-cta]');
-	const footerCta = document.querySelector<HTMLElement>('[data-footer-cta]');
+	const sections = document.querySelectorAll<HTMLElement>('[data-cta-section]');
 
-	if (cta && footerCta && 'IntersectionObserver' in window) {
-		new IntersectionObserver(
-			([entry]) => cta.classList.toggle('is-hidden', entry.isIntersecting),
+	if (cta && sections.length && 'IntersectionObserver' in window) {
+		// Tracked as a set rather than a boolean: with several observed sections,
+		// one leaving the viewport must not unhide the button while another is
+		// still on screen.
+		const visible = new Set<Element>();
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (entry.isIntersecting) visible.add(entry.target);
+					else visible.delete(entry.target);
+				}
+				cta.classList.toggle('is-hidden', visible.size > 0);
+			},
 			{ rootMargin: '0px 0px -10% 0px' },
-		).observe(footerCta);
+		);
+		sections.forEach((section) => observer.observe(section));
 	}
 </script>
 

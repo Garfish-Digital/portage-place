@@ -68,7 +68,7 @@ const firstYear = milestones[0]?.data.year ?? '1919';
 		Contextual CTA at the end of the narrative: the reader has just finished the
 		building's whole story, which is the natural decision point on this page.
 	*/}
-	<Section tone="dark">
+	<Section data-cta-section>
 		<div class="cta">
 			<div>
 				<p class="pp-eyebrow cta__eyebrow">The next chapter</p>
@@ -155,8 +155,10 @@ const firstYear = milestones[0]?.data.year ?? '1919';
 		}
 	}
 
+	// brick-dark, not bronze: bronze is 3.48:1 on plaster and 2.65:1 on limestone,
+	// both failures for text. Bronze stays non-text only — rules, rings, markers.
 	.cta__eyebrow {
-		color: var(--pp-bronze);
+		color: var(--pp-brick-dark);
 		margin-block-end: var(--pp-space-2xs);
 	}
 

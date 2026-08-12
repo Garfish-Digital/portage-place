@@ -1,0 +1,169 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { CollectionEntry } from 'astro:content';
+import Monogram from './Monogram.astro';
+
+interface Props {
+	tenant: CollectionEntry<'tenants'>;
+}
+
+const { tenant } = Astro.props;
+const { name, type, quote, quoteAttribution, url, placeholder } = tenant.data;
+---
+
+<article class:list={['tenant', placeholder && 'tenant--placeholder']}>
+	<div class="tenant__head">
+		{/* Logos and portraits land in Phase 8; initials stand in until then. */}
+		<Monogram name={name} class="tenant__mark" />
+		<div>
+			<h3 class="tenant__name">
+				{
+					url ? (
+						<a href={url} target="_blank" rel="noopener noreferrer">
+							{name}
+							<Icon name="lucide:arrow-up-right" aria-hidden="true" />
+							<span class="pp-visually-hidden">(opens in a new tab)</span>
+						</a>
+					) : (
+						name
+					)
+				}
+			</h3>
+			<p class="tenant__type">{type}</p>
+		</div>
+	</div>
+
+	{
+		quote && (
+			<figure class="tenant__quote">
+				<blockquote>{quote}</blockquote>
+				{/*
+					An unattributed testimonial reads as written by the landlord. Until a
+					name and role arrive this renders a visible gap rather than silently
+					looking finished — see the client questions in BUILD_PLAN.
+				*/}
+				{quoteAttribution ? (
+					<figcaption>{quoteAttribution}</figcaption>
+				) : (
+					<figcaption class="tenant__attribution-missing">Attribution needed</figcaption>
+				)}
+			</figure>
+		)
+	}
+
+	{placeholder && <p class="tenant__flag">Placeholder entry</p>}
+</article>
+
+<style lang="scss">
+	.tenant {
+		display: flex;
+		flex-direction: column;
+		gap: var(--pp-space-s);
+		height: 100%;
+		padding: var(--pp-space-m);
+		background-color: var(--pp-plaster);
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+	}
+
+	.tenant__head {
+		display: flex;
+		align-items: center;
+		gap: var(--pp-space-s);
+	}
+
+	:global(.tenant__mark) {
+		flex: none;
+		width: 52px;
+	}
+
+	.tenant__name {
+		font-size: var(--pp-text-h4);
+		line-height: var(--pp-leading-snug);
+		text-wrap: balance;
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25em;
+			color: inherit;
+			text-decoration: none;
+
+			@include focusable;
+
+			:global(svg) {
+				width: 0.6em;
+				height: 0.6em;
+				color: var(--pp-brick-mid);
+				transition: translate var(--pp-duration-base) var(--pp-ease-overshoot);
+			}
+
+			@include hover-capable {
+				&:hover {
+					color: var(--pp-green-link);
+
+					:global(svg) {
+						translate: 2px -2px;
+					}
+				}
+			}
+		}
+	}
+
+	.tenant__type {
+		@include eyebrow;
+
+		margin-block-start: 0.2em;
+		color: var(--pp-ink-muted);
+	}
+
+	.tenant__quote {
+		margin: 0;
+
+		blockquote {
+			margin: 0;
+			font-family: var(--pp-font-display);
+			font-size: var(--pp-text-base);
+			font-style: italic;
+			line-height: var(--pp-leading-normal);
+			color: var(--pp-ink);
+			text-wrap: pretty;
+
+			// Typographic quotes as generated content, so the marks never end up in
+			// the copied text or announced by a screen reader.
+			&::before {
+				content: '\201C';
+			}
+
+			&::after {
+				content: '\201D';
+			}
+		}
+
+		figcaption {
+			margin-block-start: var(--pp-space-2xs);
+			font-size: var(--pp-text-xs);
+			color: var(--pp-ink-muted);
+		}
+	}
+
+	.tenant__attribution-missing {
+		color: var(--pp-error);
+		font-style: italic;
+	}
+
+	// Unmistakable in the layout without being ugly enough to distort the design
+	// review. Both this and the class disappear with the placeholder data.
+	.tenant--placeholder {
+		border-style: dashed;
+		border-color: var(--pp-brick-mid);
+	}
+
+	.tenant__flag {
+		@include eyebrow;
+
+		margin-block-start: auto;
+		font-size: var(--pp-text-2xs);
+		color: var(--pp-brick-dark);
+	}
+</style>

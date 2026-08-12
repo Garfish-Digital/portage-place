@@ -1,10 +1,21 @@
 ---
-year: '2022–2025'
+year: '2025'
 sortYear: 2022
 title: The Light Comes Back
 summary: The bricks come out of the windows. Phase 1 opens in December 2025.
 confidence: documented
 featured: true
+beforeAfter:
+  then: ../../assets/before-after/then-2.png
+  now: ../../assets/before-after/now-2.png
+  thenAlt: >-
+    The west elevation before renovation: two storeys of brick with every window
+    opening filled in, under a grey winter sky.
+  nowAlt: >-
+    The same elevation today, the window openings reopened and glazed, brickwork
+    cleaned and the stone trim restored.
+  thenCaption: Every opening bricked in
+  nowCaption: Glazed again, 2022
 sources:
   - 'WNDU, 8 March 2022 — $4.2M renovations underway'
   - 'South Bend Tribune, 9 March 2022 — façade renovation'

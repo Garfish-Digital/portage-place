@@ -36,19 +36,54 @@ export const STATS = [
 ] as const;
 
 /**
- * Proximity list.
+ * Proximity list — supplied by Rob, 2026-08-11.
  *
- * ⚠️ NO DISTANCES OR DRIVE TIMES. The current site says only "just minutes from",
- * and inventing "4 minutes" or "1.8 miles" would be fabrication. Add them once
- * measured — they make the module considerably more persuasive, so this is worth
- * doing properly rather than dropping.
+ * Note this is a *cultural landmarks* list, not the commuting list the old site
+ * used. It answers "what kind of place is this?" rather than "how long is my
+ * drive?", which suits a building whose pitch is character and community.
+ *
+ * The three institutions from the old copy are still here, reached through their
+ * landmarks: IU South Bend via the Civil Rights Heritage Center, Saint Mary's via
+ * Le Mans Hall, Notre Dame via the Golden Dome.
+ *
+ * Times are approximate drive times and are rendered as such — never as absolute
+ * claims. `minutes` stays a string so ranges ("2–3") survive.
  */
 export const PROXIMITY = [
-	{ name: 'Downtown South Bend' },
-	{ name: 'University of Notre Dame' },
-	{ name: "Saint Mary's College" },
-	{ name: 'Indiana University South Bend' },
-	{ name: 'Michiana International Airport' },
+	{
+		name: 'Morris Performing Arts Center',
+		category: 'Arts & culture',
+		minutes: '3',
+	},
+	{
+		name: 'The History Museum & Oliver Mansion',
+		landmark: 'Copshaholm',
+		category: 'Architecture & local history',
+		minutes: '2–3',
+	},
+	{
+		name: 'Civil Rights Heritage Center',
+		landmark: 'IU South Bend',
+		category: 'African American history',
+		minutes: '3–4',
+	},
+	{
+		name: 'Studebaker National Museum',
+		category: 'Industrial & automotive history',
+		minutes: '4',
+	},
+	{
+		name: "Saint Mary's College",
+		landmark: 'Le Mans Hall',
+		category: 'Catholic higher education',
+		minutes: '5',
+	},
+	{
+		name: 'University of Notre Dame',
+		landmark: 'Golden Dome',
+		category: 'Religion & collegiate history',
+		minutes: '6–7',
+	},
 ] as const;
 
 /** Neighbourhood context, from the current site's copy. */

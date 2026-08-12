@@ -5,6 +5,8 @@ org: Inovateus Solar LLC
 titles:
   - 'Board Member & Investor, Inovateus Solar'
   - 'Sustainability Manager & Co-owner, Logistick, Inc.'
+portrait: ../../assets/team/kanczuzewski.png
+portraitAlt: Pencil-sketch portrait of Tyler Kanczuzewski.
 order: 2
 kind: owner
 draft: false

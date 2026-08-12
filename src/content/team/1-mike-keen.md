@@ -5,6 +5,8 @@ org: The Bakery Group LLC
 titles:
   - 'PhD · LEED-AP · Realtor®'
   - 'Managing Partner, Hometowne Development LLC'
+portrait: ../../assets/team/keen.png
+portraitAlt: Pencil-sketch portrait of Mike Keen.
 order: 1
 kind: owner
 draft: false

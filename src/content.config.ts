@@ -70,6 +70,28 @@ const milestones = defineCollection({
 			/** Credit line for archival images — required if the image isn't ours. */
 			imageCredit: z.string().optional(),
 
+			/**
+			 * A matched then/now pair, shot from the same position.
+			 *
+			 * Deliberately independent of `featured`: emphasis marks the story's
+			 * spine, imagery goes wherever a picture proves the sentence. Tying them
+			 * together would force one to follow the other for no reason.
+			 *
+			 * Alt text is required rather than optional — these carry real
+			 * information (windows bricked shut vs. reopened), so an empty alt would
+			 * drop the point entirely for a screen-reader user.
+			 */
+			beforeAfter: z
+				.object({
+					then: image(),
+					now: image(),
+					thenAlt: z.string(),
+					nowAlt: z.string(),
+					thenCaption: z.string().optional(),
+					nowCaption: z.string().optional(),
+				})
+				.optional(),
+
 			/** Where this came from. Internal; not necessarily rendered. */
 			sources: z.array(z.string()).default([]),
 

@@ -77,6 +77,9 @@
 	// 3.48:1 on plaster and 3.51:1 on espresso: the one accent that clears the
 	// 3:1 non-text threshold on BOTH surfaces, which makes it the focus ring.
 	--pp-bronze: #a97a3d;
+	// Channel triplet so alpha variants stay tied to the token:
+	// rgb(var(--pp-bronze-rgb) / 0.22)
+	--pp-bronze-rgb: 169 122 61;
 	--pp-bronze-text: #8f6530; // only if bronze must carry text        4.74:1
 
 	// ---------------------------------------------------------------------------

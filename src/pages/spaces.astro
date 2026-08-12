@@ -1,0 +1,439 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/primitives/Section.astro';
+import Button from '../components/Button.astro';
+import { getSpaces, getSpaceRange, getSpaceTypes } from '../lib/content';
+
+// ⚠️ 2021 PROPOSED PLAN — for rough-in only. Carries Kil Architecture's title
+// block; must be cropped or redrawn before anything ships.
+import planImage from '../assets/plans/first-floor-2021.webp';
+
+const spaces = await getSpaces();
+const range = await getSpaceRange();
+const types = await getSpaceTypes();
+
+const commercial = spaces.filter((entry) => entry.data.wing === 'commercial');
+const office = spaces.filter((entry) => entry.data.wing === 'office');
+
+const fmt = (n: number) => n.toLocaleString('en-US');
+
+// Prose gets rounded figures; the table gets exact ones. Quoting "211 to 1,789"
+// in a sentence claims a precision a four-year-old *proposed* plan can't support,
+// and reads as oddly specific besides.
+const roundDown = (n: number, to: number) => Math.floor(n / to) * to;
+const roundUp = (n: number, to: number) => Math.ceil(n / to) * to;
+const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
+---
+
+<BaseLayout
+	title="Find Your Space"
+	description="Commercial, studio and office space for lease at Portage Place — a restored 1919 bakery in South Bend. Units from roughly 200 to 1,800 usable square feet."
+>
+	<Section>
+		<div class="intro">
+			<p class="pp-eyebrow intro__eyebrow">Space available</p>
+			<h1>Find the one that fits.</h1>
+			<p class="intro__lede">
+				Retail on the Portage Avenue frontage, warehouse and flex space at the rear,
+				studios and offices in between. Roughly {fmt(approx.min)} to {fmt(approx.max)} usable
+				square feet, starting at $300 a month.
+			</p>
+			<div class="intro__actions">
+				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Ask about a space</Button>
+			</div>
+		</div>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	{/* What kinds of space */}
+	{/* ------------------------------------------------------------------ */}
+	<Section tone="limestone">
+		<div class="block-head">
+			<p class="pp-eyebrow block-head__eyebrow">What's here</p>
+			<h2>{types.length} kinds of space under one roof.</h2>
+			<p class="block-head__lede">
+				The building was a bread factory, so it has room shapes an office park
+				doesn't — loading-height warehouse bays behind small street-front retail.
+			</p>
+		</div>
+
+		<ul class="types" role="list">
+			{
+				types.map((entry) => (
+					<li class="type">
+						<span class="type__count">{entry.count}</span>
+						<span class="type__name">{entry.type}</span>
+					</li>
+				))
+			}
+		</ul>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	{/* The plan */}
+	{/* ------------------------------------------------------------------ */}
+	<Section>
+		<div class="block-head">
+			<p class="pp-eyebrow block-head__eyebrow">The floor plan</p>
+			<h2>Ground floor.</h2>
+		</div>
+
+		{/*
+			ROUGH-IN ONLY. This becomes an interactive SVG whose <path> ids match the
+			`id` field on each unit in spaces.yaml — hover to highlight, click for
+			detail, pinch-zoom on mobile, with the list below as the accessible
+			equivalent rather than an afterthought.
+		*/}
+		<figure class="plan">
+			<Image
+				src={planImage}
+				alt="Architect's proposed ground-floor plan showing numbered retail units along the Portage Avenue frontage, warehouse and flex bays to the rear, and a block of lettered studios in the centre."
+				widths={[720, 1080, 1200]}
+				sizes="(min-width: 1024px) 70vw, 94vw"
+				loading="lazy"
+			/>
+			<figcaption class="plan__caption">
+				<Icon name="lucide:triangle-alert" aria-hidden="true" />
+				<span>
+					<strong>Placeholder.</strong> Kil Architecture's <em>proposed</em> first-floor
+					plan, dated 22 September 2021 — not as-built, ground floor only, and it still
+					carries the architect's title block. Replaced before launch by a current plan,
+					redrawn as an interactive vector.
+				</span>
+			</figcaption>
+		</figure>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	{/* Unit list */}
+	{/* ------------------------------------------------------------------ */}
+	<Section tone="limestone">
+		<div class="block-head">
+			<p class="pp-eyebrow block-head__eyebrow">Every unit</p>
+			<h2>Sizes at a glance.</h2>
+			<p class="block-head__lede">
+				<strong>Usable</strong> square feet is the space you occupy.
+				<strong>Rentable</strong> adds a share of the common areas and is what a lease is
+				normally written against. Both are listed so there are no surprises.
+			</p>
+		</div>
+
+		<h3 class="group-label">Commercial wing — {commercial.length} units</h3>
+		<div class="table-wrap">
+			<table class="units">
+				<thead>
+					<tr>
+						<th scope="col">Unit</th>
+						<th scope="col">Type</th>
+						<th scope="col" class="units__num">Usable</th>
+						<th scope="col" class="units__num">Rentable</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						commercial.map((entry) => (
+							<tr>
+								<th scope="row">{entry.data.label}</th>
+								<td>{entry.data.type}</td>
+								<td class="units__num">{fmt(entry.data.sqftMin)}</td>
+								<td class="units__num">{fmt(entry.data.sqftMax)}</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+
+		<h3 class="group-label group-label--spaced">Office wing & studios — {office.length} units</h3>
+		<div class="table-wrap">
+			<table class="units">
+				<thead>
+					<tr>
+						<th scope="col">Unit</th>
+						<th scope="col">Type</th>
+						<th scope="col" class="units__num">Usable</th>
+						<th scope="col" class="units__num">Rentable</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						office.map((entry) => (
+							<tr>
+								<th scope="row">{entry.data.label}</th>
+								<td>{entry.data.type}</td>
+								<td class="units__num">{fmt(entry.data.sqftMin)}</td>
+								<td class="units__num">{fmt(entry.data.sqftMax)}</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+
+		<p class="units__note">
+			Figures from the 2021 proposed plan and subject to confirmation. We don't publish
+			live availability — email us and we'll tell you what's actually available today.
+		</p>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	{/* Phase 2 */}
+	{/* ------------------------------------------------------------------ */}
+	<Section>
+		<div class="phase2">
+			<div>
+				<p class="pp-eyebrow block-head__eyebrow">Coming</p>
+				<h2>Phase 2 will renovate the rest.</h2>
+				<p class="block-head__lede">
+					The ground floor is roughly 20,000 of the building's 56,000 square feet. The
+					basement and second floor follow, built out much the same way — so if you
+					need more room than exists today, it's worth asking.
+				</p>
+			</div>
+		</div>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	<Section tone="limestone" data-cta-section>
+		<div class="cta">
+			<div>
+				<p class="pp-eyebrow cta__eyebrow">No commitment</p>
+				<h2 class="cta__title">Tell us roughly what you need.</h2>
+				<p class="cta__lede">
+					Square footage, or just the kind of business — an email address on its own is
+					plenty.
+				</p>
+			</div>
+			<div class="cta__actions">
+				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+				<Button variant="quiet" size="lg" href="/community">See who's here</Button>
+			</div>
+		</div>
+	</Section>
+</BaseLayout>
+
+<style lang="scss">
+	.intro {
+		max-width: 46rem;
+	}
+
+	.intro__eyebrow {
+		color: var(--pp-ink-muted);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.intro__lede {
+		margin-block-start: var(--pp-space-m);
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	.intro__actions {
+		margin-block-start: var(--pp-space-l);
+	}
+
+	.block-head {
+		max-width: 44rem;
+		margin-block-end: var(--pp-space-xl);
+	}
+
+	.block-head__eyebrow {
+		color: var(--pp-brick-dark);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.block-head__lede {
+		margin-block-start: var(--pp-space-s);
+		color: var(--pp-text-muted);
+		text-wrap: pretty;
+
+		strong {
+			color: var(--pp-ink-strong);
+		}
+	}
+
+	.group-label {
+		@include eyebrow;
+
+		color: var(--pp-ink-muted);
+		margin-block-end: var(--pp-space-s);
+	}
+
+	.group-label--spaced {
+		margin-block-start: var(--pp-space-xl);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Type counts
+	// ---------------------------------------------------------------------------
+	.types {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
+		gap: var(--pp-space-s);
+		margin: 0;
+		padding: 0;
+	}
+
+	.type {
+		display: flex;
+		flex-direction: column;
+		gap: var(--pp-space-3xs);
+		padding: var(--pp-space-m);
+		background-color: var(--pp-plaster);
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+	}
+
+	.type__count {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h3);
+		font-weight: var(--pp-weight-semibold);
+		line-height: 1;
+		color: var(--pp-brick-dark);
+	}
+
+	.type__name {
+		@include eyebrow;
+
+		font-size: var(--pp-text-2xs);
+		color: var(--pp-ink-muted);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Plan
+	// ---------------------------------------------------------------------------
+	.plan {
+		margin: 0;
+	}
+
+	.plan :global(img) {
+		width: 100%;
+		height: auto;
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+		background-color: #fff;
+	}
+
+	.plan__caption {
+		display: flex;
+		align-items: start;
+		gap: var(--pp-space-2xs);
+		margin-block-start: var(--pp-space-s);
+		max-width: var(--pp-measure);
+		font-size: var(--pp-text-xs);
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-ink-muted);
+
+		strong {
+			color: var(--pp-error);
+		}
+
+		:global(svg) {
+			flex: none;
+			width: 15px;
+			height: 15px;
+			margin-block-start: 0.15em;
+			color: var(--pp-error);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Unit table
+	// ---------------------------------------------------------------------------
+	// Wrapped so the table scrolls inside its own box rather than pushing the
+	// page into horizontal overflow on a narrow phone.
+	.table-wrap {
+		overflow-x: auto;
+	}
+
+	.units {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: var(--pp-text-s);
+
+		th,
+		td {
+			text-align: start;
+			padding: var(--pp-space-xs) var(--pp-space-s);
+			border-block-end: 1px solid var(--pp-rule);
+			white-space: nowrap;
+		}
+
+		thead th {
+			@include eyebrow;
+
+			font-size: var(--pp-text-2xs);
+			color: var(--pp-ink-muted);
+		}
+
+		tbody th {
+			font-weight: var(--pp-weight-semibold);
+			color: var(--pp-ink-strong);
+		}
+
+		tbody tr:last-child th,
+		tbody tr:last-child td {
+			border-block-end: 0;
+		}
+	}
+
+	// Tabular figures so the columns align on the digit, not the glyph width.
+	.units__num {
+		text-align: end !important;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.units__note {
+		margin-block-start: var(--pp-space-l);
+		max-width: var(--pp-measure);
+		font-size: var(--pp-text-s);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	// ---------------------------------------------------------------------------
+	.phase2 {
+		max-width: 44rem;
+	}
+
+	.cta {
+		display: flex;
+		flex-direction: column;
+		gap: var(--pp-space-l);
+
+		@include from('lg') {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--pp-space-2xl);
+		}
+	}
+
+	.cta__eyebrow {
+		color: var(--pp-brick-dark);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.cta__title {
+		font-size: var(--pp-text-h2);
+		color: var(--pp-text-strong);
+	}
+
+	.cta__lede {
+		margin-block-start: var(--pp-space-xs);
+		max-width: 34rem;
+		color: var(--pp-text-muted);
+		text-wrap: pretty;
+	}
+
+	.cta__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--pp-space-s);
+	}
+</style>

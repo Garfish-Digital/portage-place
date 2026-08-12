@@ -77,12 +77,28 @@ export async function getSpaces(wing?: 'commercial' | 'office' | 'shared') {
  * The overall size range quoted in marketing copy, derived from the data rather
  * than typed into a template. Keeps "200–2,000 sq ft" from going stale silently
  * when the real floor plans land.
+ *
+ * `min` is the smallest usable figure and `max` the largest usable figure — NOT
+ * the largest rentable one. Mixing the two would quote a range no single unit
+ * actually spans.
  */
 export async function getSpaceRange(): Promise<{ min: number; max: number }> {
 	const spaces = await getSpaces();
 	const leasable = spaces.filter((entry) => entry.data.wing !== 'shared');
 	return {
 		min: Math.min(...leasable.map((entry) => entry.data.sqftMin)),
-		max: Math.max(...leasable.map((entry) => entry.data.sqftMax)),
+		max: Math.max(...leasable.map((entry) => entry.data.sqftMin)),
 	};
+}
+
+/** Distinct unit types, in descending order of how many units carry each. */
+export async function getSpaceTypes(): Promise<{ type: string; count: number }[]> {
+	const spaces = await getSpaces();
+	const counts = new Map<string, number>();
+	for (const entry of spaces) {
+		counts.set(entry.data.type, (counts.get(entry.data.type) ?? 0) + 1);
+	}
+	return [...counts.entries()]
+		.map(([type, count]) => ({ type, count }))
+		.sort((a, b) => b.count - a.count || a.type.localeCompare(b.type));
 }

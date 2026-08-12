@@ -5,6 +5,8 @@ org: Borkholder Buildings
 titles:
   - 'BS Marketing & Management, Indiana University South Bend'
   - 'Founder, New Energy Homes'
+portrait: ../../assets/team/borkholder.png
+portraitAlt: Pencil-sketch portrait of Dwayne Borkholder.
 order: 4
 kind: owner
 draft: false

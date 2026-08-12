@@ -367,112 +367,15 @@ https://westsb.com/features/ward?rq=ward
 
 =====
 
-Both concerns are fair, and the second one is the important one. Let me answer the direct question first.
 
-The animation doesn't exist. I never built it.
 
-You're not missing anything. I described the footer draw in BUILD_PLAN.md as a plan, set up the prerequisite for it (keepIds, so the animation would have targets), and then wired in a static logo. When I said "the future scroll-draw has its targets," the word "future" was carrying weight it shouldn't have carried. That reads as though something was delivered. Nothing was.
 
-What was intended
 
-On scroll arrival at the footer, once per page load:
 
-1. #icon-right then #icon-left draw in — stroke-dasharray/stroke-dashoffset animated so the line appears to be drawn by a pen, ~600ms
-2. #wordmark-portage rises and fades in
-3. #rule-left and #rule-right scale outward from centre
-4. #wordmark-place settles
-5. Stops. Never repeats, never loops.
-
-Native CSS via animation-timeline: view() — the same mechanism as the History timeline. No GSAP, no JS. @supports-gated, finished state rendered under prefers-reduced-motion.
-
-One technical constraint you should know before Figma
-
-stroke-dashoffset drawing only works on stroked paths. Your icon and your two rules are strokes — those can genuinely be "drawn." PORTAGE and PLACE are filled outlined letterforms. Filled shapes cannot be drawn that way. They can fade, rise, or wipe via clip-path, but no pen effect.
-
-So the honest version is: icon draws, rules draw, wordmark wipes or fades. If you wanted the letters to literally draw, they'd have to be rebuilt as single-stroke paths — a substantial and different piece of Figma work, and the result would look like a monoline sign-painter's font rather than your logo.
-
-The header: you're right, and it wasn't WCAG
-
-Let me be unambiguous, because you asked directly.
-
-WCAG 1.4.11 explicitly exempts logotypes from contrast requirements. I told you that myself when we discussed the logo. Your mark can be any colour on any background. Nothing about accessibility required dropping the rules, restructuring the text, or changing the background.
-
-The only genuine accessibility requirement is that the header link has an accessible name — and that is fully satisfied by a visually-hidden <span>Portage Place</span>. It does not require any visible text at all.
-
-So what I did in the header was a design decision I made, and I should have flagged it as one rather than presenting it as wiring-up:
-
-- I used the icon alone because the stacked lockup needs ~90px of height in a 72px bar
-- I re-set the name in Public Sans because I judged a serif beside the geometric mark to be a clash
-- I rendered it espresso-on-plaster for palette coherence
-
-Each was defensible in isolation. Together they produced a header containing your client's icon plus a wordmark I typeset myself in a different typeface, with their rules deleted. That is not their logo. Your instinct is correct, and a client would be right to object.
-
-The actual problem underneath
-
-Their logo exists in exactly one configuration: a vertical lockup on a black field, roughly 1.39:1. A website header is a horizontal strip 64–88px tall on a light background. Those two things cannot be reconciled by scaling.
-
-This is a completely normal, extremely common brand situation. Real identity systems carry several lockups: stacked (primary), horizontal, icon-only, and reversed. Portage Place doesn't have a horizontal lockup yet. That's the gap — not a flaw in your reconstruction, and not something accessibility caused.
-
-That reframe is worth a lot with the client: "your identity needs one more lockup, and we'll build it for you" is an addition to their brand, not an alteration of it.
-
-Options
-
-┌────────────────────────────────────┬───────────────────────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                    │                                  What it is                                   │                                                      Cost                                                       │
-├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ A. Full lockup in the header       │ Their exact asset, scaled                                                     │ Needs a ~140px header for PLACE to be legible at all. Eats the fold, worst on the short ThinkPad viewport       │
-├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ B. Design a horizontal lockup      │ Icon left, PORTAGE/PLACE stacked right, rules kept — all in their letterforms │ Figma work, but an asset they need anyway (email signatures, letterhead, the QR flyer)                          │
-├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ C. Compose one from existing paths │ Same as B, assembled in code from the master                                  │ Fast, no Figma. Optical spacing won't be as good as designed                                                    │
-├────────────────────────────────────┼───────────────────────────────────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
-│ D. Black plaque in the header      │ Preserve the asset exactly, on its black field, as a small plaque             │ 100% fidelity. Risks looking like a sticker — though "plaque on a building" is a real concept worth considering │
-└────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-
-My recommendation is B, with C as an interim if you want something in front of the client this week.
-
-Two questions worth asking the client
-
-1. Is the black rectangle part of the logo, or the field it's shown on?
-
-This resolves more than it looks. Their asset is a plain black rectangle — no rounded corners, no border, no padding system. That reads like "the mark, presented on black" rather than "the mark includes a black container." But it's their call, and the answer changes the palette conversation entirely.
-
-If black is just the field, then rendering the mark in a single dark colour on a light background is standard brand usage — every one-colour/knockout version works this way — and we're on solid ground.
-
-2. May we build a horizontal lockup for the site?
-
-Framed as extending their system, not changing their logo.
-
-One concrete concession worth offering: render the mark in true black #000 rather than espresso on light surfaces. Logos are exempt from our contrast rules, so nothing stops us. It'll read almost identically to espresso, and it lets you tell them their logo appears in their official black.
-
-Should you show them?
-
-I'd say no — not the current header. Not because the work is bad, but because it's an unfinished intermediate that misrepresents where we're heading, and first impressions on identity stick hard.
-
-Better sequence: take them the two questions above before showing any header treatment, then come back with a designed horizontal lockup. That's a stronger professional posture and it puts you in the position of extending their brand rather than defending a change to it.
-
-One sequencing note: the lockup question should settle before I build the footer animation, because the animation targets depend on which lockup ends up there. If a horizontal lockup lands in the header, we may also want the footer to use it rather than the stacked version — and that changes the choreography.
-
-I'd revert the header to something neutral in the meantime rather than leave my invented lockup sitting in the repo. Say the word and I'll do that, or leave it if you'd rather compare directly.
-
+---
 
 
 =====
-
--Let's not revert yet. I want to talk to the client first. Let's work on some other areas while I get more information.
-
--I made some changes to the copy in index.astro, but I got stuck on the section starting on line 143. Maybe the information below will help you complete it.
-
-```text
--1. The Morris Performing Arts CenterArts & Culture~3 mins
--2. The History Museum & Oliver Mansion (Copshaholm)Architecture & Local History~2–3 mins
--3. IU South Bend Civil Rights Heritage CenterAfrican American History~3–4 mins
--4. Studebaker National MuseumIndustrial & Automotive History~4 mins
--5. Saint Mary’s College (Le Mans Hall)Catholic Higher Education~5 mins
--6. University of Notre Dame (Golden Dome / Main Building)Religion & Collegiate History~6–7 mins
-```
-
-
 =====
 =====
 

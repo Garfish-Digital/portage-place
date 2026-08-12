@@ -51,7 +51,7 @@ const milestoneCount = milestones.length;
 
 		<Container class="hero__inner">
 			<p class="pp-eyebrow hero__eyebrow">South Bend · Near Northwest</p>
-			<h1 class="hero__title">Where you want to be</h1>
+			<h1 class="hero__title">Where you want to be.</h1>
 			<p class="hero__lede">
 				A 1919 bakery transformed. One dozen businesses under one roof, with room for yours.
 			</p>
@@ -122,7 +122,7 @@ const milestoneCount = milestones.length;
 		<div class="split split--reverse">
 			<div class="split__text">
 				<p class="pp-eyebrow location__eyebrow">Getting here</p>
-				<h2 class="location__title">Just 3 minutes from the Morris Performing Arts Center.</h2>
+				<h2 class="location__title">Just minutes from downtown.</h2>
 				<p class="split__body">
 					Portage Place anchors Portage Midtown, in the centre of the Near Northwest Neighborhood.
 				</p>
@@ -140,23 +140,34 @@ const milestoneCount = milestones.length;
 			</div>
 
 			<div class="split__media">
-				{/*
-					Distances deliberately absent — see src/config/site.ts. The current
-					site says only "just minutes from", and inventing drive times would be
-					fabrication. Adding real ones makes this module considerably stronger.
-					A styled static map slots in below this list at Phase 4.
-				*/}
+				{/* A styled static map slots in beneath this list at Phase 4. */}
 				<ul class="proximity" role="list">
 					{
 						PROXIMITY.map((place) => (
 							<li class="proximity__item">
-								<span class="proximity__name">{place.name}</span>
+								<span class="proximity__name">
+									{place.name}
+									{'landmark' in place && place.landmark && (
+										<span class="proximity__landmark"> · {place.landmark}</span>
+									)}
+								</span>
 								<span class="proximity__rule" aria-hidden="true" />
-								<span class="proximity__value">Minutes away</span>
+								{/*
+									The unit is spelled out for assistive tech but abbreviated
+									visually, so a screen reader says "three minutes" rather
+									than "three min".
+								*/}
+								<span class="proximity__time">
+									{place.minutes}
+									<span aria-hidden="true"> min</span>
+									<span class="pp-visually-hidden"> minutes</span>
+								</span>
+								<span class="proximity__category">{place.category}</span>
 							</li>
 						))
 					}
 				</ul>
+				<p class="proximity__note">Approximate drive times.</p>
 			</div>
 		</div>
 	</Section>
@@ -164,7 +175,7 @@ const milestoneCount = milestones.length;
 	{/* ================================================================== */}
 	{/* Closing CTA */}
 	{/* ================================================================== */}
-	<Section tone="limestone">
+	<Section tone="limestone" data-cta-section>
 		<div class="close">
 			<h2 class="close__title">Come see what fits.</h2>
 			<p class="close__lede">
@@ -321,8 +332,10 @@ const milestoneCount = milestones.length;
 	// ---------------------------------------------------------------------------
 	// Location
 	// ---------------------------------------------------------------------------
+	// On espresso bronze reaches only 3.51:1, which fails for text. The inverse
+	// muted ink is the dark-surface equivalent at 5.00:1.
 	.location__eyebrow {
-		color: var(--pp-bronze);
+		color: var(--pp-ink-inverse-muted);
 		margin-block-end: var(--pp-space-2xs);
 	}
 
@@ -359,34 +372,80 @@ const milestoneCount = milestones.length;
 		padding: 0;
 	}
 
+	// Name and time share a baseline with a leader rule between them; the
+	// category sits on a second row under the name. Naming the grid lines keeps
+	// that readable rather than a wall of numeric spans.
 	.proximity__item {
 		display: grid;
 		grid-template-columns: auto 1fr auto;
+		grid-template-areas:
+			'name rule time'
+			'cat  cat  cat';
 		align-items: baseline;
-		gap: var(--pp-space-2xs);
+		gap: var(--pp-space-3xs) var(--pp-space-2xs);
+		padding-block-end: var(--pp-space-xs);
+		border-block-end: 1px solid var(--pp-rule);
+	}
+
+	.proximity__item:last-child {
+		border-block-end: 0;
+		padding-block-end: 0;
 	}
 
 	.proximity__name {
+		grid-area: name;
 		font-family: var(--pp-font-display);
-		font-size: var(--pp-text-h4);
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-snug);
 		color: var(--pp-text-strong);
 		text-wrap: balance;
 	}
 
+	// The landmark is a locator, not a second name — it stays subordinate so the
+	// institution reads first.
+	.proximity__landmark {
+		font-family: var(--pp-font-body);
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-normal);
+		color: var(--pp-text-muted);
+		white-space: nowrap;
+	}
+
 	// A leader rule, like a table of contents. Costs nothing and makes a plain
-	// list read as designed.
+	// list read as designed. Hidden below `sm`, where there is rarely enough
+	// horizontal room for it to read as anything but a stray dash.
 	.proximity__rule {
+		grid-area: rule;
 		height: 1px;
 		background-color: var(--pp-rule);
 		translate: 0 -0.3em;
+
+		@include until('sm') {
+			display: none;
+		}
 	}
 
-	.proximity__value {
+	.proximity__time {
+		grid-area: time;
+		font-family: var(--pp-font-body);
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+		color: var(--pp-text-strong);
+		white-space: nowrap;
+	}
+
+	.proximity__category {
+		grid-area: cat;
 		@include eyebrow;
 
 		font-size: var(--pp-text-2xs);
 		color: var(--pp-text-muted);
-		text-wrap: nowrap;
+	}
+
+	.proximity__note {
+		margin-block-start: var(--pp-space-s);
+		font-size: var(--pp-text-xs);
+		color: var(--pp-text-muted);
 	}
 
 	// ---------------------------------------------------------------------------

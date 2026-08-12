@@ -1,0 +1,43 @@
+---
+/**
+ * Initials tile, used wherever a logo or portrait hasn't arrived yet.
+ *
+ * Deliberately NOT a fake logo or a stock silhouette: initials read as an
+ * obvious placeholder to anyone looking, and they never risk being mistaken for
+ * a real business's mark. Every one of these is replaced in Phase 8.
+ */
+interface Props {
+	name: string;
+	class?: string;
+}
+
+const { name, class: className } = Astro.props;
+
+// First letter of the first two meaningful words. "&" and short joining words
+// would otherwise produce initials like "C&" or "TH".
+const SKIP = new Set(['&', 'and', 'the', 'of', 'a']);
+const initials = name
+	.split(/\s+/)
+	.filter((word) => !SKIP.has(word.toLowerCase()))
+	.slice(0, 2)
+	.map((word) => word[0]?.toUpperCase() ?? '')
+	.join('');
+---
+
+<span class:list={['monogram', className]} aria-hidden="true">{initials}</span>
+
+<style lang="scss">
+	.monogram {
+		display: grid;
+		place-items: center;
+		aspect-ratio: 1;
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h4);
+		font-weight: var(--pp-weight-semibold);
+		letter-spacing: 0.01em;
+		color: var(--pp-brick-dark);
+		background-color: var(--pp-limestone);
+		border-radius: var(--pp-radius-m);
+		user-select: none;
+	}
+</style>

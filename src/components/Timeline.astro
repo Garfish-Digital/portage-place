@@ -1,6 +1,7 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import { Icon } from 'astro-icon/components';
+import BeforeAfter from './BeforeAfter.astro';
 
 interface Props {
 	milestones: CollectionEntry<'milestones'>[];
@@ -49,6 +50,19 @@ const entries = await Promise.all(
 							<div class="milestone__prose">
 								<Content />
 							</div>
+
+							{data.beforeAfter && (
+								<BeforeAfter
+									then={data.beforeAfter.then}
+									now={data.beforeAfter.now}
+									thenAlt={data.beforeAfter.thenAlt}
+									nowAlt={data.beforeAfter.nowAlt}
+									thenCaption={data.beforeAfter.thenCaption}
+									nowCaption={data.beforeAfter.nowCaption}
+									class="milestone__figure"
+									sizes="(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw"
+								/>
+							)}
 
 							{
 								hedged && data.confidenceNote && (
@@ -139,18 +153,21 @@ const entries = await Promise.all(
 		width: var(--marker-size);
 		height: var(--marker-size);
 		border-radius: var(--pp-radius-full);
-		background-color: var(--pp-plaster);
-		border: 2px solid var(--pp-brick-mid);
+		// Every marker resolves to solid bronze — this is the finished state, and
+		// what an engine without scroll-driven animation renders.
+		background-color: var(--pp-bronze);
+		border: 2px solid var(--pp-bronze);
 
 		@include from('lg') {
 			inset-inline-start: calc(9rem + var(--rail-x) - (var(--marker-size) / 2) + 1px);
 		}
 	}
 
+	// The halo — and only the halo — marks the story's spine. Fill is now common
+	// to every milestone, so the ring is the sole signal of emphasis rather than
+	// competing with a fill/no-fill distinction that read as arbitrary.
 	.milestone--featured .milestone__marker {
-		background-color: var(--pp-bronze);
-		border-color: var(--pp-bronze);
-		box-shadow: 0 0 0 4px color-mix(in srgb, var(--pp-bronze) 22%, transparent);
+		box-shadow: 0 0 0 4px rgb(var(--pp-bronze-rgb) / 0.22);
 	}
 
 	.milestone__year-wrap {
@@ -213,6 +230,12 @@ const entries = await Promise.all(
 		}
 	}
 
+	// A step above the prose gap so the pair reads as a separate beat rather than
+	// as another paragraph.
+	:global(.milestone__figure) {
+		margin-block-start: var(--pp-space-l);
+	}
+
 	// Sourcing hedge. Shown whenever confidence !== documented — the timeline
 	// never asserts a contested date as settled.
 	.milestone__note {
@@ -271,7 +294,11 @@ const entries = await Promise.all(
 				animation-range: cover 0% cover 100%;
 			}
 
+			// Named so the marker can share the milestone's timeline. The marker is
+			// tiny, so its own `view()` would cover a very different scroll range
+			// and the dot would fill out of step with the text it belongs to.
 			.milestone {
+				view-timeline-name: --milestone;
 				animation: milestone-in linear both;
 				animation-timeline: view();
 
@@ -290,6 +317,39 @@ const entries = await Promise.all(
 				// view on both a phone and a desktop.
 				animation-range: cover 0% cover 22%;
 			}
+
+			// Each dot fills as its milestone arrives. Runs slightly ahead of the
+			// text (18% vs 22%) so the marker has landed by the time the entry is
+			// readable, rather than resolving after you've started reading.
+			.milestone__marker {
+				animation: marker-fill linear both;
+				animation-timeline: --milestone;
+				animation-range: cover 0% cover 18%;
+			}
+
+			// The halo blooms a beat later than the fill, so the emphasis reads as a
+			// second event rather than arriving pre-formed.
+			.milestone--featured .milestone__marker {
+				animation: marker-fill linear both, marker-halo linear both;
+				animation-timeline: --milestone, --milestone;
+				animation-range: cover 0% cover 18%, cover 8% cover 30%;
+			}
+		}
+	}
+
+	@keyframes marker-fill {
+		from {
+			background-color: var(--pp-plaster);
+			border-color: var(--pp-brick-mid);
+		}
+	}
+
+	@keyframes marker-halo {
+		from {
+			// Same hue at zero alpha, not `transparent` — interpolating from
+			// `transparent` resolves to transparent *black* in some engines and the
+			// ring greys out on the way in.
+			box-shadow: 0 0 0 0 rgb(var(--pp-bronze-rgb) / 0);
 		}
 	}
 

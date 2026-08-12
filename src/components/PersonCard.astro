@@ -1,0 +1,314 @@
+---
+import { Image } from 'astro:assets';
+import { render, type CollectionEntry } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import Monogram from './Monogram.astro';
+
+interface Props {
+	person: CollectionEntry<'team'>;
+}
+
+const { person } = Astro.props;
+const { name, role, org, titles, links, portrait, portraitAlt } = person.data;
+const { Content } = await render(person);
+
+// Forced line break between given and family name. Left to wrap naturally, only
+// the two longest names broke, so the cards' heads sat at different heights and
+// the row looked accidental. Splitting on the first space makes all four
+// two-line, which is the cheapest way to get a consistent grid.
+const [firstName, ...restOfName] = name.split(' ');
+const lastName = restOfName.join(' ');
+---
+
+<article class="person">
+	<div class="person__head">
+		{
+			portrait ? (
+				<Image
+					src={portrait}
+					alt={portraitAlt ?? `Portrait of ${name}.`}
+					class="person__portrait"
+					widths={[128, 192, 256]}
+					sizes="96px"
+				/>
+			) : (
+				<Monogram name={name} class="person__portrait" />
+			)
+		}
+		<div>
+			<h3 class="person__name">
+				{firstName}
+				{lastName && (
+					<>
+						<br />
+						{lastName}
+					</>
+				)}
+			</h3>
+			<p class="person__role">{role}</p>
+			{org && <p class="person__org">{org}</p>}
+		</div>
+	</div>
+
+	{
+		titles.length > 0 && (
+			<ul class="person__titles" role="list">
+				{titles.map((title) => (
+					<li>{title}</li>
+				))}
+			</ul>
+		)
+	}
+
+	{/*
+		A native <details> disclosure rather than a JS accordion: it is keyboard
+		operable, announced correctly, and works with no script at all — which
+		matters on a site that ships zero JS bundles. The bios run long and unequal,
+		so collapsing them keeps four cards on a readable grid.
+	*/}
+	<details class="person__bio">
+		<summary>
+			<span class="person__bio-label person__bio-label--closed">Read bio</span>
+			<span class="person__bio-label person__bio-label--open">Hide bio</span>
+			<Icon name="lucide:chevron-down" aria-hidden="true" />
+		</summary>
+		<div class="person__bio-body">
+			<Content />
+		</div>
+	</details>
+
+	{
+		links.length > 0 && (
+			<ul class="person__links" role="list">
+				{links.map((link) => (
+					<li>
+						<a href={link.url} target="_blank" rel="noopener noreferrer">
+							{link.label}
+							<Icon name="lucide:arrow-up-right" aria-hidden="true" />
+							<span class="pp-visually-hidden">(opens in a new tab)</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</article>
+
+<style lang="scss">
+	.person {
+		display: flex;
+		flex-direction: column;
+		gap: var(--pp-space-s);
+		height: 100%;
+		padding: var(--pp-space-m);
+		background-color: var(--pp-plaster);
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+	}
+
+	.person__head {
+		display: flex;
+		align-items: center;
+		gap: var(--pp-space-s);
+	}
+
+	// The sketches are line art on white. `multiply` drops the white into the card
+	// so there is no visible plate edge, and it tints the graphite very slightly
+	// warm against plaster — which ties them to the palette rather than sitting on
+	// top of it. No circular mask for the same reason: a hard crop through the
+	// shoulders would fight the open, unbounded drawing.
+	:global(.person__portrait) {
+		flex: none;
+		width: 96px;
+		height: auto;
+		aspect-ratio: 1;
+		mix-blend-mode: multiply;
+	}
+
+	// Monogram fallback keeps its tile treatment.
+	:global(.monogram.person__portrait) {
+		width: 64px;
+		border-radius: var(--pp-radius-full);
+		mix-blend-mode: normal;
+	}
+
+	.person__name {
+		font-size: var(--pp-text-h4);
+		line-height: var(--pp-leading-snug);
+		text-wrap: nowrap;
+	}
+
+	.person__role {
+		margin-block-start: 0.2em;
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+		color: var(--pp-ink);
+	}
+
+	.person__org {
+		font-size: var(--pp-text-s);
+		color: var(--pp-ink-muted);
+	}
+
+	.person__titles {
+		display: grid;
+		gap: 0.15em;
+		margin: 0;
+		padding: 0;
+		font-size: var(--pp-text-xs);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Disclosure
+	// ---------------------------------------------------------------------------
+	.person__bio {
+		margin-block-start: auto;
+		border-block-start: 1px solid var(--pp-rule);
+		padding-block-start: var(--pp-space-s);
+
+		summary {
+			display: flex;
+			align-items: center;
+			gap: var(--pp-space-3xs);
+			width: fit-content;
+			cursor: pointer;
+			list-style: none;
+			font-size: var(--pp-text-s);
+			font-weight: var(--pp-weight-semibold);
+			color: var(--pp-green-link);
+			transition: color var(--pp-duration-fast) var(--pp-ease-out);
+
+			@include hover-capable {
+				&:hover {
+					color: var(--pp-green-hover);
+				}
+			}
+
+			// Safari still paints its own triangle without this.
+			&::-webkit-details-marker {
+				display: none;
+			}
+
+			@include focusable;
+
+			:global(svg) {
+				width: 16px;
+				height: 16px;
+				transition: rotate var(--pp-duration-base) var(--pp-ease-out);
+			}
+		}
+
+		&[open] summary :global(svg) {
+			rotate: 180deg;
+		}
+	}
+
+	// Label swaps with state so the control always describes what it will do.
+	// `display: none` rather than a font-size trick: hidden-by-display is removed
+	// from the accessibility tree, whereas `font-size: 0` leaves both strings in
+	// it and a screen reader announces "Read bioHide bio".
+	.person__bio-label--open {
+		display: none;
+	}
+
+	.person__bio[open] {
+		.person__bio-label--closed {
+			display: none;
+		}
+
+		.person__bio-label--open {
+			display: inline;
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Smoothing the disclosure
+	// ---------------------------------------------------------------------------
+	// <details> has no natively animatable state: `open` flips instantly and the
+	// content is added to or removed from rendering in one frame. Two layers here,
+	// both zero-JS.
+	//
+	// 1. Modern engines: `interpolate-size: allow-keywords` makes `height: auto`
+	//    interpolable, and `::details-content` gives us the box to animate. This
+	//    gets a real height transition BOTH ways — open and close.
+	// 2. Everywhere else: an entrance animation on the body, so the text fades and
+	//    settles instead of snapping in. Closing still snaps; without JS there is
+	//    no way to hold an element in the tree long enough to animate it out, and
+	//    a snap-shut is far less noticeable than a snap-open.
+	@supports (interpolate-size: allow-keywords) {
+		.person__bio {
+			interpolate-size: allow-keywords;
+		}
+
+		.person__bio::details-content {
+			block-size: 0;
+			overflow: hidden;
+			transition: block-size var(--pp-duration-base) var(--pp-ease-out),
+				content-visibility var(--pp-duration-base) allow-discrete;
+		}
+
+		.person__bio[open]::details-content {
+			block-size: auto;
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		@supports not (interpolate-size: allow-keywords) {
+			.person__bio[open] .person__bio-body {
+				animation: bio-in var(--pp-duration-base) var(--pp-ease-out) both;
+			}
+		}
+	}
+
+	@keyframes bio-in {
+		from {
+			opacity: 0;
+			translate: 0 -6px;
+		}
+	}
+
+	.person__bio-body {
+		margin-block-start: var(--pp-space-s);
+		display: grid;
+		gap: var(--pp-space-s);
+		font-size: var(--pp-text-s);
+		line-height: var(--pp-leading-loose);
+		color: var(--pp-ink);
+
+		:global(p) {
+			text-wrap: pretty;
+		}
+
+		:global(strong) {
+			color: var(--pp-ink-strong);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	.person__links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--pp-space-s);
+		margin: 0;
+		padding: 0;
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25em;
+			font-size: var(--pp-text-xs);
+			font-weight: var(--pp-weight-semibold);
+			color: var(--pp-green-link);
+			text-decoration: none;
+
+			@include focusable;
+
+			:global(svg) {
+				width: 13px;
+				height: 13px;
+			}
+		}
+	}
+</style>

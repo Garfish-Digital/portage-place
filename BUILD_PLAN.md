@@ -440,6 +440,30 @@ API with a Cloud-based Map ID, which means an API key, a billing account, and a
 sizeable JS payload. The plain embed also ships ~1 MB+ and sets third-party
 cookies before the visitor has done anything.
 
+### ✅ Implemented — click-to-load facade (Contact page)
+
+**Correction to an earlier note in this file:** I previously warned that Google
+map embeds need an API key and a billing account. That conflated two things and
+was wrong in the part that mattered.
+
+| Form | Key needed? | Notes |
+|---|---|---|
+| **Maps → Share → "Embed a map"** → `/maps/embed?pb=…` | **No** | Official, documented, free. The `pb=` blob encodes the map view and must be pasted — it can't be built from an address. **This is what should ship.** |
+| `maps?q=…&output=embed` | No | Constructible, widely used, but undocumented. Currently in `MAP_EMBED_URL` as a stopgap. |
+| Maps Embed API `/maps/embed/v1/` | Yes | Also free at unlimited usage, but needs a key + billing project. Only worth it for *directions mode* (an actual drawn route). |
+
+**No account or billing is required.** ⚠️ Still to do: paste the Share→Embed URL
+into `MAP_EMBED_URL` in `src/config/nav.ts`.
+
+Note the share-embed shows a **place**, not a route — "Get directions" opens a map
+centred on the building, and the visitor taps through to Google for turn-by-turn.
+
+The facade is built and verified: zero iframes on load, the embed injected only on
+click, the facade replaced, focus moved to the map region, both triggers disabled,
+and an `<a>` to Google Maps kept permanently as the escape hatch — Google's iframe
+is patchy for keyboard users and anyone actually travelling here wants the
+destination on their phone.
+
 **Recommended approach — a styled static map with a facade:**
 
 - A **static map image** styled to the site palette (Mapbox Static Images API, or
@@ -756,6 +780,32 @@ module, **too small for the full-bleed hero**, which will look soft on any large
 display. It is acceptable as placeholder and must be replaced by the professional
 photography in Phase 8. Shoot the hero frame at 2560px or wider.
 
+### ⚠️ `then-1` missed the shadow lift — measured 2026-08-11
+
+The Then images are not consistent with each other, and it is measurable. Taking
+the mean luminance of the darker half of each frame (roughly "the building",
+ignoring sky), the *lift* each Then image has over its Now partner:
+
+| Pair | Then | Now | Lift |
+|---|---|---|---|
+| 1 — parapet | 69.1 | 77.4 | **−8.3** ← wrong direction |
+| 2 — elevation | 111.3 | 79.2 | +32.1 |
+| 3 — corner | 114.9 | 81.8 | +33.1 |
+| 4 — south end | 91.6 | 67.7 | +23.9 |
+
+Pairs 2–4 are consistent: shadows lifted 24–33 points, which is the faded, aged
+look and exactly right. **Pair 1 is the outlier** — its shadows sit *below* its
+Now partner, so it reads as a dark photo rather than an old one.
+
+Frame-average brightness tells the same story: then-1 medians **78.6** against
+143.2 / 155.2 / 127.3 for the others. Part of that is subject — the parapet is a
+tight crop on dark brick with almost no sky, where the others are half sky and
+pavement — so matching should target *the brick*, not the frame average.
+
+Confirmed not a code problem: the build pipeline shifts every image by +0.1 to
++0.2 out of 255 (rounding noise), there is no CSS filter on these images, and all
+four sources are tagged sRGB.
+
 ### The then/now dissolve
 
 Rob shot the modern exteriors at matching angles, which makes a crossfade
@@ -933,10 +983,10 @@ Do **not** order the carousel chronologically. Standard structure:
 | **1** | Foundations: SCSS token layer, type scale (Fraunces / Public Sans), layout primitives, base layout, header/footer, floating CTA + modal + Netlify Forms 📸 **capture the `/specimen` sheet** | ✅ Complete |
 | **2** | Content model + collection schemas; real copy replacing the wall of text | 🔨 Schemas + seed content done; blocked on client inputs for the rest |
 | **3** | Home: hero, use-type grid, stat strip, location module, teasers 📸 | ✅ Built. Hero image is placeholder-resolution; proximity drive times still needed |
-| **4** | Find Your Space: floor plans + interactive SVG + location map 📸 — ⚠️ **confirm static-map decision with client before building this page** | |
+| **4** | Find Your Space: floor plans + interactive SVG + location map 📸 | 🔨 Page roughed in from the 2021 proposed plan. Needs a current plan, the SVG, and the static map |
 | **5** | History: scroll-driven vertical timeline 📸 | ✅ Built early — content was ready. Archival images still to come |
-| **6** | Community: tenants → owners → neighborhood → partners 📸 | |
-| **7** | Contact page, meta/OG/manifest/icon matrix, QR code | |
+| **6** | Community: tenants → owners → neighborhood → partners 📸 | ✅ Built. Needs tenant logos/portraits, quote attribution, owner portraits |
+| **7** | Contact page, meta/OG/manifest/icon matrix, QR code | 🔨 Contact page built (hours pending). Meta/OG/icons/QR still to do |
 | **8** | Real photography and video swapped in for placeholders 📸 *(biggest visual delta — highest-value capture)* | |
 | **9** | Accessibility audit, Lighthouse pass, real-device testing (iPhone 14/16, Pixel 9, ThinkPad E14) | |
 | **10** | 📸 Final captures → assemble carousel; domain cutover; delete `TODO.md`, `BUILD_PLAN.md`, smoke-test page, `reference-only/` | |
@@ -1110,6 +1160,18 @@ Export a clean static SVG alongside it.
 
 ---
 
+## Open reminders
+
+- **Press blurbs** — revisit for consistent length so the cards stop stretching
+  their grid rows unevenly. The unused `pullQuote` field is the bigger win.
+- **The size range now differs between pages.** Home, Community and the footer say
+  "200 to 2,000 sq ft" (the client's rounded figure); Spaces derives "200 to 1,800"
+  from the 2021 plan's usable figures. Rentable on that plan reaches 2,433, so the
+  client's 2,000 is probably rentable, or covers space not on this drawing. Worth
+  settling on one number and one basis before launch.
+- **`then-1` is graded differently from the other three.** See Archival image
+  treatment.
+
 ## Questions for the client — Phase 2 content
 
 Grouped by who can answer. Nothing here blocks schema work; all of it blocks
@@ -1161,11 +1223,20 @@ finished copy.
 
 ### Contact & launch
 
-13. **What email should actually receive form submissions?** Currently Mike's
+13. **What are the building's opening hours?** ⚠️ Blocking the Contact page — it
+    currently renders a visible "to be confirmed" note rather than a guess, since
+    a wrong opening time sends someone to a locked door. Note the commercial
+    tenants keep their own hours, so the answer is probably "the building is open
+    X; individual businesses vary."
+14. **Is there parking, and where?** Not currently mentioned anywhere on the site.
+    It is one of the first questions a retail tenant asks, and the 2013 housing
+    proposal documented 34 on-site spaces plus on-street — so there is something
+    to say.
+15. **What email should actually receive form submissions?** Currently Mike's
     personal address on the live site; Rob is advising against. `tyler@regensb.com`
     is the interim. A proper `@portageplacesb.com` mailbox would need MX records
     set up — and note the domain currently has none at all.
-14. **Google Business Profile** — is one claimed and tended? For a "remember the
+16. **Google Business Profile** — is one claimed and tended? For a "remember the
     name" goal it does more than anything on the site itself.
 
 ---

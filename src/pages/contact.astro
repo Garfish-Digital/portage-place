@@ -1,0 +1,395 @@
+---
+import { Icon } from 'astro-icon/components';
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/primitives/Section.astro';
+import Button from '../components/Button.astro';
+import { CONTACT, MAP_EMBED_URL } from '../config/nav';
+import { ACCESS } from '../config/site';
+
+const { street, city, region, postalCode } = CONTACT.address;
+
+// Google Maps directions deep-link. Sends the visitor to their own map app with
+// the destination pre-filled rather than embedding a 1 MB third-party iframe that
+// sets cookies before they've done anything.
+const mapQuery = encodeURIComponent(`Portage Place, ${street}, ${city}, ${region} ${postalCode}`);
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+---
+
+<BaseLayout
+	title="Contact"
+	description="Visit or email Portage Place — 908 Portage Avenue, South Bend, Indiana. Commercial and office space from 200 to 2,000 sq ft."
+>
+	<Section>
+		<div class="intro">
+			<p class="pp-eyebrow intro__eyebrow">Get in touch</p>
+			<h1>Email us so we can talk.</h1>
+			<p class="intro__lede">
+				No forms to fill in, no commitment. Send an address and we'll take it from
+				there — or come and knock on the door.
+			</p>
+			<div class="intro__actions">
+				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+			</div>
+		</div>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	<Section tone="limestone">
+		<div class="details">
+			<div class="detail">
+				<h2 class="detail__label">Address</h2>
+				<address class="detail__body">
+					Portage Place<br />
+					{street}<br />
+					{city}, {region} {postalCode}
+				</address>
+			</div>
+
+			<div class="detail">
+				<h2 class="detail__label">Getting here</h2>
+				<ul class="access" role="list">
+					{
+						ACCESS.map((item) => (
+							<li class="access__item">
+								<Icon name="lucide:check" aria-hidden="true" />
+								<span>{item}</span>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<div class="detail">
+				<h2 class="detail__label">Interactive map</h2>
+				{/*
+					A <button>, not a link: it loads the map into the page below rather
+					than navigating away. `aria-controls` ties it to the region it changes,
+					and the script moves focus there so a keyboard user isn't left behind.
+				*/}
+				<Button
+					type="button"
+					icon="lucide:navigation"
+					aria-controls="map-region"
+					data-load-map
+				>
+					Get directions
+				</Button>
+				<p class="detail__hint">Click to open Google Maps</p>
+			</div>
+		</div>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	{/* ------------------------------------------------------------------ */}
+	<Section>
+		<div class="map" id="map-region" tabindex="-1" data-map-region>
+			{/*
+				Facade. The styled static map (Phase 4) sits here until clicked; only
+				then does the Google iframe load. Google sets third-party cookies and
+				pulls a large payload the instant it loads, so doing that to every
+				visitor who opens Contact is what this pattern avoids.
+			*/}
+			<div class="map__facade" data-map-facade>
+				<p class="map__label">Map — Phase 4</p>
+				<p class="map__note">
+					A styled static map goes here, drawn to the palette. Zero JS, no
+					third-party cookies, no layout shift — until you ask for the live one.
+				</p>
+				<Button variant="quiet" type="button" icon="lucide:map" data-load-map>
+					Load Google Maps
+				</Button>
+			</div>
+		</div>
+
+		<p class="map__escape">
+			Or <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
+				open it in Google Maps
+				<Icon name="lucide:arrow-up-right" aria-hidden="true" />
+				<span class="pp-visually-hidden">(opens in a new tab)</span></a> — better if
+			you're heading here now and want it on your phone.
+		</p>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	<Section tone="limestone" data-cta-section>
+		<div class="cta">
+			<div>
+				<p class="pp-eyebrow cta__eyebrow">Still deciding?</p>
+				<h2 class="cta__title">Have a look at what's here.</h2>
+				<p class="cta__lede">
+					Sizes, wings and what fits where — plus the hundred-year story behind the
+					building.
+				</p>
+			</div>
+			<div class="cta__actions">
+				<Button variant="quiet" size="lg" href="/spaces">Find your space</Button>
+				<Button variant="quiet" size="lg" href="/history">The history</Button>
+			</div>
+		</div>
+	</Section>
+</BaseLayout>
+
+<script>
+	import { MAP_EMBED_URL } from '../config/nav';
+
+	// Click-to-load map. The only JS on this page, and it exists to keep Google's
+	// cookies and payload off visitors who never ask for the map.
+	const region = document.querySelector<HTMLElement>('[data-map-region]');
+	const facade = document.querySelector<HTMLElement>('[data-map-facade]');
+	const triggers = document.querySelectorAll<HTMLButtonElement>('[data-load-map]');
+
+	if (region && facade && triggers.length) {
+		let loaded = false;
+
+		const load = () => {
+			if (loaded) return;
+			loaded = true;
+
+			const frame = document.createElement('iframe');
+			frame.src = MAP_EMBED_URL;
+			// Without a title the frame is announced as an unlabelled region.
+			frame.title = 'Google Maps showing Portage Place, 908 Portage Avenue, South Bend, Indiana';
+			frame.loading = 'lazy';
+			frame.referrerPolicy = 'no-referrer-when-downgrade';
+			frame.className = 'map__frame';
+			frame.setAttribute('allowfullscreen', '');
+
+			facade.replaceWith(frame);
+
+			// The control that was clicked may now be off-screen, and the thing it
+			// changed is elsewhere on the page. Move focus to the region so a
+			// keyboard or screen-reader user lands on what they just asked for.
+			region.focus();
+
+			triggers.forEach((button) => {
+				button.disabled = true;
+				button.textContent = 'Map loaded';
+			});
+		};
+
+		triggers.forEach((button) => button.addEventListener('click', load));
+	}
+</script>
+
+<style lang="scss">
+	.intro {
+		max-width: 44rem;
+	}
+
+	.intro__eyebrow {
+		color: var(--pp-ink-muted);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.intro__lede {
+		margin-block-start: var(--pp-space-m);
+		font-size: var(--pp-text-lede);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	.intro__actions {
+		margin-block-start: var(--pp-space-l);
+	}
+
+	// ---------------------------------------------------------------------------
+	.details {
+		display: grid;
+		gap: var(--pp-space-xl);
+
+		@include from('md') {
+			grid-template-columns: repeat(3, 1fr);
+			gap: var(--pp-space-2xl);
+		}
+	}
+
+	.detail__label {
+		@include eyebrow;
+
+		color: var(--pp-ink-muted);
+		margin-block-end: var(--pp-space-s);
+	}
+
+	.detail__body {
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h4);
+		font-style: normal;
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-strong);
+	}
+
+	.detail__body--pending {
+		font-family: var(--pp-font-body);
+		font-size: var(--pp-text-s);
+		color: var(--pp-error);
+		font-style: italic;
+	}
+
+	.detail__actions {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--pp-space-s);
+		margin-block-start: var(--pp-space-m);
+	}
+
+	.detail__link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25em;
+		font-size: var(--pp-text-s);
+		font-weight: var(--pp-weight-semibold);
+		color: var(--pp-green-link);
+		text-decoration: none;
+
+		@include focusable;
+
+		:global(svg) {
+			width: 14px;
+			height: 14px;
+		}
+	}
+
+	.access {
+		display: grid;
+		gap: var(--pp-space-2xs);
+		margin: 0;
+		padding: 0;
+	}
+
+	.access__item {
+		display: flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+		font-size: var(--pp-text-s);
+		color: var(--pp-ink);
+
+		:global(svg) {
+			flex: none;
+			width: 16px;
+			height: 16px;
+			color: var(--pp-green);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Map
+	// ---------------------------------------------------------------------------
+	.map {
+		// Reserved before anything loads, so swapping the facade for the iframe
+		// costs no layout shift.
+		aspect-ratio: 16 / 9;
+		max-block-size: 30rem;
+		overflow: hidden;
+		border-radius: var(--pp-radius-m);
+		background-color: var(--pp-limestone);
+
+		// tabindex="-1" makes it a focus target; the ring would otherwise be noise
+		// on a non-interactive region.
+		&:focus {
+			outline: none;
+		}
+	}
+
+	.map__facade {
+		display: grid;
+		place-content: center;
+		justify-items: center;
+		gap: var(--pp-space-2xs);
+		height: 100%;
+		padding: var(--pp-space-l);
+		text-align: center;
+		border: 1px dashed var(--pp-border);
+		border-radius: inherit;
+	}
+
+	.map__label {
+		@include eyebrow;
+
+		color: var(--pp-brick-dark);
+	}
+
+	.map__note {
+		max-width: 30rem;
+		margin-block-end: var(--pp-space-s);
+		font-size: var(--pp-text-s);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	:global(.map__frame) {
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+
+	// Kept even once the embed loads. Google's iframe is patchy for keyboard users,
+	// and anyone actually travelling here wants the destination on their phone.
+	.map__escape {
+		margin-block-start: var(--pp-space-s);
+		font-size: var(--pp-text-s);
+		color: var(--pp-ink-muted);
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.2em;
+			color: var(--pp-green-link);
+			font-weight: var(--pp-weight-semibold);
+
+			:global(svg) {
+				width: 13px;
+				height: 13px;
+			}
+		}
+	}
+
+	.detail__hint {
+		margin-block-start: var(--pp-space-2xs);
+		font-size: var(--pp-text-xs);
+		color: var(--pp-ink-muted);
+	}
+
+	// ---------------------------------------------------------------------------
+	.cta {
+		display: flex;
+		flex-direction: column;
+		gap: var(--pp-space-l);
+
+		@include from('lg') {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--pp-space-2xl);
+		}
+	}
+
+	// brick-dark, not bronze: bronze is 3.48:1 on plaster and 2.65:1 on limestone,
+	// both failures for text. Bronze stays non-text only — rules, rings, markers.
+	.cta__eyebrow {
+		color: var(--pp-brick-dark);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.cta__title {
+		font-size: var(--pp-text-h2);
+		color: var(--pp-text-strong);
+	}
+
+	.cta__lede {
+		margin-block-start: var(--pp-space-xs);
+		max-width: 34rem;
+		color: var(--pp-text-muted);
+		text-wrap: pretty;
+	}
+
+	.cta__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--pp-space-s);
+	}
+</style>

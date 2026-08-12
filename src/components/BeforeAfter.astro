@@ -23,6 +23,7 @@ interface Props {
 	/** First pair on the page gets eager loading; the rest stay lazy. */
 	priority?: boolean;
 	sizes?: string;
+	class?: string;
 }
 
 const {
@@ -35,10 +36,11 @@ const {
 	layout = 'side-by-side',
 	priority = false,
 	sizes = '(min-width: 768px) 45vw, 92vw',
+	class: className,
 } = Astro.props;
 ---
 
-<figure class:list={['ba', `ba--${layout}`]}>
+<figure class:list={['ba', `ba--${layout}`, className]}>
 	<div class="ba__frames">
 		<div class="ba__frame">
 			<Image
