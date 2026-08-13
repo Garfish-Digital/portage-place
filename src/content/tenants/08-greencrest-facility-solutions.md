@@ -3,7 +3,7 @@ name: 'GreenCrest Facility Solutions'
 category: office
 type: Facility services
 quote: >-
-  From the beginning, the process of moving into our space was straightforward and easy. We’ve been very happy here.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: false
 order: 8
 placeholder: false

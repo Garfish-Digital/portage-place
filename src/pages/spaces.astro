@@ -4,12 +4,18 @@ import { Icon } from 'astro-icon/components';
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/primitives/Section.astro';
+import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
 import { getSpaces, getSpaceRange, getSpaceTypes } from '../lib/content';
 
 // ⚠️ 2021 PROPOSED PLAN — for rough-in only. Carries Kil Architecture's title
 // block; must be cropped or redrawn before anything ships.
 import planImage from '../assets/plans/first-floor-2021.webp';
+
+// Phase 2 in progress, shot 2026. Evidence that "more coming" is actually
+// happening — which is the only reason these earn space on a leasing page.
+import phase2Skylight from '../assets/phase-2/skylight.jpg';
+import phase2Openings from '../assets/phase-2/openings.jpg';
 
 const spaces = await getSpaces();
 const range = await getSpaceRange();
@@ -26,26 +32,28 @@ const fmt = (n: number) => n.toLocaleString('en-US');
 const roundDown = (n: number, to: number) => Math.floor(n / to) * to;
 const roundUp = (n: number, to: number) => Math.ceil(n / to) * to;
 const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
+
+// ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
+import heroImage from '../assets/heroes/spaces.jpg';
 ---
 
 <BaseLayout
 	title="Find Your Space"
 	description="Commercial, studio and office space for lease at Portage Place — a restored 1919 bakery in South Bend. Units from roughly 200 to 1,800 usable square feet."
 >
-	<Section>
-		<div class="intro">
-			<p class="pp-eyebrow intro__eyebrow">Space available</p>
-			<h1>Find the one that fits.</h1>
-			<p class="intro__lede">
-				Retail on the Portage Avenue frontage, warehouse and flex space at the rear,
-				studios and offices in between. Roughly {fmt(approx.min)} to {fmt(approx.max)} usable
-				square feet, starting at $300 a month.
-			</p>
-			<div class="intro__actions">
-				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Ask about a space</Button>
-			</div>
-		</div>
-	</Section>
+	<PageHero
+		image={heroImage}
+		alt="A glazed private office inside the building, framed in black steel against exposed brick and painted ductwork, with polished concrete floors."
+		eyebrow="Space available"
+		title="Find the one that fits."
+		lede={`Retail on the Portage Avenue frontage, warehouse and flex space at the rear, studios and offices in between. Roughly ${fmt(approx.min)} to ${fmt(approx.max)} usable square feet, starting at $300 a month.`}
+		position="center 50%"
+		priority
+	>
+		<Fragment slot="actions">
+			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Ask about a space</Button>
+		</Fragment>
+	</PageHero>
 
 	{/* ------------------------------------------------------------------ */}
 	{/* What kinds of space */}
@@ -55,7 +63,7 @@ const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
 			<p class="pp-eyebrow block-head__eyebrow">What's here</p>
 			<h2>{types.length} kinds of space under one roof.</h2>
 			<p class="block-head__lede">
-				The building was a bread factory, so it has room shapes an office park
+				Our building has room shapes an office park
 				doesn't — loading-height warehouse bays behind small street-front retail.
 			</p>
 		</div>
@@ -184,15 +192,41 @@ const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
 	{/* ------------------------------------------------------------------ */}
 	<Section>
 		<div class="phase2">
-			<div>
+			<div class="phase2__text">
 				<p class="pp-eyebrow block-head__eyebrow">Coming</p>
-				<h2>Phase 2 will renovate the rest.</h2>
+				<h2>Phase 2 is under way.</h2>
 				<p class="block-head__lede">
 					The ground floor is roughly 20,000 of the building's 56,000 square feet. The
 					basement and second floor follow, built out much the same way — so if you
 					need more room than exists today, it's worth asking.
 				</p>
 			</div>
+
+			{/*
+				Two photographs, not six. BUILD_PLAN keeps Phase 2 "mentioned, not
+				featured" — enough that a tenant needing more room knows to ask, not
+				enough to distract from what's available now. Captioned and dated so
+				nobody mistakes a construction site for a space they can lease today.
+			*/}
+			<figure class="phase2__media">
+				<div class="phase2__frames">
+					<Image
+						src={phase2Skylight}
+						alt="Interior of the Phase 2 space: a skylight over exposed timber joists and pale brick walls, with stacked lumber and buckets on the concrete floor."
+						widths={[420, 640, 900]}
+						sizes="(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw"
+						loading="lazy"
+					/>
+					<Image
+						src={phase2Openings}
+						alt="Two large openings cut through a brick pier, looking into an adjoining bay with steel columns and a timber ceiling."
+						widths={[420, 640, 900]}
+						sizes="(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw"
+						loading="lazy"
+					/>
+				</div>
+				<figcaption class="phase2__caption">Phase 2 in progress, 2026.</figcaption>
+			</figure>
 		</div>
 	</Section>
 
@@ -203,8 +237,7 @@ const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
 				<p class="pp-eyebrow cta__eyebrow">No commitment</p>
 				<h2 class="cta__title">Tell us roughly what you need.</h2>
 				<p class="cta__lede">
-					Square footage, or just the kind of business — an email address on its own is
-					plenty.
+					Square footage, or just the kind of business — an email is all it takes.
 				</p>
 			</div>
 			<div class="cta__actions">
@@ -284,7 +317,7 @@ const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
 		flex-direction: column;
 		gap: var(--pp-space-3xs);
 		padding: var(--pp-space-m);
-		background-color: var(--pp-plaster);
+		background-color: var(--pp-raised);
 		border: 1px solid var(--pp-rule);
 		border-radius: var(--pp-radius-m);
 	}
@@ -398,7 +431,43 @@ const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
 
 	// ---------------------------------------------------------------------------
 	.phase2 {
-		max-width: 44rem;
+		display: grid;
+		gap: var(--pp-space-xl);
+		align-items: center;
+
+		@include from('lg') {
+			grid-template-columns: 1fr 1fr;
+			gap: var(--pp-space-2xl);
+		}
+	}
+
+	.phase2__text {
+		max-width: 40rem;
+	}
+
+	.phase2__media {
+		margin: 0;
+	}
+
+	.phase2__frames {
+		display: grid;
+		gap: var(--pp-space-xs);
+		grid-template-columns: 1fr 1fr;
+
+		:global(img) {
+			width: 100%;
+			height: auto;
+			aspect-ratio: 4 / 3;
+			object-fit: cover;
+			border-radius: var(--pp-radius-m);
+			background-color: var(--pp-limestone);
+		}
+	}
+
+	.phase2__caption {
+		margin-block-start: var(--pp-space-xs);
+		font-size: var(--pp-text-xs);
+		color: var(--pp-ink-muted);
 	}
 
 	.cta {

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/primitives/Section.astro';
+import PageHero from '../components/PageHero.astro';
 import Timeline from '../components/Timeline.astro';
 import PressList from '../components/PressList.astro';
 import Button from '../components/Button.astro';
@@ -11,6 +12,9 @@ const press = await getPress();
 
 // Derived rather than typed in, so the intro can't drift from the data.
 const firstYear = milestones[0]?.data.year ?? '1919';
+
+// ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
+import heroImage from '../assets/heroes/history.jpg';
 ---
 
 <BaseLayout
@@ -18,22 +22,25 @@ const firstYear = milestones[0]?.data.year ?? '1919';
 	description="A 1919 industrial bakery in South Bend that kept reinventing itself — from Busse and Ward through forty years as a sealed warehouse to Portage Place."
 >
 	{/* ------------------------------------------------------------------ */}
-	<Section>
-		<div class="intro">
-			<p class="pp-eyebrow intro__eyebrow">Since {firstYear}</p>
-			<h1>A building that kept reinventing itself.</h1>
-			<p class="intro__lede">
-				It began as a neighborhood bread plant, was absorbed into the company that would
-				become Wonder Bread, ran four thousand loaves an hour, spent forty years with its
-				windows bricked shut, sat empty for a decade — and got its light back in 2022.
-			</p>
-		</div>
-	</Section>
+	<PageHero
+		image={heroImage}
+		alt="The restored building seen along Portage Avenue: two storeys of red brick with stepped stone parapets, tall windows and young street trees."
+		eyebrow={`Since ${firstYear}`}
+		title="A building that keeps reinventing itself."
+		lede="It began as a neighborhood bread plant that ran four thousand loaves an hour, then it spent forty years with its windows bricked shut. Now the lights are back on."
+		position="center 55%"
+		priority
+	/>
 
 	{/* ------------------------------------------------------------------ */}
 	<Section tone="limestone" tight>
 		<div class="note">
-			<h2 class="note__title">A note on the record</h2>
+			<h2 class="note__title">The record</h2>
+			<p class="note__body">
+				Published accounts of this building state that the 1919 plant was built by <strong>Fred W. Busse</strong> for his bread making plant. It was acquired by Ward Baking Company a few years later, in which they ran business for 50 years. It was then occupied by <strong>Ford Distributing</strong>, a local wholesaler of
+				vending goods and tobacco.
+			</p>
+			<!-- <h2 class="note__title">A note on the record</h2>
 			<p class="note__body">
 				Published accounts of this building disagree with each other — on when it was
 				built, when Ward took over, and when its last tenant arrived. Where sources
@@ -41,7 +48,7 @@ const firstYear = milestones[0]?.data.year ?? '1919';
 				worth stating plainly: the 1919 plant was built by <strong>Fred W. Busse</strong>,
 				not by Ward; and <strong>Ford Distributing</strong> was a local wholesaler of
 				vending goods and tobacco — <strong>not Ford Motor Company</strong>.
-			</p>
+			</p> -->
 		</div>
 	</Section>
 
@@ -75,7 +82,7 @@ const firstYear = milestones[0]?.data.year ?? '1919';
 				<h2 class="cta__title">There's room in it for you.</h2>
 				<p class="cta__lede">
 					Spaces from 200 to 2,000 square feet, in a building that has been useful for a
-					hundred years and intends to stay that way.
+					hundred years.
 				</p>
 			</div>
 			<div class="cta__actions">

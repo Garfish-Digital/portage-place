@@ -53,7 +53,11 @@
 	// Lines
 	// ---------------------------------------------------------------------------
 	--pp-rule: #c9c1b6; // decorative hairlines, section dividers          1.64:1
-	--pp-border: #8f8476; // input borders, meaningful edges — WCAG 1.4.11 3.37:1
+	// Control boundaries — buttons, inputs. Must clear 3:1 against EVERY surface
+	// it can sit on, not just the page background: the previous #8F8476 managed
+	// 3.37 on plaster but only 2.56 on limestone, so any bordered control inside a
+	// limestone section had an invalid boundary.
+	--pp-border: #7c6f62; // plaster 4.48:1 · limestone 3.41:1
 	--pp-rule-inverse: #4a4541; // hairlines on espresso
 	--pp-border-inverse: #7c7266; // input borders on espresso
 
@@ -95,6 +99,11 @@
 	// ---------------------------------------------------------------------------
 	--pp-surface: var(--pp-plaster);
 	--pp-surface-alt: var(--pp-limestone);
+	// The surface for anything sitting ON the current surface — cards, quiet
+	// buttons, wells. Section flips it per tone, so a filled element never ends up
+	// the same colour as its own background. Hard-coding `--pp-plaster` on a card
+	// is what turned cards and quiet buttons into ghosts inside plaster sections.
+	--pp-raised: var(--pp-limestone);
 	--pp-text: var(--pp-ink);
 	--pp-text-strong: var(--pp-ink-strong);
 	--pp-text-muted: var(--pp-ink-muted);
@@ -153,6 +162,10 @@
 	--pp-space-3xl: 6rem; // 96px
 	--pp-space-section: #{fluid(56, 120)}; // vertical section rhythm
 	--pp-gutter: #{fluid(20, 40)}; // page side padding
+
+	// The header overlays the hero, so the hero has to pull up by exactly this and
+	// pad back down by it. A token keeps the two in step.
+	--pp-header-h: 4.5rem; // 72px
 
 	--pp-container: 75rem; // 1200px — general content
 	--pp-container-wide: 90rem; // 1440px — full-bleed media sections
@@ -215,6 +228,7 @@
 	--pp-rule: var(--pp-rule-inverse);
 	--pp-border: var(--pp-border-inverse);
 	--pp-green-link: var(--pp-green-on-dark);
+	--pp-raised: var(--pp-espresso-raised);
 
 	color: var(--pp-text);
 	background-color: var(--pp-surface);

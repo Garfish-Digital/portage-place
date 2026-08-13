@@ -1,0 +1,115 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+/**
+ * Documentary images for a timeline milestone.
+ *
+ * Deliberately not <BeforeAfter>: that component pairs two frames shot from one
+ * camera position and tags them Then / Now, which asserts a direct comparison.
+ * These images merely document the same period, so they get captions instead of
+ * labels — the caption says what you're looking at without implying the two are
+ * two halves of one thing.
+ */
+interface Figure {
+	src: ImageMetadata;
+	alt: string;
+	caption: string;
+	credit?: string;
+}
+
+interface Props {
+	figures: Figure[];
+	class?: string;
+	sizes?: string;
+}
+
+const {
+	figures,
+	class: className,
+	sizes = '(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw',
+} = Astro.props;
+---
+
+<div class:list={['figs', className]}>
+	{
+		figures.map((figure) => (
+			<figure class="fig">
+				<div class="fig__frame">
+					<Picture
+						src={figure.src}
+						alt={figure.alt}
+						formats={['avif', 'webp']}
+						sizes={sizes}
+						widths={[380, 560, 760]}
+						loading="lazy"
+					/>
+				</div>
+				<figcaption class="fig__caption">
+					{figure.caption}
+					{figure.credit && <span class="fig__credit">{figure.credit}</span>}
+				</figcaption>
+			</figure>
+		))
+	}
+</div>
+
+<style lang="scss">
+	.figs {
+		display: grid;
+		gap: var(--pp-space-xs);
+
+		@include from('md') {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	// The grid stretches both figures to equal height; `margin-block-start: auto`
+	// on the caption then pins it to the bottom of that shared height. Without it
+	// each caption sits directly under its own image, and since a portrait advert
+	// and a landscape photograph are different heights, the two captions land at
+	// different points — which reads as misalignment rather than variety.
+	//
+	// Deliberately NOT solved by forcing a shared aspect-ratio: the adverts are
+	// dense type and need every pixel of height they can get to stay readable.
+	.fig {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.fig__frame {
+		overflow: hidden;
+		border-radius: var(--pp-radius-m);
+		// Adverts are tall and photographs are landscape, so a shared aspect ratio
+		// would crop one or the other badly. A common background instead lets each
+		// keep its own shape while the pair still reads as a set.
+		background-color: var(--pp-limestone);
+
+		:global(picture) {
+			display: contents;
+		}
+
+		:global(img) {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	.fig__caption {
+		display: grid;
+		gap: 1px;
+		margin-block-start: auto;
+		padding-block-start: var(--pp-space-xs);
+		font-size: var(--pp-text-xs);
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-text-muted);
+		text-wrap: pretty;
+	}
+
+	.fig__credit {
+		font-size: var(--pp-text-2xs);
+		color: var(--pp-brick-mid);
+	}
+</style>

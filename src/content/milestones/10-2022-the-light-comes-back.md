@@ -6,16 +6,26 @@ summary: The bricks come out of the windows. Phase 1 opens in December 2025.
 confidence: documented
 featured: true
 beforeAfter:
-  then: ../../assets/before-after/then-2.png
-  now: ../../assets/before-after/now-2.png
-  thenAlt: >-
-    The west elevation before renovation: two storeys of brick with every window
-    opening filled in, under a grey winter sky.
-  nowAlt: >-
-    The same elevation today, the window openings reopened and glazed, brickwork
-    cleaned and the stone trim restored.
-  thenCaption: Every opening bricked in
-  nowCaption: Glazed again, 2022
+  - then: ../../assets/before-after/then-3.png
+    now: ../../assets/before-after/now-3.png
+    thenAlt: >-
+      The California Avenue corner while the building stood vacant — window openings
+      filled with brick and glass block under an overcast sky, the street deserted.
+    nowAlt: >-
+      The same corner after renovation, with reopened glazing in black frames, tidy
+      kerbs and planting, under a bright sky.
+    thenCaption: Vacant
+    nowCaption: Thriving
+  - then: ../../assets/before-after/then-2.png
+    now: ../../assets/before-after/now-2.png
+    thenAlt: >-
+      The west elevation before renovation: two storeys of brick with every window
+      opening filled in, under a grey winter sky.
+    nowAlt: >-
+      The same elevation today, the window openings reopened and glazed, brickwork
+      cleaned and the stone trim restored.
+    thenCaption: Every opening bricked in.
+    nowCaption: Glazed back to life.
 sources:
   - 'WNDU, 8 March 2022 — $4.2M renovations underway'
   - 'South Bend Tribune, 9 March 2022 — façade renovation'

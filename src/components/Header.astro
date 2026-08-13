@@ -92,6 +92,9 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 			toggle.setAttribute('aria-expanded', String(open));
 			panel.hidden = !open;
 			header.classList.toggle('is-nav-open', open);
+			// The panel is plaster; a transparent bar above it would leave the nav
+			// links reading as light text on a light surface.
+			if (open) header.classList.add('is-solid');
 			// Lock the page behind the panel, but only while it's actually open.
 			document.documentElement.style.overflow = open ? 'hidden' : '';
 		};
@@ -116,30 +119,68 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		});
 	}
 
-	// Shadow appears only once the page has actually scrolled, so the header sits
-	// flat against the hero at rest.
-	const onScroll = () => {
-		document.querySelector('[data-header]')?.classList.toggle('is-scrolled', window.scrollY > 8);
-	};
-	onScroll();
-	window.addEventListener('scroll', onScroll, { passive: true });
+	// The header is transparent over the hero and solid once the hero has passed
+	// under it.
+	//
+	// An IntersectionObserver on the hero rather than a scroll threshold: hero
+	// heights differ per page (display vs page size, and svh varies with mobile
+	// browser chrome), so any fixed pixel value would be wrong somewhere. Shrinking
+	// the root's top edge by the header height makes the hero stop intersecting at
+	// exactly the moment its base slides under the bar.
+	//
+	// No hero on the page — or no IntersectionObserver — means solid from the
+	// start, which is also the correct fallback: light nav on a light page would be
+	// unreadable.
+	const headerEl = document.querySelector<HTMLElement>('[data-header]');
+	const hero = document.querySelector<HTMLElement>('[data-hero]');
+
+	if (headerEl) {
+		if (!hero || !('IntersectionObserver' in window)) {
+			headerEl.classList.add('is-solid');
+		} else {
+			const headerHeight = () => headerEl.offsetHeight;
+			let observer: IntersectionObserver | null = null;
+
+			const watch = () => {
+				observer?.disconnect();
+				observer = new IntersectionObserver(
+					([entry]) => headerEl.classList.toggle('is-solid', !entry.isIntersecting),
+					{ rootMargin: `-${headerHeight()}px 0px 0px 0px`, threshold: 0 },
+				);
+				observer.observe(hero);
+			};
+
+			watch();
+			// The header can change height (the wordmark wraps at some widths), which
+			// would leave the rootMargin stale and the flip firing early or late.
+			if ('ResizeObserver' in window) {
+				new ResizeObserver(watch).observe(headerEl);
+			}
+		}
+	}
 </script>
 
 <style lang="scss">
+	// Transparent at rest, sitting over the hero; espresso once the hero has
+	// scrolled past. The hero pulls itself up under this by --pp-header-h.
 	.header {
 		position: sticky;
 		inset-block-start: 0;
 		z-index: var(--pp-z-header);
-		background-color: color-mix(in srgb, var(--pp-plaster) 88%, transparent);
-		backdrop-filter: blur(12px);
-		border-block-end: 1px solid transparent;
-		transition: border-color var(--pp-duration-base) var(--pp-ease-out),
+		background-color: transparent;
+		// Rule drawn as an inset shadow, not a border: a 1px border adds to the
+		// header's height, and the hero tucks up by exactly --pp-header-h — so the
+		// border left a 1px plaster line across the top of every hero.
+		transition: background-color var(--pp-duration-base) var(--pp-ease-out),
 			box-shadow var(--pp-duration-base) var(--pp-ease-out);
 	}
 
-	.header.is-scrolled {
-		border-block-end-color: var(--pp-rule);
-		box-shadow: var(--pp-shadow-s);
+	// Set by the observer once the hero's base passes under the header — and the
+	// default for any page with no hero at all, so the nav is never light text on
+	// a light page.
+	.header.is-solid {
+		background-color: var(--pp-espresso);
+		box-shadow: inset 0 -1px 0 var(--pp-rule-inverse), var(--pp-shadow-s);
 	}
 
 	:global(.header__inner) {
@@ -147,18 +188,28 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		align-items: center;
 		justify-content: space-between;
 		gap: var(--pp-space-m);
-		min-height: 72px;
+		min-height: var(--pp-header-h);
 	}
 
 	// ---------------------------------------------------------------------------
 	// Brand
 	// ---------------------------------------------------------------------------
+	// The client's mark is designed to sit on black, so it keeps its own plaque in
+	// both header states rather than adopting the bar's colour. Square corners:
+	// their asset is a hard-edged rectangle, not a rounded chip.
+	//
+	// The plaque is --pp-ink-strong (#16130F) and the bar it sits on when scrolled
+	// is espresso (#322F2C) — about 1.6:1 apart, so the plaster hairline is what
+	// keeps its edge defined in the solid state.
 	.header__brand {
 		display: inline-flex;
 		align-items: center;
 		gap: var(--pp-space-xs);
+		padding: var(--pp-space-2xs) var(--pp-space-s);
 		text-decoration: none;
-		color: var(--pp-ink-strong);
+		color: var(--pp-plaster);
+		background-color: var(--pp-ink-strong);
+		border: 1px solid var(--pp-plaster);
 
 		@include focusable;
 	}
@@ -171,7 +222,8 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		height: 38px;
 		width: auto;
 		flex: none;
-		color: var(--pp-ink-strong);
+		// currentColor on the inlined SVG — plaster on the plaque.
+		color: var(--pp-plaster);
 	}
 
 	// Public Sans letter-spaced caps rather than Fraunces. The mark's own
@@ -184,7 +236,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		letter-spacing: var(--pp-tracking-caps);
 		text-transform: uppercase;
 		line-height: 1.2;
-		color: var(--pp-ink-strong);
+		color: var(--pp-plaster);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -212,7 +264,9 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		position: relative;
 		display: block;
 		padding-block: var(--pp-space-2xs);
-		color: var(--pp-ink);
+		// One colour in both states: the bar is either a dark-scrimmed photograph
+		// or espresso, so plaster reads on both and nothing needs to flip.
+		color: var(--pp-plaster);
 		text-decoration: none;
 		transition: color var(--pp-duration-fast) var(--pp-ease-out);
 
@@ -227,7 +281,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 			inset-block-end: -2px;
 			inset-inline: 0;
 			height: 2px;
-			background-color: var(--pp-bronze);
+			background-color: var(--pp-limestone-deep);
 			scale: 0 1;
 			transform-origin: left center;
 			transition: scale var(--pp-duration-base) var(--pp-ease-out);
@@ -240,7 +294,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		}
 
 		&[aria-current='page'] {
-			color: var(--pp-ink-strong);
+			color: #fff;
 
 			&::after {
 				scale: 1 1;
@@ -257,7 +311,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		width: 44px;
 		height: 44px;
 		margin-inline-end: calc(var(--pp-space-2xs) * -1);
-		color: var(--pp-ink-strong);
+		color: var(--pp-plaster);
 		border-radius: var(--pp-radius-m);
 
 		@include focusable;

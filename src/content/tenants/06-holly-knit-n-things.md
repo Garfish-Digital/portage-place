@@ -1,9 +1,9 @@
 ---
-name: 'Holly Knit n Things'
+name: 'Holly & Oak Yarn Co.'
 category: commercial
 type: Yarn & fibre arts
 quote: >-
-  We really enjoy being part of the building. It has a professional atmosphere while still feeling welcoming.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
 order: 6
 placeholder: false

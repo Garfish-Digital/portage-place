@@ -3,7 +3,7 @@ name: 'Cloudwalking Bakery'
 category: commercial
 type: Bakery
 quote: >-
-  It’s a convenient location with a great mix of businesses and services nearby. We’re glad we chose this space.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
 order: 7
 placeholder: false

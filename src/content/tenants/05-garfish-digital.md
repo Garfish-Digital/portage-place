@@ -3,7 +3,7 @@ name: 'Garfish Digital'
 category: office
 type: Web development
 quote: >-
-  The space gave us the flexibility we needed as our business grew, and we’ve been pleased with the overall experience.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: false
 order: 5
 placeholder: false

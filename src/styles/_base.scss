@@ -181,3 +181,42 @@ button {
 		@include focus-ring;
 	}
 }
+
+// -----------------------------------------------------------------------------
+// Cross-document view transitions
+// -----------------------------------------------------------------------------
+// Native CSS, zero JavaScript. Astro's <ClientRouter /> would do this too, but at
+// the cost of ~7 KB of JS and re-initialising every script on `astro:page-load` —
+// and it would end the zero-JS-bundle property the whole build has held.
+//
+// Supported in Chromium and Safari; Firefox simply navigates as normal, with no
+// broken intermediate state. Both pages have to opt in, which they do by sharing
+// this stylesheet through BaseLayout.
+//
+// Speed was never the problem here — pages are 10–16 KB gzipped with no JS, so
+// navigation is already effectively instant. This is polish on top of that.
+@view-transition {
+	navigation: auto;
+}
+
+// The page cross-fades on its own timing rather than the browser default, so it
+// reads as deliberate instead of merely quick.
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: var(--pp-duration-slow);
+	animation-timing-function: var(--pp-ease-out);
+}
+
+// Naming an element lifts it out of the page cross-fade and transitions it in its
+// own right — so the brand plaque stays put while everything under it changes.
+// For a client whose stated goal is that people remember the name, that is the
+// one element worth anchoring.
+.header__brand {
+	view-transition-name: pp-brand;
+}
+
+@include reduced-motion {
+	@view-transition {
+		navigation: none;
+	}
+}

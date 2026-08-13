@@ -1160,6 +1160,34 @@ Export a clean static SVG alongside it.
 
 ---
 
+## Timeline imagery — sourcing status
+
+Ten milestones; eight now carry images. Three assignments were remapped after
+checking what the files actually show:
+
+| Milestone | Images | Status |
+|---|---|---|
+| 1919 | parapet then/now | ✅ ours |
+| c. 1922 | two Ward Tip-Top adverts | ⚠️ dated **c. 1911**, New York/Pittsburgh plants — client has accepted this. Sourced from Google Images under CC; **verify the licence before launch** |
+| c. 1940s | addition under construction + complete | 🚫 **watermarked "Hickey Family History", permission pending.** Cannot ship as-is |
+| 1955 | bakery interior + Gotham advert | ⚠️ placeholders. Interior is 518×386 — too small for retina; advert is again c. 1911 |
+| c. 1976 | south end then/now | ✅ ours |
+| 2012 | corner then/now **plus** two derelict interiors | ✅ ours |
+| 2021 | stairwell + façade under way | ✅ ours |
+| 2022–25 | elevation then/now | ✅ ours |
+
+**1925 and 1974 remain text-only.** 1974 in particular is the bakery's closure and
+would benefit from something contemporary if any archive turns one up.
+
+Originally the adverts were assigned to c. 1940s, the Hickey photographs to 1955,
+and the derelict interiors to 1974 — each roughly thirty to forty years out. Given
+this page carries a visible sourcing note on five of ten entries, mismatched
+imagery would undercut the exact credibility the confidence field exists to earn.
+
+`npm run check:content` now catches lowercase "placeholder", "permission pending",
+"photographer unknown" and "date unconfirmed" — an uppercase-only test sailed past
+every one of these credits.
+
 ## Open reminders
 
 - **Press blurbs** — revisit for consistent length so the cards stop stretching

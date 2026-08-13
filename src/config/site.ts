@@ -30,7 +30,7 @@ export const USE_TYPES = [
 export const STATS = [
 	{ value: '200–2,000', unit: 'sq ft', label: 'Space sizes' },
 	{ value: '1919', label: 'Built' },
-	{ value: '20', label: 'Private offices' },
+	// { value: '20', label: 'Private offices' },
 	{ value: '$300', unit: '/mo', label: 'Starting rent' },
 	{ value: '$4.2M', label: 'Renovation' },
 ] as const;
@@ -55,18 +55,18 @@ export const PROXIMITY = [
 		category: 'Arts & culture',
 		minutes: '3',
 	},
-	{
-		name: 'The History Museum & Oliver Mansion',
-		landmark: 'Copshaholm',
-		category: 'Architecture & local history',
-		minutes: '2–3',
-	},
-	{
-		name: 'Civil Rights Heritage Center',
-		landmark: 'IU South Bend',
-		category: 'African American history',
-		minutes: '3–4',
-	},
+	// {
+	// 	name: 'The History Museum & Oliver Mansion',
+	// 	landmark: 'Copshaholm',
+	// 	category: 'Architecture & local history',
+	// 	minutes: '2–3',
+	// },
+	// {
+	// 	name: 'Civil Rights Heritage Center',
+	// 	landmark: 'IU South Bend',
+	// 	category: 'African American history',
+	// 	minutes: '3–4',
+	// },
 	{
 		name: 'Studebaker National Museum',
 		category: 'Industrial & automotive history',
@@ -82,7 +82,7 @@ export const PROXIMITY = [
 		name: 'University of Notre Dame',
 		landmark: 'Golden Dome',
 		category: 'Religion & collegiate history',
-		minutes: '6–7',
+		minutes: '7',
 	},
 ] as const;
 

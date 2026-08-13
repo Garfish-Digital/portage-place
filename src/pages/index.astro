@@ -3,8 +3,8 @@ import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
 import Section from '../components/primitives/Section.astro';
-import Container from '../components/primitives/Container.astro';
 import Button from '../components/Button.astro';
 import StatStrip from '../components/StatStrip.astro';
 import UseTypeGrid from '../components/UseTypeGrid.astro';
@@ -16,7 +16,7 @@ import { getMilestones } from '../lib/content';
 // ⚠️ PLACEHOLDER IMAGERY — Rob's phone shots, hand-treated. Professional
 // photography and video replace these in Phase 8. The hero is currently a still;
 // the brief calls for a short silent loop with a poster frame once footage lands.
-import heroImage from '../assets/before-after/now-2.png';
+import heroImage from '../assets/heroes/home.jpg';
 import then2 from '../assets/before-after/then-2.png';
 import now2 from '../assets/before-after/now-2.png';
 
@@ -31,36 +31,21 @@ const milestoneCount = milestones.length;
 	{/* ================================================================== */}
 	{/* Hero */}
 	{/* ================================================================== */}
-	<section class="hero">
-		<div class="hero__media">
-			{/*
-				The LCP element. `loading="eager"` + `fetchpriority="high"` keep it off
-				the lazy queue, and the explicit aspect-ratio holds CLS at zero while it
-				decodes.
-			*/}
-			<Image
-				src={heroImage}
-				alt="The restored Ward Baking Co. building on Portage Avenue, its two storeys of windows reopened behind red brick and pale stone trim."
-				sizes="100vw"
-				widths={[640, 960, 1280, 1600]}
-				loading="eager"
-				fetchpriority="high"
-			/>
-			<div class="hero__scrim" aria-hidden="true"></div>
-		</div>
-
-		<Container class="hero__inner">
-			<p class="pp-eyebrow hero__eyebrow">South Bend · Near Northwest</p>
-			<h1 class="hero__title">Where you want to be.</h1>
-			<p class="hero__lede">
-				A 1919 bakery transformed. One dozen businesses under one roof, with room for yours.
-			</p>
-			<div class="hero__actions">
-				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
-				<Button variant="secondary" size="lg" href="/spaces">Find your space</Button>
-			</div>
-		</Container>
-	</section>
+	<PageHero
+		image={heroImage}
+		alt="The restored Ward Baking Co. building on Portage Avenue, its two storeys of windows reopened behind red brick and pale stone trim."
+		eyebrow="South Bend · Near Northwest"
+		title="Where you want to be"
+		lede="A 1919 bakery transformed. Retail and office space under one roof, with room for yours."
+		size="display"
+		position="center 42%"
+		priority
+	>
+		<Fragment slot="actions">
+			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+			<Button variant="secondary" size="lg" href="/spaces">Find your space</Button>
+		</Fragment>
+	</PageHero>
 
 	{/* ================================================================== */}
 	{/* Stat strip — immediately under the hero, where the qualifying */}
@@ -78,7 +63,7 @@ const milestoneCount = milestones.length;
 			<p class="pp-eyebrow block-head__eyebrow">All under one roof</p>
 			<h2>Room to think, work, and create.</h2>
 			<p class="block-head__lede">
-				Retailers next to makers next to therapists next to software. The perfect mix for a building that just works.
+				Retailers next to makers next to therapists next to software. The perfect mix.
 			</p>
 		</div>
 
@@ -177,10 +162,9 @@ const milestoneCount = milestones.length;
 	{/* ================================================================== */}
 	<Section tone="limestone" data-cta-section>
 		<div class="close">
-			<h2 class="close__title">Come see what fits.</h2>
+			<h2 class="close__title">Come see what works.</h2>
 			<p class="close__lede">
-				Tell us roughly what you're looking for — an email address on its own is
-				plenty. No forms to fill in, no commitment.
+				Tell us roughly what you're looking for — one simple email.
 			</p>
 			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
 		</div>
@@ -188,101 +172,6 @@ const milestoneCount = milestones.length;
 </BaseLayout>
 
 <style lang="scss">
-	// ---------------------------------------------------------------------------
-	// Hero
-	// ---------------------------------------------------------------------------
-	.hero {
-		position: relative;
-		display: grid;
-		align-items: end;
-		// Not 100dvh. A full-height hero on the ThinkPad E14's short desktop
-		// viewport pushes every piece of qualifying information below the fold,
-		// which is exactly the wrong trade for a leasing page.
-		min-height: min(74svh, 40rem);
-		padding-block: var(--pp-space-3xl) var(--pp-space-2xl);
-		overflow: hidden;
-		isolation: isolate;
-
-		@include short-viewport {
-			min-height: 30rem;
-			padding-block: var(--pp-space-2xl) var(--pp-space-xl);
-		}
-	}
-
-	.hero__media {
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-
-		:global(img) {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			object-position: center 42%;
-		}
-	}
-
-	// Graduated scrim rather than a flat overlay: the text sits at the bottom, so
-	// darkening the top uniformly would only mute the building for no benefit.
-	//
-	// The stops are set from worst-case contrast maths, not by eye. Assume the
-	// photograph's brightest possible pixel (a blown-out sky) sits directly behind
-	// the text: at 70% espresso the blend is #706D6B, where white reaches 5.14:1
-	// and --pp-plaster 4.73:1 — both clear AA for normal-size text. Limestone only
-	// manages 3.71:1 there, which is why no hero text uses it.
-	//
-	// This matters because the placeholder photo gets replaced in Phase 8. Tuning
-	// the scrim to *this* image would hide a failure that reappears with the next.
-	.hero__scrim {
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			to bottom,
-			color-mix(in srgb, var(--pp-espresso) 18%, transparent) 0%,
-			color-mix(in srgb, var(--pp-espresso) 48%, transparent) 38%,
-			color-mix(in srgb, var(--pp-espresso) 78%, transparent) 66%,
-			color-mix(in srgb, var(--pp-espresso) 92%, transparent) 100%
-		);
-	}
-
-	:global(.hero__inner) {
-		position: relative;
-	}
-
-	// Plaster, not limestone: at the worst-case scrim/photo blend plaster reaches
-	// 4.73:1 and limestone only 3.71:1. Plaster is warm enough not to read as
-	// harsh white.
-	.hero__eyebrow {
-		color: var(--pp-plaster);
-		margin-block-end: var(--pp-space-xs);
-	}
-
-	.hero__title {
-		font-size: var(--pp-text-display);
-		line-height: var(--pp-leading-tight);
-		letter-spacing: var(--pp-tracking-tight);
-		color: #fff;
-		max-width: 16ch;
-	}
-
-	.hero__lede {
-		margin-block-start: var(--pp-space-m);
-		max-width: 44ch;
-		font-size: var(--pp-text-lede);
-		line-height: var(--pp-leading-snug);
-		// 20–23px regular is NOT "large text" under WCAG (that needs 24px), so this
-		// carries the full 4.5:1 requirement like body copy.
-		color: var(--pp-plaster);
-		text-wrap: pretty;
-	}
-
-	.hero__actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--pp-space-s);
-		margin-block-start: var(--pp-space-l);
-	}
-
 	// ---------------------------------------------------------------------------
 	// Shared block heading
 	// ---------------------------------------------------------------------------

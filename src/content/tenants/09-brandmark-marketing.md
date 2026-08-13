@@ -3,7 +3,7 @@ name: 'Brandmark Marketing Specialists'
 category: office
 type: Marketing
 quote: >-
-  We’ve enjoyed being tenants here and appreciate having a well-kept, professional space for our business.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: false
 order: 9
 placeholder: false

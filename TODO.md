@@ -367,17 +367,133 @@ https://westsb.com/features/ward?rq=ward
 
 =====
 
+"One executable task--green light:"
+-I created the static map, and it is ready to be wired up. It currently sits on the top level of /src/assets, and we will need to create an appropriate folder. It should fit into place on the Contact page perfectly, but let me know if it can be improved by any adjustments in size or aspect ratio, and I'll go back into Figma.
+
+"Discussion points--do not code yet:"
+-The biggest question on my mind is in regards to the client's logo. They provided a logo asset that is already recognized, and we do not correctly represent it here. The quick fix on the footer is to simply put a #000000 background on "footer__brand". But the plaster header just doesn't sit right with me, and I wonder if it should be "espresso" so that the SVG and header__wordmark can be set to rgb(247, 245, 241). This site currently has a header that does not match its footer, and I don't like it--meaning others won't either. We must discuss a better design on the header color, and perhaps making the BG on header__brand #000000. Its functionality seems fine, its coloration does not. I need the following more fully explained: "There's a second option worth considering: a transparent header overlaying the hero, so the logo sits directly on the photograph and the header gains a solid background on scroll. It's the more dramatic choice and it's what most high-end sites do. The cost is real though: the logo and nav would need to pass contrast over a photograph, which means darkening the top of the hero — undoing some of what we just gained — plus a scroll-state change". I would like to see this explained in bullet point form or something that helps me understand what would be removed, what would be added, and what this would mean for the user.
+
+-Earlier I mentioned we need a little spacing/padding between the milestone_figure elements and the milestone_prose, and that goes for both desktop and mobile. That does not appear to have been executed. Investigate the matter then report whether there is a deeper issue I am unaware of in this area that is preventing the addition of space. Only report for now. If there are no blockers, I will confirm and we'll proceed in the following task.
+
+=====
+"Update information:"
+
+-The red locator pin on the map has been changed to #A97A3D. I exported as an SVG this time and it appears good at all sizes. This current implementation should be good for the client's first review.
+
+-The black background for the original Portage Place wordmark was not a "shown on black" situation--they intend it to have a black background.
+
+"Executable tasks:"
+
+-Let's try the wrapper to solve the milestone spacing issue.
+
+- We will leave the footer alone for now. We need to first implement a transparent header over the hero. Once the user scrolls past the hero, the header gains a solid "espresso" background and its text color flips. *However*, the color flip will only apply to the header__link elements, not the brand. The header__brand needs to be rgb(247, 245, 241), which means its background needs to be our --pp-ink-strong token. I understand this could require fine-grained adjustments, but it's a direction we must toward in order to get closer to the client's requirements.
+
+-Do not go rogue. If there are any areas of these executable tasks that are unclear, ask me clarifying questions to ensure our alignment. 
+
+=====
+
+"Update information:"
+
+-Most of the changes look excellent. The milestone spacing with the wrapper is perfect. The nav spacing, look, and functionality are in a good spot as well.
+
+-Your concern about the --pp-brick-light for the underline was warranted. I changed it to --pp-limestone-deep, and now it looks much more acceptable.
+
+-Your flattening of the SVG map looks fine. The reason the pin isn't centered is because we need to capture the streets southeast toward downtown South Bend for proper orientation by users, rather than northwest. If we gave equal amounts of map in every direction from the pin, we'd lose the street names from the map. Anyway, we'll let the client see it as-is and let them decide.
+
+"Discussion point on the next task:"
+
+-The hero image on Home is taller than the hero images on the other 4 pages, even though the images have the same aspect ratio. I think the other 4 pages would look better if given the same psacing as the Home page. Would that be against convention? Also, do these images need optimized with ImageMagic or something else in order to ensure performant load times on the pages? Do we have plans for making the page transitions smoother, or will we rely solely on speed? Let's focus on this matter to ensure we get the images and page transitions as dialed in as possible for a professional UI/UX.
+
+=====
+
+-I worked on all 5 hero images at /assets/heroes. They are now 2000 w X 1123 h. Re-analyze the situation and determine what it will take to make them appear the same height as the Home hero. The Home hero height is what we want throughout all 5 pages.
+
+-Let's do AVIF via <Picture> on the five heroes to ensure the best performance.
+
+-For the page transitions, let's go with native CSS cross-document view transitions.
+
+=====
+
+-Excellent. Those hero sections now look correct.
+
+-I now want to add a few milestone__figures to some of the timeline dates on the History page that do not yet have images. These will not need "Then" and "Now" labels, as they are more a documentation of the times. Here are the timeline dates affected, as well as the filenames and locations of the additions for them: 
+-"c. 1940s": `/history/advertisements/ward-ad-3.webp` and `/history/advertisements/ward-ad-4.webp`
+-"1955": `history-building-interior-old/Wards-Bakery-Construction.jpg` and `building-exterior-old/Wards-Bakery-outside.jpg`
+-"1974": `/construction-pp/construction-dark-2.jpg` and `/construction-pp/construction-desk-1.jpg`
+-"2021": `/construction-and-news/construction-underway.jpg` and `/construction-pp/construction-stairs-mike.jpg`
+
+-Please ask any necessary clarifying questions to ensure our accuracy and best results.
+
+=====
 
 
+I checked all eight before touching anything, and three of the four assignments look historically mismatched. Given this page is built around sourcing discipline — five of ten milestones carry "contested" notes — I'd rather flag it than ship it.
 
+What the images actually show
 
+┌───────────────┬─────────────────────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Requested for │                      Files                      │                                                                                                     What they are                                                                                                      │
+├───────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ c. 1940s      │ ward-ad-3, ward-ad-4                            │ Ward Tip-Top newspaper adverts from ~1911. One is datelined "N.Y. American, April 19th, 1911"; both promote the New York and Pittsburgh "snow-white temple" plants.                                                    │
+├───────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1955          │ Wards-Bakery-Construction, Wards-Bakery-outside │ The c.1940 north addition — one mid-construction under new steel, one of the finished single-storey block with glass-block windows and a "Ward Tip-Top Cake" sign next door. Both watermarked "Hickey Family History." │
+├───────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1974          │ construction-dark-2, construction-desk-1        │ The derelict interior — graffiti, modern plastic debris, a dust-covered desk. This is the 2012–2020 vacancy, not the 1974 closure.                                                                                     │
+├───────────────┼─────────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 2021          │ contruction-underway, construction-stairs-mike  │ Façade work with plywood in the window openings (reads as 2022), and a man descending a peeling stairwell. Both good fits.                                                                                             │
+└───────────────┴─────────────────────────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
----
+Also: the file is contruction-underway.jpg — the typo is in the filename itself, not your note.
+
+Two things I'd call blockers
+
+The Hickey photos are watermarked and third-party. "Hickey Family History" is legible across both. They're the best images in the set — they literally document the north addition, and Thos. L. Hickey, Inc. is the only builder ever attributed to any phase of this building. But we can't publish a visible watermark, and these need permission regardless.
+
+The 1911 adverts on a 1940s milestone would put New York advertising thirty years early on a South Bend construction beat.
+
+What I'd propose instead
+
+- c. 1922 "The Bread War" ← the two Ward adverts. Right era, right subject: that milestone is about Ward as a national operation and names Tip-Top and Bond. Currently has no image.
+- c. 1940s "The Building Grows North" ← the two Hickey photos. They document precisely that construction. Pending permission and clean copies.
+- 2021 "A New Vision" ← stairs-mike + contruction-underway, as you asked.
+- 1974 and 1955 would be left without images under this mapping.
+
+Questions
+
+1. Do you want the adverts moved to the Bread War milestone, or was 1940s deliberate — using them as period texture rather than documentation?
+2. Do we have permission for the Hickey images, and can we get unwatermarked versions? If not, they can't ship regardless of where they sit.
+3. The derelict photos — move them to "2012 — Empty"? That milestone already carries the then/now corner pair, so: replace that pair, add a second figure below it, or leave 1974 without images?
+4. Layout for unlabelled pairs — same side-by-side grid as the then/now figures, just without the tags? And do you want a caption under each image, one caption for the pair, or none?
+5. Credit lines — do you have sources for the adverts (publication and date) and for the two archival photos? I'd want a small credit under any third-party image.
+6. 1955 would end up with nothing. Do you have anything for the automation/explosion beat, or is it fine text-only?
+
+=====
+
+-It looks good, only a couple of adjustments are needed:
+-1. Replace `ward-ad-gotham.webp` with `/history/tip-top-truck.jpeg`
+-2. Move the beforeAfter from line 9 in `08-2012-empty.md` to between lines 7&8 in `10-2022-the-light-comes-back.md`
+
+=====
+
+-Great job. Let's now turn our attention to the Community page. I want to switch the Owners section (section 2) with the Neighborhood section (section 3). This is for coloration reasons (the placement will change their BG and card colors), because the sketched images will display better on the lighter plaster-colored cards.
+
+-Further, I want to explore the idea of the owner cards spanning the width of the section (or the usable wdith of the section container, rather). I want to try this arrangement so that the images can be a little larger, perhaps in 3 columns on desktop (I realize they will still be vertical cards on mobile). By 3 columns I mean person image, person name/role/org, and person titles.
+
+-We need to look at the triggers on the "Read bio" sections, as they are bubbling across the row. For example, on a desktop where the cards expand to 2 per row (or even 3 per row), the trigger will effect every card in the row. Strangely, it doesn't show the bio text of the sibling cards when this occurs, they dropdown empty until clicked themselves. This needs fixed to properly isolate the triggers.
+
 
 
 =====
 =====
 =====
+
+Tile services you can style and export from:
+- Mapbox Studio — the most control. Design a monochrome style to the palette, export via the Static Images API. Free tier is generous.
+- MapTiler Cloud — similar, custom styles, static maps API, easier pricing.
+- Stadia Maps — hosts the Stamen styles. Alidade Smooth is very close to what this site wants: minimal, warm-neutral, almost no colour.
+- CARTO Positron — clean and near-monochrome, a good tracing base.
+- Thunderforest — more characterful styles (Pioneer, Atlas) if you want something less clinical.
+- Protomaps — open and self-hostable, full styling control, no vendor.
 
 ## Notes
 

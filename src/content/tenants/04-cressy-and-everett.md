@@ -3,7 +3,7 @@ name: 'Cressy & Everett Real Estate'
 category: office
 type: Real estate
 quote: >-
-  The location is convenient, the space works well for our needs, and we’ve had a very positive experience overall.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
 order: 4
 placeholder: false

@@ -1,9 +1,9 @@
 ---
-name: 'Rhyme & Reason Ministry'
+name: 'Rhyme & Reason Ministry, Inc.'
 category: commercial
 type: Community outreach
 quote: >-
-  Finding the right space made a big difference for our business, and this property has been a great home for us.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
 order: 3
 placeholder: false

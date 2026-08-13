@@ -12,17 +12,17 @@ confidenceNote: >-
   Ward would have re-signed a building it bought.
 featured: true
 beforeAfter:
-  then: ../../assets/before-after/then-1.png
-  now: ../../assets/before-after/now-1.png
-  thenAlt: >-
-    The building's parapet before restoration: a circular medallion reading 1919
-    above a weathered WARD BAKING CO sign, the paintwork cracked and the brick
-    darkened.
-  nowAlt: >-
-    The same parapet today, cleaned and repointed — the 1919 medallion and the
-    WARD BAKING CO lettering crisp against red brick and pale stone trim.
-  thenCaption: The datestone, weathered
-  nowCaption: Cleaned and repointed
+  - then: ../../assets/before-after/then-1.png
+    now: ../../assets/before-after/now-1.png
+    thenAlt: >-
+      The building's parapet before restoration: a circular medallion reading 1919
+      above a weathered WARD BAKING CO sign, the paintwork cracked and the brick
+      darkened.
+    nowAlt: >-
+      The same parapet today, cleaned and realigned — the 1919 medallion and the
+      WARD BAKING CO lettering crisp against red brick and pale stone trim.
+    thenCaption: The datestone, weathered
+    nowCaption: Cleaned and repointed
 sources:
   - 'South Bend Tribune feature, c. 1920, reproduced in West.SB (Feb 2021)'
   - 'OPUS_5_HISTORY.md §II — Busse builds, Ward acquires c. 1922'

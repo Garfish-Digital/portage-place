@@ -71,7 +71,11 @@ const milestones = defineCollection({
 			imageCredit: z.string().optional(),
 
 			/**
-			 * A matched then/now pair, shot from the same position.
+			 * Matched then/now pairs, each shot from a single camera position.
+			 *
+			 * A LIST rather than one pair: a milestone can carry more than one
+			 * comparison, and YAML cannot repeat a key — a second `beforeAfter:` block
+			 * would either error or silently discard one pair depending on the parser.
 			 *
 			 * Deliberately independent of `featured`: emphasis marks the story's
 			 * spine, imagery goes wherever a picture proves the sentence. Tying them
@@ -82,14 +86,37 @@ const milestones = defineCollection({
 			 * drop the point entirely for a screen-reader user.
 			 */
 			beforeAfter: z
-				.object({
-					then: image(),
-					now: image(),
-					thenAlt: z.string(),
-					nowAlt: z.string(),
-					thenCaption: z.string().optional(),
-					nowCaption: z.string().optional(),
-				})
+				.array(
+					z.object({
+						then: image(),
+						now: image(),
+						thenAlt: z.string(),
+						nowAlt: z.string(),
+						thenCaption: z.string().optional(),
+						nowCaption: z.string().optional(),
+					}),
+				)
+				.optional(),
+
+			/**
+			 * Documentary images for a milestone — adverts, archive photographs, shots
+			 * of the derelict building. Distinct from `beforeAfter`, which is a matched
+			 * pair from one camera position and carries Then/Now labels; these are
+			 * unrelated images that happen to document the same moment, so labelling
+			 * them would assert a relationship that isn't there.
+			 *
+			 * Alt and caption are both required. `credit` is optional in the schema but
+			 * required in practice for anything third-party — see the launch checklist.
+			 */
+			figures: z
+				.array(
+					z.object({
+						src: image(),
+						alt: z.string(),
+						caption: z.string(),
+						credit: z.string().optional(),
+					}),
+				)
 				.optional(),
 
 			/** Where this came from. Internal; not necessarily rendered. */

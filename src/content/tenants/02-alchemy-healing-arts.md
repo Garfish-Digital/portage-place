@@ -3,7 +3,7 @@ name: 'Alchemy Healing Arts'
 category: commercial
 type: Massage & wellness
 quote: >-
-  We’ve been very happy with our experience here. The building is well maintained, and it’s a comfortable place to work.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
 order: 2
 placeholder: false

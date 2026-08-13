@@ -4,6 +4,20 @@ sortYear: 2021
 title: A New Vision
 summary: Four partners buy the building out of tax arrears and start hauling out the past.
 confidence: documented
+figures:
+  - src: ../../assets/history/stairwell-survey.jpg
+    alt: >-
+      A man in a dark coat climbs a narrow stairwell inside the derelict
+      building, walls thick with peeling green and cream paint, lit from above.
+    caption: Surveying what they had bought.
+    # credit: 'Photographer unknown — placeholder'
+  - src: ../../assets/history/facade-underway.jpg
+    alt: >-
+      The Portage Avenue elevation with plywood boards filling the window
+      openings and a forklift and skip at the kerb, the 1919 datestone and Ward
+      Baking Co sign visible above.
+    caption: Openings cut back, plywood in, work under way.
+    # credit: 'Photographer unknown — placeholder'
 sources:
   - 'WVPE, 15 June 2021 — Common Council abatement vote'
   - 'OPUS_5_HISTORY.md §IX'

@@ -21,21 +21,30 @@ const lastName = restOfName.join(' ');
 ---
 
 <article class="person">
-	<div class="person__head">
-		{
-			portrait ? (
-				<Image
-					src={portrait}
-					alt={portraitAlt ?? `Portrait of ${name}.`}
-					class="person__portrait"
-					widths={[128, 192, 256]}
-					sizes="96px"
-				/>
-			) : (
-				<Monogram name={name} class="person__portrait" />
-			)
-		}
-		<div>
+	{/*
+		Three columns on desktop — portrait, identity, credentials — because the card
+		now spans the full container width rather than sitting in a 3-up grid. That
+		buys the sketches roughly 60% more width, and it also removes the row-stretch
+		bug: with one card per row there are no siblings to inflate when a bio opens.
+	*/}
+	<div class="person__cols">
+		<div class="person__portrait-wrap">
+			{
+				portrait ? (
+					<Image
+						src={portrait}
+						alt={portraitAlt ?? `Portrait of ${name}.`}
+						class="person__portrait"
+						widths={[160, 240, 320]}
+						sizes="(min-width: 1024px) 160px, 112px"
+					/>
+				) : (
+					<Monogram name={name} class="person__portrait" />
+				)
+			}
+		</div>
+
+		<div class="person__identity">
 			<h3 class="person__name">
 				{firstName}
 				{lastName && (
@@ -48,17 +57,17 @@ const lastName = restOfName.join(' ');
 			<p class="person__role">{role}</p>
 			{org && <p class="person__org">{org}</p>}
 		</div>
-	</div>
 
-	{
-		titles.length > 0 && (
-			<ul class="person__titles" role="list">
-				{titles.map((title) => (
-					<li>{title}</li>
-				))}
-			</ul>
-		)
-	}
+		{
+			titles.length > 0 && (
+				<ul class="person__titles" role="list">
+					{titles.map((title) => (
+						<li>{title}</li>
+					))}
+				</ul>
+			)
+		}
+	</div>
 
 	{/*
 		A native <details> disclosure rather than a JS accordion: it is keyboard
@@ -99,17 +108,31 @@ const lastName = restOfName.join(' ');
 		display: flex;
 		flex-direction: column;
 		gap: var(--pp-space-s);
-		height: 100%;
 		padding: var(--pp-space-m);
-		background-color: var(--pp-plaster);
+		background-color: var(--pp-raised);
 		border: 1px solid var(--pp-rule);
 		border-radius: var(--pp-radius-m);
 	}
 
-	.person__head {
-		display: flex;
+	// Stacked on mobile, three columns from `lg`. `auto` for the portrait so it
+	// sizes to its own width; the two text columns share what's left.
+	.person__cols {
+		display: grid;
+		gap: var(--pp-space-m);
 		align-items: center;
-		gap: var(--pp-space-s);
+
+		@include from('sm') {
+			grid-template-columns: auto 1fr;
+		}
+
+		@include from('lg') {
+			grid-template-columns: auto minmax(14rem, 1fr) minmax(14rem, 1.2fr);
+			gap: var(--pp-space-xl);
+		}
+	}
+
+	.person__portrait-wrap {
+		display: flex;
 	}
 
 	// The sketches are line art on white. `multiply` drops the white into the card
@@ -119,10 +142,14 @@ const lastName = restOfName.join(' ');
 	// shoulders would fight the open, unbounded drawing.
 	:global(.person__portrait) {
 		flex: none;
-		width: 96px;
+		width: 112px;
 		height: auto;
 		aspect-ratio: 1;
 		mix-blend-mode: multiply;
+
+		@include from('lg') {
+			width: 160px;
+		}
 	}
 
 	// Monogram fallback keeps its tile treatment.
@@ -152,19 +179,27 @@ const lastName = restOfName.join(' ');
 
 	.person__titles {
 		display: grid;
-		gap: 0.15em;
+		gap: 0.35em;
 		margin: 0;
 		padding: 0;
 		font-size: var(--pp-text-xs);
+		line-height: var(--pp-leading-normal);
 		color: var(--pp-ink-muted);
 		text-wrap: pretty;
+
+		// On mobile the titles sit under a two-column head, so they span both.
+		@include until('lg') {
+			@include from('sm') {
+				grid-column: 1 / -1;
+			}
+		}
 	}
 
 	// ---------------------------------------------------------------------------
 	// Disclosure
 	// ---------------------------------------------------------------------------
 	.person__bio {
-		margin-block-start: auto;
+		margin-block-start: var(--pp-space-m);
 		border-block-start: 1px solid var(--pp-rule);
 		padding-block-start: var(--pp-space-s);
 
@@ -242,11 +277,16 @@ const lastName = restOfName.join(' ');
 			interpolate-size: allow-keywords;
 		}
 
+		// `content-visibility` is deliberately NOT in this transition. It is a
+		// discrete property that decides whether the content renders at all, and
+		// pairing it with `allow-discrete` means a transition that does not run
+		// leaves it stuck at `hidden` — with block-size already clamped to 0, the
+		// bio then becomes permanently unreachable rather than merely unanimated.
+		// The height transition alone reads the same; the UA handles visibility.
 		.person__bio::details-content {
 			block-size: 0;
 			overflow: hidden;
-			transition: block-size var(--pp-duration-base) var(--pp-ease-out),
-				content-visibility var(--pp-duration-base) allow-discrete;
+			transition: block-size var(--pp-duration-base) var(--pp-ease-out);
 		}
 
 		.person__bio[open]::details-content {

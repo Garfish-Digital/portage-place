@@ -2,6 +2,7 @@
 import { render, type CollectionEntry } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import BeforeAfter from './BeforeAfter.astro';
+import MilestoneFigures from './MilestoneFigures.astro';
 
 interface Props {
 	milestones: CollectionEntry<'milestones'>[];
@@ -51,17 +52,33 @@ const entries = await Promise.all(
 								<Content />
 							</div>
 
-							{data.beforeAfter && (
-								<BeforeAfter
-									then={data.beforeAfter.then}
-									now={data.beforeAfter.now}
-									thenAlt={data.beforeAfter.thenAlt}
-									nowAlt={data.beforeAfter.nowAlt}
-									thenCaption={data.beforeAfter.thenCaption}
-									nowCaption={data.beforeAfter.nowCaption}
-									class="milestone__figure"
-									sizes="(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw"
-								/>
+							{/*
+								Wrapped rather than spaced directly. BeforeAfter's own
+								`.ba { margin: 0 }` reset is Astro-scoped, so it compiles to
+								`.ba[data-astro-cid-…]` — specificity (0,2,0) — which
+								outranks any (0,1,0) `:global()` class this component can put
+								on it. The child always wins that fight regardless of source
+								order, so the spacing goes on an element Timeline owns.
+							*/}
+							{data.beforeAfter?.map((pair) => (
+								<div class="milestone__figure-wrap">
+									<BeforeAfter
+										then={pair.then}
+										now={pair.now}
+										thenAlt={pair.thenAlt}
+										nowAlt={pair.nowAlt}
+										thenCaption={pair.thenCaption}
+										nowCaption={pair.nowCaption}
+										class="milestone__figure"
+										sizes="(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw"
+									/>
+								</div>
+							))}
+
+							{data.figures && data.figures.length > 0 && (
+								<div class="milestone__figure-wrap">
+									<MilestoneFigures figures={data.figures} />
+								</div>
 							)}
 
 							{
@@ -230,10 +247,17 @@ const entries = await Promise.all(
 		}
 	}
 
-	// A step above the prose gap so the pair reads as a separate beat rather than
-	// as another paragraph.
-	:global(.milestone__figure) {
-		margin-block-start: var(--pp-space-l);
+	// Set apart from the prose on both sides so the pair reads as its own beat
+	// rather than as another paragraph. The bottom margin matters as much as the
+	// top — the sourcing note sits directly beneath and was crowding the captions.
+	.milestone__figure-wrap {
+		margin-block: var(--pp-space-xl);
+	}
+
+	// Nothing follows the figure on some milestones, and a trailing margin there
+	// would just pad the bottom of the entry unevenly.
+	.milestone__figure-wrap:last-child {
+		margin-block-end: 0;
 	}
 
 	// Sourcing hedge. Shown whenever confidence !== documented — the timeline

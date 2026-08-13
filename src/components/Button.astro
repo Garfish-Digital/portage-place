@@ -168,12 +168,17 @@ const tagProps = href
 		}
 	}
 
-	// quiet — still a solid fill, not a ghost. The border is what makes the
-	// boundary meet 1.4.11 (3.37:1); the limestone fill is what keeps it a button.
+	// quiet — still a solid fill, never a ghost.
+	//
+	// Fill comes from --pp-raised so it always contrasts with the section behind
+	// it. It was hard-coded to limestone, which made it a limestone button on a
+	// limestone section: an outline with nothing inside, i.e. exactly the ghost
+	// button the style guide rules out. The border (4.48 plaster / 3.41 limestone)
+	// is what satisfies 1.4.11; the fill is what keeps it reading as a button.
 	.btn--quiet {
-		--btn-bg: var(--pp-limestone);
-		--btn-bg-hover: var(--pp-limestone-deep);
-		--btn-bg-active: #c7bfb3;
+		--btn-bg: var(--pp-raised);
+		--btn-bg-hover: color-mix(in srgb, var(--pp-raised) 92%, var(--pp-ink));
+		--btn-bg-active: color-mix(in srgb, var(--pp-raised) 85%, var(--pp-ink));
 		--btn-fg: var(--pp-ink);
 		--btn-border: var(--pp-border);
 		--btn-ring: var(--pp-bronze);

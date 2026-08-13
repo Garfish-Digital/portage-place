@@ -3,7 +3,7 @@ name: 'Counterspell'
 category: commercial
 type: Coffee shop
 quote: >-
-  The space has been a great fit for our business, and the location makes it easy for both customers and employees to get here.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
 order: 1
 placeholder: false

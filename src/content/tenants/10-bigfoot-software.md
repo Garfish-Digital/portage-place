@@ -3,7 +3,7 @@ name: 'Bigfoot Software Development'
 category: office
 type: Software development
 quote: >-
-  The building provides a great environment for our business and has everything we need to operate comfortably.
+  This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: false
 order: 10
 placeholder: false

@@ -26,6 +26,11 @@ const flaggedIn = (text) =>
 		.map((line, index) => ({ line: line.trim(), number: index + 1 }))
 		.filter(({ line }) => /^-?\s*placeholder:\s*true\s*$/.test(line));
 
+// Phrases that mean "not cleared for publication yet", in any casing. The
+// milestone credits use lowercase "placeholder" and "permission pending", which
+// an uppercase-only check sailed straight past.
+const PENDING = /placeholder|permission pending|photographer unknown|date unconfirmed/i;
+
 // Markdown collections: one file per entry.
 for (const dir of ['milestones', 'team', 'tenants']) {
 	const path = join(CONTENT, dir);
@@ -36,8 +41,10 @@ for (const dir of ['milestones', 'team', 'tenants']) {
 		for (const hit of flaggedIn(text)) {
 			problems.push(`${full}:${hit.number} — placeholder entry`);
 		}
-		if (/PLACEHOLDER/.test(text)) {
-			problems.push(`${full} — contains the literal string "PLACEHOLDER"`);
+		for (const [i, line] of text.split('\n').entries()) {
+			if (PENDING.test(line)) {
+				problems.push(`${full}:${i + 1} — unresolved: ${line.trim().slice(0, 72)}`);
+			}
 		}
 	}
 }

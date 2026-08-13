@@ -66,10 +66,13 @@ const {
 
 	.section--plaster {
 		--pp-surface: var(--pp-plaster);
+		--pp-raised: var(--pp-limestone);
 	}
 
+	// Inverted on purpose: a limestone card on a limestone section is invisible.
 	.section--limestone {
 		--pp-surface: var(--pp-limestone);
+		--pp-raised: var(--pp-plaster);
 	}
 
 	// .section--dark inherits its remap from .pp-on-dark in the token layer.

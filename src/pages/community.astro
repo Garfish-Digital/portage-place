@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/primitives/Section.astro';
+import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
 import TenantCard from '../components/TenantCard.astro';
 import PersonCard from '../components/PersonCard.astro';
@@ -23,22 +24,24 @@ const partners = await getNeighborhood('partner');
 // the array length would silently tell visitors the building is half empty.
 const TENANT_TOTAL = 20;
 const shown = commercial.length + office.length;
+
+// ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
+import heroImage from '../assets/heroes/community.jpg';
 ---
 
 <BaseLayout
 	title="Community"
 	description="The businesses, owners, neighbours and partners behind Portage Place — a restored 1919 bakery in South Bend's Near Northwest Neighborhood."
 >
-	<Section>
-		<div class="intro">
-			<p class="pp-eyebrow intro__eyebrow">Who's here</p>
-			<h1>A building is only as good as the people in it.</h1>
-			<p class="intro__lede">
-				Coffee and yarn and bodywork and software, sharing a hallway. The mix wasn't
-				assigned from above — it's what the neighbourhood turned out to want.
-			</p>
-		</div>
-	</Section>
+	<PageHero
+		image={heroImage}
+		alt="The shared kitchenette and dining area, with a long counter, exposed brick and a row of glazed offices behind."
+		eyebrow="Who's here"
+		title="A building as unique as the people in it."
+		lede="Shops, therapy, & offices — a mix that the neighborhood itself wanted."
+		position="center 50%"
+		priority
+	/>
 
 	{/* ------------------------------------------------------------------ */}
 	{/* 1 — Tenants */}
@@ -48,13 +51,11 @@ const shown = commercial.length + office.length;
 			<p class="pp-eyebrow block-head__eyebrow">Tenants</p>
 			<h2>Twenty businesses, one roof.</h2>
 			<p class="block-head__lede">
-				The commercial wing fronts Portage Avenue. Past the restrooms and through a
-				dividing door, the office wing holds twenty private offices. Here are {shown} of
-				the {TENANT_TOTAL} businesses currently in the building.
+				Commercial spaces front Portage Avenue alongside twenty private offices.
 			</p>
 		</div>
 
-		<h3 class="group-label">Commercial wing</h3>
+		<h3 class="group-label">Commercial</h3>
 		<ul class="cards" role="list">
 			{
 				commercial.map((tenant) => (
@@ -65,7 +66,7 @@ const shown = commercial.length + office.length;
 			}
 		</ul>
 
-		<h3 class="group-label group-label--spaced">Office wing</h3>
+		<h3 class="group-label group-label--spaced">Office</h3>
 		<ul class="cards" role="list">
 			{
 				office.map((tenant) => (
@@ -78,12 +79,49 @@ const shown = commercial.length + office.length;
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
-	{/* 2 — Owners */}
+	{/* 2 — Neighbourhood */}
 	{/* ------------------------------------------------------------------ */}
-	<Section id="owners">
+	<Section id="neighborhood">
+		<div class="block-head">
+			<p class="pp-eyebrow block-head__eyebrow">Neighbourhood</p>
+			<h2>The corridor, not just the building.</h2>
+			<p class="block-head__lede">
+				Portage Place anchors Portage Midtown. These are the neighbours who make the
+				block worth walking.
+			</p>
+		</div>
+
+		<ul class="links" role="list">
+			{
+				neighbours.map((item) => (
+					<li class:list={['link-card', item.data.placeholder && 'link-card--placeholder']}>
+						<h3 class="link-card__name">
+							{item.data.url ? (
+								<a href={item.data.url} target="_blank" rel="noopener noreferrer">
+									{item.data.name}
+									<Icon name="lucide:arrow-up-right" aria-hidden="true" />
+									<span class="pp-visually-hidden">(opens in a new tab)</span>
+								</a>
+							) : (
+								item.data.name
+							)}
+						</h3>
+						<p class="link-card__blurb">{item.data.blurb}</p>
+						{item.data.address && <p class="link-card__address">{item.data.address}</p>}
+						{item.data.placeholder && <p class="link-card__flag">Placeholder entry</p>}
+					</li>
+				))
+			}
+		</ul>
+	</Section>
+
+	{/* ------------------------------------------------------------------ */}
+	{/* 3 — Owners */}
+	{/* ------------------------------------------------------------------ */}
+	<Section tone="limestone" id="owners">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Owners</p>
-			<h2>Four people bought a neglected bakery out of tax arrears.</h2>
+			<h2>Four people pulled a neglected bakery out of tax arrears.</h2>
 			<p class="block-head__lede">
 				Six attempts to rescue this building had already failed when they took it on.
 			</p>
@@ -129,43 +167,6 @@ const shown = commercial.length + office.length;
 				</div>
 			)
 		}
-	</Section>
-
-	{/* ------------------------------------------------------------------ */}
-	{/* 3 — Neighbourhood */}
-	{/* ------------------------------------------------------------------ */}
-	<Section tone="limestone" id="neighborhood">
-		<div class="block-head">
-			<p class="pp-eyebrow block-head__eyebrow">Neighbourhood</p>
-			<h2>The corridor, not just the building.</h2>
-			<p class="block-head__lede">
-				Portage Place anchors Portage Midtown. These are the neighbours who make the
-				block worth walking.
-			</p>
-		</div>
-
-		<ul class="links" role="list">
-			{
-				neighbours.map((item) => (
-					<li class:list={['link-card', item.data.placeholder && 'link-card--placeholder']}>
-						<h3 class="link-card__name">
-							{item.data.url ? (
-								<a href={item.data.url} target="_blank" rel="noopener noreferrer">
-									{item.data.name}
-									<Icon name="lucide:arrow-up-right" aria-hidden="true" />
-									<span class="pp-visually-hidden">(opens in a new tab)</span>
-								</a>
-							) : (
-								item.data.name
-							)}
-						</h3>
-						<p class="link-card__blurb">{item.data.blurb}</p>
-						{item.data.address && <p class="link-card__address">{item.data.address}</p>}
-						{item.data.placeholder && <p class="link-card__flag">Placeholder entry</p>}
-					</li>
-				))
-			}
-		</ul>
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
@@ -270,10 +271,24 @@ const shown = commercial.length + office.length;
 		margin: 0;
 		padding: 0;
 		grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+		// `stretch` is the grid default, and it is what made an expanding card drag
+		// every sibling in its row to the same height. Tenant cards want equal
+		// heights, so they opt back in below; anything that grows must not.
+		align-items: start;
 	}
 
+	// Tenant cards have no expanding content, so equal heights are safe and tidier.
+	.cards:not(.cards--people) {
+		align-items: stretch;
+	}
+
+	// One card per row: the owner cards span the container so the sketches can be
+	// larger. This also removes the row-stretch that made a single open bio inflate
+	// every other card in its row to match — they grew without opening, which read
+	// as the disclosure firing on all of them.
 	.cards--people {
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+		grid-template-columns: 1fr;
+		gap: var(--pp-space-m);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -340,7 +355,7 @@ const shown = commercial.length + office.length;
 		flex-direction: column;
 		gap: var(--pp-space-3xs);
 		padding: var(--pp-space-m);
-		background-color: var(--pp-surface);
+		background-color: var(--pp-raised);
 		border: 1px solid var(--pp-rule);
 		border-radius: var(--pp-radius-m);
 	}
