@@ -2,6 +2,8 @@
 name: 'GreenCrest Facility Solutions'
 category: office
 type: Facility services
+icon: ../../assets/tenant-icons/tenant-sanitation.png
+iconAlt: 'Pencil drawing of a rubber duck beside a soap bubble.'
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: false

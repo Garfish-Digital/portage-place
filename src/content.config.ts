@@ -166,6 +166,20 @@ const tenants = defineCollection({
 			category: wing,
 			/** Plain-language descriptor: "Coffee shop", "Real estate", "Massage therapy". */
 			type: z.string(),
+			/**
+			 * Commissioned pencil illustration standing in for a mark, in the same
+			 * hand as the owner portraits.
+			 *
+			 * Deliberately NOT the `logo` field. A logo is the business's own
+			 * identity and needs their permission; this is our drawing of an object
+			 * associated with what they do, which asserts nothing on their behalf.
+			 * Conflating the two is how a placeholder quietly becomes a claim.
+			 *
+			 * Falls back to the initials monogram when absent.
+			 */
+			icon: image().optional(),
+			iconAlt: z.string().optional(),
+
 			logo: image().optional(),
 			portrait: image().optional(),
 			imageAlt: z.string().optional(),

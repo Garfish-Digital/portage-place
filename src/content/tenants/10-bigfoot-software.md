@@ -1,7 +1,9 @@
 ---
-name: 'Bigfoot Software Development'
+name: 'Software Development'
 category: office
 type: Software development
+icon: ../../assets/tenant-icons/tenant-tech.png
+iconAlt: 'Pencil drawing of a small tin robot waving.'
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: false

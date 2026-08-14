@@ -1,7 +1,9 @@
 ---
-name: 'Brandmark Marketing Specialists'
+name: 'Marketing Specialists'
 category: office
 type: Marketing
+icon: ../../assets/tenant-icons/tenant-marketing.png
+iconAlt: 'Pencil drawing of two tin cans joined by a length of string.'
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: false

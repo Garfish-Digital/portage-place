@@ -20,5 +20,5 @@ looked at what new equipment would cost. Tip-Top would keep reaching South Bend 
 the meantime, trucked in from Chicago.
 
 The bakery never reopened. What makes it land harder is that it was not a slow
-death — as recently as 1972 Ward was announcing new distribution centers and
+demise — as recently as 1972 Ward was announcing new distribution centers and
 reporting sales at an all-time high.

@@ -8,8 +8,6 @@ confidenceNote: >-
   The building's own parapet carries a 1919 datestone, which settles the year. Who
   built it is less certain: one account has Busse erecting the plant and Ward
   acquiring it in the early 1920s, another has Ward entering South Bend in 1919.
-  The "Ward Baking Co" sign above the door is not evidence of the original owner —
-  Ward would have re-signed a building it bought.
 featured: true
 beforeAfter:
   - then: ../../assets/before-after/then-1.png

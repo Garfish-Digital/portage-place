@@ -6,7 +6,7 @@ summary: Converted to a warehouse, the building is sealed — every window brick
 confidence: contested
 confidenceNote: >-
   Ford Distributing's arrival is dated to fall 1976 by one source and to the
-  1980s by the other. The window infill is undated in both.
+  1980s by the other.
 featured: true
 beforeAfter:
   - then: ../../assets/before-after/then-4.png
@@ -35,7 +35,5 @@ how the neighborhood felt about it, for the next forty years.
 Its last occupant was **Ford Distributing**, a wholesale supplier of coffee makers,
 vending machines, tobacco, and convenience goods.
 
-> **Not Ford Motor Company.** The building is often called the "Ford Distribution
-> Center," including on Portage Place's own current website. It was never an
-> automotive facility. Ford Distributing was a local wholesaler, and the
-> distinction is worth keeping straight.
+> **Ford Distributing clarification.** The building is often referred to as the "Ford Distribution
+> Center". However, Ford Distributing was a local wholesaler and did not have assocaitions with the Ford Motor Company.

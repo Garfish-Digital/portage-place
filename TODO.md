@@ -544,8 +544,16 @@ Questions
 
 -On "Sizes at a Glance" I want to go with option 3 (7 rows): By type, with count and range.
 
+=====
 
+-The commitment has been made, and things are on a good path. Next we will focus on making the cards more complementary. The cards we need to refine as:
+1. News Cards: The "In the News" cards at teh bottom of the History page.
+2. Tenant Cards: The "Commercial" & "Office" cards in the 1st section of the Community page.
+3. Neighbor Cards: The 4 Neighborhood cards in the 2nd section of the Community page.
+4. Owner Cards: The 4 Owner Bio cards in the 3rd section of the Community page.
+3. Partner Cards: The 3 Partners cards in the 4th section of the Community page.
 
+-Evaluate the images I placed at `/reference/tenant-icons`. These are original sketched icons, and their style is simialr to those in the Owner sketches. I am thinking of generating similar iconms for the News, Neighbor, and Partner cards. Replace the "monogram tenant__mark" on the Tenant cards with the 6 images in `/reference/tenant-icons`, and let's see how it looks.
 
 
 

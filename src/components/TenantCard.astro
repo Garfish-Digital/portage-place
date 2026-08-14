@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import type { CollectionEntry } from 'astro:content';
 import Monogram from './Monogram.astro';
@@ -8,13 +9,31 @@ interface Props {
 }
 
 const { tenant } = Astro.props;
-const { name, type, quote, quoteAttribution, url, placeholder } = tenant.data;
+const { name, type, icon, iconAlt, quote, quoteAttribution, url, placeholder } = tenant.data;
 ---
 
 <article class:list={['tenant', placeholder && 'tenant--placeholder']}>
 	<div class="tenant__head">
-		{/* Logos and portraits land in Phase 8; initials stand in until then. */}
-		<Monogram name={name} class="tenant__mark" />
+		{
+			/*
+				Commissioned pencil illustration where we have one, initials where we
+				don't. Not the tenant's logo — see the schema note. Both paths keep the
+				same class so the slot is one fixed size either way and a card with a
+				monogram doesn't sit differently from a card with a drawing.
+			*/
+			icon ? (
+				<Image
+					src={icon}
+					alt={iconAlt ?? ''}
+					class="tenant__mark"
+					widths={[88, 176, 264]}
+					sizes="88px"
+					loading="lazy"
+				/>
+			) : (
+				<Monogram name={name} class="tenant__mark tenant__mark--monogram" />
+			)
+		}
 		<div>
 			<h3 class="tenant__name">
 				{
@@ -72,9 +91,27 @@ const { name, type, quote, quoteAttribution, url, placeholder } = tenant.data;
 		gap: var(--pp-space-s);
 	}
 
+	// The drawings are line art on white — the tan field they arrived on was
+	// levelled off so `multiply` drops it into the card with no visible plate
+	// edge, exactly as the owner sketches do. Multiply also warms the graphite
+	// against plaster, which ties them to the palette rather than sitting on it.
+	//
+	// 88px rather than the monogram's 52: these carry hatching and a subject, and
+	// below about 80px the cup, the duck and the robot all collapse into a smudge.
 	:global(.tenant__mark) {
 		flex: none;
-		width: 52px;
+		width: 88px;
+		height: auto;
+		mix-blend-mode: multiply;
+	}
+
+	// The monogram is a solid plate, not line art, so multiply would muddy it.
+	// Kept smaller and round so a card without a drawing still reads as
+	// deliberate rather than as a missing image.
+	:global(.tenant__mark--monogram) {
+		width: 56px;
+		border-radius: var(--pp-radius-full);
+		mix-blend-mode: normal;
 	}
 
 	.tenant__name {

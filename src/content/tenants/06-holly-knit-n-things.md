@@ -2,6 +2,8 @@
 name: 'Holly & Oak Yarn Co.'
 category: commercial
 type: Yarn & fibre arts
+icon: ../../assets/tenant-icons/tenant-yarn.png
+iconAlt: 'Pencil drawing of a ball of yarn with a loose trailing strand.'
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true

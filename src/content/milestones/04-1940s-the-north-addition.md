@@ -5,8 +5,10 @@ title: The Building Grows North
 summary: A major addition extends the complex toward the California Avenue corner.
 confidence: contested
 confidenceNote: >-
-  Three different dates are in circulation — 1940, 1944, and 1948 — from West.SB,
-  county assessor records, and the current owners respectively.
+    Three different dates are in circulation in regards to the expansion — 1940, 1944, and 1948.
+# confidenceNote: >-
+#   Three different dates are in circulation — 1940, 1944, and 1948 — from West.SB,
+#   county assessor records, and the current owners respectively.
 figures:
   - src: ../../assets/history/addition-under-construction.jpg
     alt: >-
