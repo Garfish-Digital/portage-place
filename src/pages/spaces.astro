@@ -6,7 +6,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/primitives/Section.astro';
 import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
-import { getSpaces, getSpaceRange, getSpaceTypes } from '../lib/content';
+import UseTypeGrid from '../components/UseTypeGrid.astro';
+import { getSpaceRange, getSpaceTypes, getSpaceTypeSummary } from '../lib/content';
+import { SPACE_TYPE_ICONS, SPACE_TYPE_ICON_FALLBACK } from '../config/site';
 
 // ⚠️ 2021 PROPOSED PLAN — for rough-in only. Carries Kil Architecture's title
 // block; must be cropped or redrawn before anything ships.
@@ -17,14 +19,30 @@ import planImage from '../assets/plans/first-floor-2021.webp';
 import phase2Skylight from '../assets/phase-2/skylight.jpg';
 import phase2Openings from '../assets/phase-2/openings.jpg';
 
-const spaces = await getSpaces();
 const range = await getSpaceRange();
 const types = await getSpaceTypes();
+const typeSummary = await getSpaceTypeSummary();
 
-const commercial = spaces.filter((entry) => entry.data.wing === 'commercial');
-const office = spaces.filter((entry) => entry.data.wing === 'office');
+// Seven types come out of the floor plan; "Health" is the eighth and is NOT in
+// spaces.yaml. It's a use rather than a unit type — Alchemy Healing Arts is a
+// real tenant, so the building demonstrably houses one, but no unit on the 2021
+// drawing is drawn as a treatment room. Appended deliberately, and appended last
+// so it never displaces a type the data actually supports. Icon matches the
+// "Health & wellness" entry on the Home grid.
+const typeItems = [
+	...types.map((entry) => ({
+		icon: SPACE_TYPE_ICONS[entry.type] ?? SPACE_TYPE_ICON_FALLBACK,
+		label: entry.type,
+	})),
+	{ icon: 'lucide:heart-pulse', label: 'Health' },
+];
 
 const fmt = (n: number) => n.toLocaleString('en-US');
+
+// Collapses to a single figure where a type has one unit — "703–703" reads as a
+// mistake rather than as precision.
+const sqftRange = ({ min, max }: { min: number; max: number }) =>
+	min === max ? fmt(min) : `${fmt(min)}–${fmt(max)}`;
 
 // Prose gets rounded figures; the table gets exact ones. Quoting "211 to 1,789"
 // in a sentence claims a precision a four-year-old *proposed* plan can't support,
@@ -46,7 +64,7 @@ import heroImage from '../assets/heroes/spaces.jpg';
 		alt="A glazed private office inside the building, framed in black steel against exposed brick and painted ductwork, with polished concrete floors."
 		eyebrow="Space available"
 		title="Find the one that fits."
-		lede={`Retail on the Portage Avenue frontage, warehouse and flex space at the rear, studios and offices in between. Roughly ${fmt(approx.min)} to ${fmt(approx.max)} usable square feet, starting at $300 a month.`}
+		lede={`Roughly ${fmt(approx.min)} to ${fmt(approx.max)} usable square feet, starting at $300 a month.`}
 		position="center 50%"
 		priority
 	>
@@ -61,23 +79,23 @@ import heroImage from '../assets/heroes/spaces.jpg';
 	<Section tone="limestone">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">What's here</p>
-			<h2>{types.length} kinds of space under one roof.</h2>
+			{/* Counts the rendered cards, not the collection — the grid carries an
+				appended entry that isn't in spaces.yaml, and a hard-coded "8" would
+				drift the first time a unit type is added or dropped. */}
+			<h2>{typeItems.length} kinds of space under one roof.</h2>
 			<p class="block-head__lede">
-				Our building has room shapes an office park
-				doesn't — loading-height warehouse bays behind small street-front retail.
+				Our building offers what an office park
+				doesn't.
 			</p>
 		</div>
 
-		<ul class="types" role="list">
-			{
-				types.map((entry) => (
-					<li class="type">
-						<span class="type__count">{entry.count}</span>
-						<span class="type__name">{entry.type}</span>
-					</li>
-				))
-			}
-		</ul>
+		{/*
+			Same component as the Home page's use-type grid, not a lookalike. This
+			was a numeral-led list in its own layout, which read as a third kind of
+			card for no reason. Counts moved to "Sizes at a glance" below, where a
+			number is what the section is for.
+		*/}
+		<UseTypeGrid items={typeItems} />
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
@@ -123,57 +141,50 @@ import heroImage from '../assets/heroes/spaces.jpg';
 			<p class="pp-eyebrow block-head__eyebrow">Every unit</p>
 			<h2>Sizes at a glance.</h2>
 			<p class="block-head__lede">
-				<strong>Usable</strong> square feet is the space you occupy.
+				<strong>Usable</strong> square feet is the space you occupy.&nbsp;
 				<strong>Rentable</strong> adds a share of the common areas and is what a lease is
 				normally written against. Both are listed so there are no surprises.
 			</p>
 		</div>
 
-		<h3 class="group-label">Commercial wing — {commercial.length} units</h3>
-		<div class="table-wrap">
-			<table class="units">
-				<thead>
-					<tr>
-						<th scope="col">Unit</th>
-						<th scope="col">Type</th>
-						<th scope="col" class="units__num">Usable</th>
-						<th scope="col" class="units__num">Rentable</th>
-					</tr>
-				</thead>
-				<tbody>
-					{
-						commercial.map((entry) => (
-							<tr>
-								<th scope="row">{entry.data.label}</th>
-								<td>{entry.data.type}</td>
-								<td class="units__num">{fmt(entry.data.sqftMin)}</td>
-								<td class="units__num">{fmt(entry.data.sqftMax)}</td>
-							</tr>
-						))
-					}
-				</tbody>
-			</table>
-		</div>
+		{/*
+			One row per TYPE, not per unit. This was two tables and 33 rows of a
+			four-year-old proposed plan — the densest block on the site, and the
+			content least able to survive scrutiny. Seven rows answers the question a
+			prospect actually has ("is there something my size?") without quoting a
+			figure anyone could hold us to.
 
-		<h3 class="group-label group-label--spaced">Office wing & studios — {office.length} units</h3>
+			The two ranges stay in separate columns because they are separate
+			measures: sqftMin is usable and sqftMax is rentable for the SAME unit, so
+			a single "211–1,158" column would span two different things at once.
+		*/}
 		<div class="table-wrap">
 			<table class="units">
 				<thead>
 					<tr>
-						<th scope="col">Unit</th>
 						<th scope="col">Type</th>
+						<th scope="col" class="units__num">Units</th>
 						<th scope="col" class="units__num">Usable</th>
 						<th scope="col" class="units__num">Rentable</th>
 					</tr>
 				</thead>
 				<tbody>
 					{
-						office.map((entry) => (
+						typeSummary.map((entry) => (
 							<tr>
-								<th scope="row">{entry.data.label}</th>
-								<td>{entry.data.type}</td>
-								<td class="units__num">{fmt(entry.data.sqftMin)}</td>
-								<td class="units__num">{fmt(entry.data.sqftMax)}</td>
+								<th scope="row">
+									<span class="units__type">
+										<Icon
+											name={SPACE_TYPE_ICONS[entry.type] ?? SPACE_TYPE_ICON_FALLBACK}
+											class="units__icon"
+											aria-hidden="true"
+										/>
+										{entry.type}
+									</span>
+								</th>
+								<td class="units__num">{entry.count}</td>
+								<td class="units__num">{sqftRange(entry.usable)}</td>
+								<td class="units__num">{sqftRange(entry.rentable)}</td>
 							</tr>
 						))
 					}
@@ -182,8 +193,9 @@ import heroImage from '../assets/heroes/spaces.jpg';
 		</div>
 
 		<p class="units__note">
-			Figures from the 2021 proposed plan and subject to confirmation. We don't publish
-			live availability — email us and we'll tell you what's actually available today.
+			Square feet from the 2021 proposed plan and subject to confirmation. We don't
+			publish live availability — email us and we'll tell you what's actually available
+			today, unit by unit.
 		</p>
 	</Section>
 
@@ -302,42 +314,6 @@ import heroImage from '../assets/heroes/spaces.jpg';
 	}
 
 	// ---------------------------------------------------------------------------
-	// Type counts
-	// ---------------------------------------------------------------------------
-	.types {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
-		gap: var(--pp-space-s);
-		margin: 0;
-		padding: 0;
-	}
-
-	.type {
-		display: flex;
-		flex-direction: column;
-		gap: var(--pp-space-3xs);
-		padding: var(--pp-space-m);
-		background-color: var(--pp-raised);
-		border: 1px solid var(--pp-rule);
-		border-radius: var(--pp-radius-m);
-	}
-
-	.type__count {
-		font-family: var(--pp-font-display);
-		font-size: var(--pp-text-h3);
-		font-weight: var(--pp-weight-semibold);
-		line-height: 1;
-		color: var(--pp-brick-dark);
-	}
-
-	.type__name {
-		@include eyebrow;
-
-		font-size: var(--pp-text-2xs);
-		color: var(--pp-ink-muted);
-	}
-
-	// ---------------------------------------------------------------------------
 	// Plan
 	// ---------------------------------------------------------------------------
 	.plan {
@@ -413,6 +389,21 @@ import heroImage from '../assets/heroes/spaces.jpg';
 		tbody tr:last-child td {
 			border-block-end: 0;
 		}
+	}
+
+	// Same bronze icon as the grid above, so a "Retail" row and the "Retail" card
+	// read as the same thing rather than two separate lists that share a word.
+	.units__type {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+	}
+
+	.units__icon {
+		flex: none;
+		width: 18px;
+		height: 18px;
+		color: var(--pp-bronze); // decorative, non-text — 3.48:1 clears the UI threshold
 	}
 
 	// Tabular figures so the columns align on the digit, not the glyph width.

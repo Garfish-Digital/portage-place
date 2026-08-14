@@ -102,3 +102,46 @@ export async function getSpaceTypes(): Promise<{ type: string; count: number }[]
 		.map(([type, count]) => ({ type, count }))
 		.sort((a, b) => b.count - a.count || a.type.localeCompare(b.type));
 }
+
+export interface SpaceTypeSummary {
+	type: string;
+	count: number;
+	/** Smallest and largest USABLE figure among units of this type. */
+	usable: { min: number; max: number };
+	/** Smallest and largest RENTABLE figure among units of this type. */
+	rentable: { min: number; max: number };
+}
+
+/**
+ * One row per unit type for "Sizes at a glance", replacing a 33-row unit-by-unit
+ * table that was the densest thing on the site.
+ *
+ * The two ranges are kept separate on purpose. `sqftMin`/`sqftMax` are not the
+ * ends of a size range — they are usable and rentable area for the SAME unit, so
+ * spanning min(sqftMin) to max(sqftMax) would advertise a spread no unit has,
+ * built from two different measures. Same trap `getSpaceRange` guards against.
+ */
+export async function getSpaceTypeSummary(): Promise<SpaceTypeSummary[]> {
+	const spaces = await getSpaces();
+	const groups = new Map<string, { sqftMin: number; sqftMax: number }[]>();
+	for (const entry of spaces) {
+		const bucket = groups.get(entry.data.type) ?? [];
+		bucket.push({ sqftMin: entry.data.sqftMin, sqftMax: entry.data.sqftMax });
+		groups.set(entry.data.type, bucket);
+	}
+
+	return [...groups.entries()]
+		.map(([type, units]) => ({
+			type,
+			count: units.length,
+			usable: {
+				min: Math.min(...units.map((u) => u.sqftMin)),
+				max: Math.max(...units.map((u) => u.sqftMin)),
+			},
+			rentable: {
+				min: Math.min(...units.map((u) => u.sqftMax)),
+				max: Math.max(...units.map((u) => u.sqftMax)),
+			},
+		}))
+		.sort((a, b) => b.count - a.count || a.type.localeCompare(b.type));
+}

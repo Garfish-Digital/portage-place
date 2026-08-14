@@ -7,7 +7,10 @@ quote: >-
 featured: true
 order: 3
 placeholder: false
-draft: false
+# ⏸ HELD BACK FOR ROUND 1 at Rob's request 2026-08-14, pending a decision on
+#   whether this tenant belongs on the page at all. Flip `draft` back to
+#   false to restore — the entry is otherwise untouched.
+draft: true
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
 #   · attribution — a person's name and role. An unattributed testimonial reads
 #     as written by the landlord, which is the opposite of what it's for.

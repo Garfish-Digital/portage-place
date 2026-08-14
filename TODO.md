@@ -525,15 +525,36 @@ Questions
 
 =====
 
--Things look better. Brain Lair Books is definitely at 1005 Portage. "Near Northwest Neighborhood" covers quite an area, including Brain Lair. We do not need to touch Milestone 10. 
+-Things look better and the changes have been commited. "Near Northwest Neighborhood" covers quite an area, including Brain Lair Books, and Brain Lair Books is definitely at 1005 Portage. We do not need to touch Milestone 10.
 
--I don't think we're on the same page for what is important to get correct for the client's Round 1 review. The 24 placeholder cues on Community are not going to be an issue for the client on this round--they will, in fact, expect there to be placeholders all over the place. What they will *not* expect to see on round one is a wall of scrollable text, which is exactly what we have on the Spaces page. I have closely examined the Community page with the client in mind, and it is not hard to read. The Community page is great, actually, and I was even thinking of adding images to the 4 cards on the "Neighborhood" section to liven it up a bit. But the Spaces page has 2 huge tables of numbers that take 3 scrolls to get through. In my mind, this is an issue. When the site is in front of a user, Pages feels the most dense. History comes in 2nd, but History should be a little dense because it's *history*, and the client specifically asked for a vertical timeline on this page. I realize the numbers on Spaces are from a 5 year-old print, and the client will need to answer detailed questions about that content when the time comes in a later round. But right now, they are going to look at the fundamentals--the structure. They will of course scrutinize the colors, fonts, and so on, but the pages and their sections will be the matter of discussion on Round 1. There are going to be 2 more rounds, so we'll get to the quotes, numbers, permissions, and so on.
+-We should temporarily comment out the following elements (for the Round 1 review, while we consider their relevance and importance):
+-1. The `https://www.southbendtribune.com/story/news/local/2022/03/09/facade-renovation-ward-baking-building-south-bend/9424146002/` link from "In the News" on the History page.
+-2. `Rhyme & Reason Ministry, Inc.` and `Cloud Walking` from "Tenants" on the Community page.
+-3. `Cressy & Everett Real Estate` and `Garfish Digital` from "Office" on the Community page.
 
--Let me ask the Spaces question another way. If "Sizes at a glance" was to be boiled down into something more quickly digestible, what would *those* options look like. What is the barest version? What is the next version up from that? 
+-I don't think we're in alignment for what is important to get correct for the client's Round 1 review. The 24 placeholder cues on Community are not going to be an issue for the client on this round--they will, in fact, expect there to be placeholders all over the place. What they will *not* expect to see on round one is a wall of scrollable text, which is exactly what we have on the Spaces page. I have closely examined the Community page with the client in mind, and it is not difficult to read. The Community page is great, actually, and I was even thinking of adding images to the 4 cards on the "Neighborhood" section to liven it up a bit. But the Spaces page has 2 huge tables of numbers that take 3 scrolls to get through. In my mind, this is an issue. When the site is in front of a user, Pages feels the most dense. History comes in 2nd, but History should be a little dense because it's *history*, and the client specifically asked for a vertical timeline on this page. I realize the numbers on Spaces are from a 5 year-old print, and the client will need to answer detailed questions about that content when the time comes in a later round. But right now, they are going to look at the fundamentals--the structure. They will of course scrutinize the colors, fonts, and so on, but the pages and their sections will be the matter of discussion on Round 1. There are going to be 2 more rounds, so we'll get to the quotes, numbers, permissions, and so on.
+
+-If I'm understanding correctly, you are saying there is a major inconsistency in the cards and/or card-like elements used throughout the site. I will admit I do not like all the variety, but there are images with some, monograms with others, and so on. Let's start with some low-hanging fruit that I believe can improve the UI/UX right away: The ul items on lines 61-81 of spaces.astro should be redrawn to exactly resemble the style of the <UseTypeGrid/> on line 70 of index.astro. Use the exact sizing and styling--remove the numbers and use relevant icons instead that will match the style and color of the <UseTypeGrid/> icons.
+
+-If "Sizes at a glance" was to be boiled down into something more quickly digestible by users, what would *those* options look like? What is the barest version? What is the next version up from that? Give me 3 ideas to work with, because what we have now is an unapproachable wall.
+
+=====
+
+-Excellent! Let's add an 8th UseTypeGrid to the "7 Kinds of Space" section on Spaces, and label it `Health`. Then it will match the structure on Home.
+
+-On "Sizes at a Glance" I want to go with option 3 (7 rows): By type, with count and range.
 
 
 
 
+
+
+
+
+
+=====
+=====
+=====
 
 Community is the whole problem, and it's concentrated:
 - 10 identical placeholder quotes, each the full sentence "This is a placeholder quote for the card and will need to be replaced by an actual tenant quote…"
@@ -548,8 +569,21 @@ My recommendation, against your two stated goals:
 2. One badge treatment replacing all five variants — a short neutral label, not a sentence.
 3. One section-level note explaining what's pending, said once instead of ten times.
 
+=====
 
+https://www.953mnc.com/2022/03/10/century-old-building-in-south-bend-to-be-renovated-into-commercial-center/
 
+https://www.southbendtribune.com/story/news/local/2022/03/09/facade-renovation-ward-baking-building-south-bend/9424146002/
+
+https://www.wndu.com/2022/03/08/42-million-renovations-underway-old-ward-baking-co-building-south-bend/
+
+https://www.jsonline.com/story/news/solutions/2022/02/24/south-bends-micro-scale-developers-changing-indiana-city/6887375001/
+
+https://www.wvpe.org/indiana-news/2021-06-15/south-bend-common-council-approves-tax-abatements-for-ward-bakery-building-redevelopment
+
+https://southbendelkhart.org/news/40-million-awarded-in-south-bend-elkhart-region-readi-funds/
+
+https://westsb.com/features/ward?rq=ward
 
 =====
 =====

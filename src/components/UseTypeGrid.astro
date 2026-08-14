@@ -1,11 +1,26 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { USE_TYPES } from '../config/site';
+
+/**
+ * Icon + label grid.
+ *
+ * Takes `items` so the Spaces page's "kinds of space" list can be the same
+ * object as the Home page's "who this suits" list rather than a lookalike.
+ * They were drifting apart — one was numerals in a different grid — and two
+ * near-identical treatments of the same idea is what made the site read as
+ * inconsistent. Defaults to USE_TYPES so Home needs no props.
+ */
+interface Props {
+	items?: readonly { icon: string; label: string }[];
+}
+
+const { items = USE_TYPES } = Astro.props;
 ---
 
 <ul class="uses" role="list">
 	{
-		USE_TYPES.map((use) => (
+		items.map((use) => (
 			<li class="use">
 				{/*
 					Icons are decorative — the label carries the meaning, so aria-hidden

@@ -41,14 +41,18 @@
   blurb: >-
     Broadcast coverage from the week the façade work began.
 
-- id: sbt-facade-work
-  outlet: South Bend Tribune
-  headline: Façade work underway on the former Ward Baking Building near downtown
-  url: https://www.southbendtribune.com/story/news/local/2022/03/09/facade-renovation-ward-baking-building-south-bend/9424146002/
-  date: 2022-03-09
-  verifiedOn: 2026-08-07
-  blurb: >-
-    The week the bricks finally came back out of the windows.
+# ⏸ HELD BACK FOR ROUND 1 at Rob's request 2026-08-14, pending a decision on
+#   whether it belongs on the list. Uncomment to restore — the entry is
+#   otherwise untouched, and the URL was verified on 2026-08-07.
+#
+# - id: sbt-facade-work
+#   outlet: South Bend Tribune
+#   headline: Façade work underway on the former Ward Baking Building near downtown
+#   url: https://www.southbendtribune.com/story/news/local/2022/03/09/facade-renovation-ward-baking-building-south-bend/9424146002/
+#   date: 2022-03-09
+#   verifiedOn: 2026-08-07
+#   blurb: >-
+#     The week the bricks finally came back out of the windows.
 
 - id: mnc-century-old-building
   outlet: 95.3 MNC

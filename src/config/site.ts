@@ -20,6 +20,24 @@ export const USE_TYPES = [
 ] as const;
 
 /**
+ * Icon per unit `type` in spaces.yaml, for the Spaces page's "kinds of space"
+ * grid. Keyed by the exact `type` string — if a new type appears in the YAML
+ * without an entry here it falls back to a neutral square, so the grid never
+ * breaks, it just looks unfinished (which is the correct signal).
+ */
+export const SPACE_TYPE_ICONS: Record<string, string> = {
+	Retail: 'lucide:store',
+	Studio: 'lucide:palette',
+	Office: 'lucide:briefcase',
+	Restaurant: 'lucide:utensils',
+	Warehouse: 'lucide:warehouse',
+	Flex: 'lucide:blocks',
+	'Resale retail': 'lucide:recycle',
+};
+
+export const SPACE_TYPE_ICON_FALLBACK = 'lucide:square';
+
+/**
  * Stat strip. Every figure here is sourced:
  * - 200–2,000 sq ft — client, and derived from the spaces collection
  * - 1919 — the datestone on the building's own parapet
