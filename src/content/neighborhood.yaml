@@ -13,12 +13,13 @@
   name: The Portage Collective
   blurb: >-
     A co-op of independent, women-owned businesses on the same corridor.
+  address: 905 Portage Avenue
   relationship: neighbor
   order: 1
   placeholder: false
 
 - id: botany
-  name: Botany
+  name: The Botany Shop
   blurb: Directly across the street at 909 Portage Avenue.
   address: 909 Portage Avenue
   relationship: neighbor
@@ -51,20 +52,20 @@
   order: 5
   placeholder: false
 
-- id: placeholder-neighbor-1
-  name: 'Placeholder — Neighbouring Business'
+- id: brain-lair-books
+  name: Brain Lair Books
   blurb: >-
-    Invented stand-in so the neighbourhood grid can be built at a realistic item
-    count. Replace once the client supplies the real list.
+    An independent bookshop a few doors up the corridor.
+  address: 1005 Portage Avenue
   relationship: neighbor
-  order: 90
-  placeholder: true
+  order: 3
+  placeholder: false
 
-- id: placeholder-neighbor-2
-  name: 'Placeholder — Neighbouring Business'
+- id: the-local-cup
+  name: The Local Cup SB
   blurb: >-
-    Invented stand-in so the neighbourhood grid can be built at a realistic item
-    count. Replace once the client supplies the real list.
+    Coffee and a place to sit, two doors further along.
+  address: 1009 Portage Avenue
   relationship: neighbor
-  order: 91
-  placeholder: true
+  order: 4
+  placeholder: false

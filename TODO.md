@@ -481,6 +481,74 @@ Questions
 
 -We need to look at the triggers on the "Read bio" sections, as they are bubbling across the row. For example, on a desktop where the cards expand to 2 per row (or even 3 per row), the trigger will effect every card in the row. Strangely, it doesn't show the bio text of the sibling cards when this occurs, they dropdown empty until clicked themselves. This needs fixed to properly isolate the triggers.
 
+=====
+
+-Those changes to Community look good for the round 1 client review. Now let's return to the logo in the footer. Do not code yet, only discuss the plan with me to make sure neither of us overlook anything. Here are my thoughts for improving this logo:
+-1. footer__brand needs a background of --pp-ink-strong.
+-2. footer__brand needs a hairline border in --pp-plaster, similar to the one on header__brand.
+-3. The lines need SVG animation that occur when the user scrolls the footer into view (using IntersectionObserver), but only triggered once.
+-4. I am unsure if the wordmark (top & bottom text) can be animated. If not, I would like to know our options to better decide whether I need to go back into Figma to rework the wordmark.
+
+=====
+
+"Confirmations:"
+-Point 1: Upon inspection in DevTools, the footer__brand div appears to have the correct proportions in every way, including padding. It is my belief that if we give it a --pp-ink-strong background, it will display correctly as-is. And I do want the plaque itself to fade in before the lines start drawing.
+-Point 2: Yes, we want the plaster hairline to work exactly as it does on the header__brand, as it displays well on the header.
+-Point 3: We will want to draw both rules from the inner and run outward, so we should set rule-left to run -91 to 0. The ~10 lines inline to ensure a once-only effect sounds good. If we run into issues we can discuss the option of letting it run each time (although I believe once-only would be more intentional).
+-Point 4: Let's use option A (clip-path wipe) for the wordmark. I am inclined to think it might look best if wordmark-portage reveals left-to-right, but wordmark-place reveals right-to-left.  
+
+"Three additional points:"
+-1. Let's use the finished logo as the default fallback to accommodate old browsers.
+-2. Let's implement sessionStorage so that we get a true once-only effect. 
+-3. I think I understand: Because the SVG is injected dynamically via set:html, standard Astro CSS won't see inside the SVG to apply our line-draw animation unless we wrap the #icon-left selector in :global(). That sounds correct to me; I assume the concept is like the following:
+```html
+<style>
+  /* To keep the rule isolated to this component container while reaching inside the SVG */
+  .logo-wrapper :global(#icon-left) {
+    animation: draw 2s forwards;
+  }
+</style>
+```
+
+-I believe we are in alignment and ready to execute. Let me know if you have any further clarifying questions.
+
+=====
+
+-Excellent results. I now want to work on some of the copy. Many things are placeholder, which is fine for the Round 1 client review. But I would like to make sure of two things:
+-1. The amount of placeholder copy doesn't impede the client's ability to review the website itself.
+-2. The cards (and other elements) that contain the placeholder copy are consistent so that the structure is easier to digest for a non-technical person.
+
+-I think for the most part we're in good shape, but I have a few thoughts for Round 1 polish:
+-1. On the Spaces page, I think the "Sizes at a glance" section (lines 121-188) might be overwhelming because there are so many numbers to be scrolled. Tell me our options here. Accordion? Something else?
+-2. On the History page, the "press-head" cards (lines 62-71) are not uniform in size. It would benefit the eye greatly if their content was revised in a way that allowed one press item per row. This would make it much more visually digestible for the client. 
+-3. On the Community page, we can replace the two placeholder 'neighbors' on lines 54-70 of neighborhood.yaml with `Brain Lair Books` at 1005 Portage Ave., and `The Local Cup SB` at 1009 Portage Ave.
+
+=====
+
+-Things look better. Brain Lair Books is definitely at 1005 Portage. "Near Northwest Neighborhood" covers quite an area, including Brain Lair. We do not need to touch Milestone 10. 
+
+-I don't think we're on the same page for what is important to get correct for the client's Round 1 review. The 24 placeholder cues on Community are not going to be an issue for the client on this round--they will, in fact, expect there to be placeholders all over the place. What they will *not* expect to see on round one is a wall of scrollable text, which is exactly what we have on the Spaces page. I have closely examined the Community page with the client in mind, and it is not hard to read. The Community page is great, actually, and I was even thinking of adding images to the 4 cards on the "Neighborhood" section to liven it up a bit. But the Spaces page has 2 huge tables of numbers that take 3 scrolls to get through. In my mind, this is an issue. When the site is in front of a user, Pages feels the most dense. History comes in 2nd, but History should be a little dense because it's *history*, and the client specifically asked for a vertical timeline on this page. I realize the numbers on Spaces are from a 5 year-old print, and the client will need to answer detailed questions about that content when the time comes in a later round. But right now, they are going to look at the fundamentals--the structure. They will of course scrutinize the colors, fonts, and so on, but the pages and their sections will be the matter of discussion on Round 1. There are going to be 2 more rounds, so we'll get to the quotes, numbers, permissions, and so on.
+
+-Let me ask the Spaces question another way. If "Sizes at a glance" was to be boiled down into something more quickly digestible, what would *those* options look like. What is the barest version? What is the next version up from that? 
+
+
+
+
+
+Community is the whole problem, and it's concentrated:
+- 10 identical placeholder quotes, each the full sentence "This is a placeholder quote for the card and will need to be replaced by an actual tenant quote…"
+- 10 red "Attribution needed" labels
+- 4 more from the neighbour entries — now resolved
+
+There are also five different visual treatments across the site for the same idea (placeholder prose, red "Attribution needed", dashed border + chip, red "Placeholder.", "⚠️ … permission pending"). No shared language, which is exactly what makes it hard for a non-technical reviewer to parse.
+
+My recommendation, against your two stated goals:
+
+1. Where there's no real quote, don't render the quote block at all. That removes 20 of Community's 24 cues at a stroke. Reading the same explanatory sentence ten times is worse than not seeing it — and it stops the client reviewing the card design, which is the point of Round 1.
+2. One badge treatment replacing all five variants — a short neutral label, not a sentence.
+3. One section-level note explaining what's pending, said once instead of ten times.
+
+
 
 
 =====
@@ -502,4 +570,3 @@ Tile services you can style and export from:
 
 
 =====
-

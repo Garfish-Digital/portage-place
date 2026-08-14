@@ -222,6 +222,11 @@ const press = defineCollection({
 		/** Path under /public. Never the outlet's masthead — see BUILD_PLAN. */
 		image: z.string().optional(),
 		imageAlt: z.string().optional(),
+		/**
+		 * Currently unrendered. The list is one item per row and every row is the
+		 * same shape on purpose — a featured item spanning the row was what made
+		 * the old two-column grid look ragged. Kept as a lever, not a live flag.
+		 */
 		featured: z.boolean().default(false),
 		/**
 		 * Link-rot guard. Set to the date the URL was last confirmed to resolve.

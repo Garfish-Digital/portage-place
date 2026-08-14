@@ -1,5 +1,5 @@
 ---
-name: 'Cloudwalking Bakery'
+name: 'Cloud Walking'
 category: commercial
 type: Bakery
 quote: >-

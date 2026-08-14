@@ -19,38 +19,36 @@
   outlet: West.SB
   headline: New Life for a 102-Year-Old Bakery in South Bend
   url: https://westsb.com/features/ward?rq=ward
-  blurb: >-
-    Jacob Titus's photo essay — the most complete visual record of the building
-    before renovation began, alongside the fullest account of its bakery years.
-  featured: true
   verifiedOn: 2026-08-07
+  blurb: >-
+    Jacob Titus's photo essay — the fullest record of the building before work began.
 
 - id: jsonline-micro-scale-developers
   outlet: Milwaukee Journal Sentinel
   headline: In economically battered South Bend, Ind., a unique development model
   url: https://www.jsonline.com/story/news/solutions/2022/02/24/south-bends-micro-scale-developers-changing-indiana-city/6887375001/
   date: 2022-02-24
-  blurb: >-
-    National coverage of the incremental development approach behind Portage
-    Place and its neighbours.
-  featured: true
   verifiedOn: 2026-08-07
+  blurb: >-
+    National coverage of the incremental model behind Portage Place and its neighbours.
 
 - id: wndu-4-2-million
   outlet: WNDU
   headline: $4.2 million renovations underway at old Ward Baking Co. building
   url: https://www.wndu.com/2022/03/08/42-million-renovations-underway-old-ward-baking-co-building-south-bend/
   date: 2022-03-08
-  blurb: Broadcast coverage as the façade work began.
   verifiedOn: 2026-08-07
+  blurb: >-
+    Broadcast coverage from the week the façade work began.
 
 - id: sbt-facade-work
   outlet: South Bend Tribune
   headline: Façade work underway on the former Ward Baking Building near downtown
   url: https://www.southbendtribune.com/story/news/local/2022/03/09/facade-renovation-ward-baking-building-south-bend/9424146002/
   date: 2022-03-09
-  blurb: The week the bricks came out of the windows.
   verifiedOn: 2026-08-07
+  blurb: >-
+    The week the bricks finally came back out of the windows.
 
 - id: mnc-century-old-building
   outlet: 95.3 MNC
@@ -58,20 +56,22 @@
   url: https://www.953mnc.com/2022/03/10/century-old-building-in-south-bend-to-be-renovated-into-commercial-center/
   date: 2022-03-10
   verifiedOn: 2026-08-07
+  blurb: >-
+    Local radio on the plan to bring a century-old plant back into use.
 
 - id: wvpe-tax-abatements
   outlet: WVPE
   headline: South Bend Common Council Approves Tax Abatements for Ward Bakery Building
   url: https://www.wvpe.org/indiana-news/2021-06-15/south-bend-common-council-approves-tax-abatements-for-ward-bakery-building-redevelopment
   date: 2021-06-15
-  blurb: The unanimous council vote that made the project financially possible.
   verifiedOn: 2026-08-07
+  blurb: >-
+    The unanimous council vote that made the project financially possible.
 
 - id: readi-550k
   outlet: South Bend–Elkhart Regional Partnership
   headline: $40 million awarded in South Bend–Elkhart region READI funds
   url: https://southbendelkhart.org/news/40-million-awarded-in-south-bend-elkhart-region-readi-funds/
-  blurb: >-
-    Portage Place among the projects funded, with a $550,000 award toward the
-    renovation.
   verifiedOn: 2026-08-07
+  blurb: >-
+    Portage Place among the funded projects, with $550,000 toward the renovation.
