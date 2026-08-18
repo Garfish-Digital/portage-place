@@ -19,7 +19,13 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 				outlined vector, which no screen reader can read.
 			*/}
 			<Logo variant="icon" class="header__mark" />
-			<span class="header__wordmark">Portage Place</span>
+			<Logo variant="wordmark" class="header__wordmark" />
+			{/*
+				The wordmark is outlined vector, not text, so it cannot name the link.
+				This carries the accessible name that the rendered PORTAGE / PLACE
+				used to supply as live type.
+			*/}
+			<span class="pp-visually-hidden">Portage Place</span>
 		</a>
 
 		<nav class="header__nav" aria-label="Primary">
@@ -55,27 +61,34 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 
 	{/*
 		Mobile nav is a sibling panel rather than a duplicate <nav aria-label="Primary">
-		— two nav landmarks with the same name is a screen-reader smell. It's hidden
-		with `hidden` (not just CSS) so it stays out of the tab order when closed.
+		— two nav landmarks with the same name is a screen-reader smell.
+
+		No `hidden` attribute: the panel animates in and out of `display: none` via
+		@starting-style + allow-discrete, and `hidden` would win over the open
+		state's `display: block` and kill the transition. `display: none` already
+		removes it from both the tab order and the accessibility tree, so nothing is
+		lost — see the style block.
+
+		`.pp-on-dark` is the surface context, not a modifier: it remaps the semantic
+		aliases so the links, the muted text and the current-page colour all resolve
+		correctly on espresso with no inverse variants of their own.
 	*/}
-	<div class="header__panel" id="header-mobile-nav" hidden data-nav-panel>
-		<Container as="div">
-			<ul class="header__panel-list" role="list">
-				{
-					NAV_ITEMS.map((item) => (
-						<li>
-							<a
-								class="header__panel-link"
-								href={item.href}
-								aria-current={isCurrent(item.href) ? 'page' : undefined}
-							>
-								{item.label}
-							</a>
-						</li>
-					))
-				}
-			</ul>
-		</Container>
+	<div class="header__panel pp-on-dark" id="header-mobile-nav" data-nav-panel>
+		<ul class="header__panel-list" role="list">
+			{
+				NAV_ITEMS.map((item, index) => (
+					<li class="header__panel-item" style={`--i: ${index}`}>
+						<a
+							class="header__panel-link"
+							href={item.href}
+							aria-current={isCurrent(item.href) ? 'page' : undefined}
+						>
+							{item.label}
+						</a>
+					</li>
+				))
+			}
+		</ul>
 	</div>
 </header>
 
@@ -88,19 +101,38 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 	const header = document.querySelector<HTMLElement>('[data-header]');
 
 	if (toggle && panel && header) {
+		// No `panel.hidden` here by design. The panel's open/closed state is a class
+		// on the header, so CSS owns `display` and can transition it discretely via
+		// @starting-style + allow-discrete. Setting `hidden` as well would override
+		// the open state's `display: block` and the panel would never appear.
+		// `display: none` when closed already keeps it out of the tab order and the
+		// accessibility tree.
 		const setOpen = (open: boolean) => {
 			toggle.setAttribute('aria-expanded', String(open));
-			panel.hidden = !open;
 			header.classList.toggle('is-nav-open', open);
-			// The panel is plaster; a transparent bar above it would leave the nav
-			// links reading as light text on a light surface.
+			// The bar has to be opaque while the panel hangs off it — over a hero the
+			// transparent bar would leave the toggle sitting on the photograph with
+			// the panel's own edge starting a few pixels below.
 			if (open) header.classList.add('is-solid');
 			// Lock the page behind the panel, but only while it's actually open.
 			document.documentElement.style.overflow = open ? 'hidden' : '';
 		};
 
-		toggle.addEventListener('click', () => {
-			setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+		const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
+
+		toggle.addEventListener('click', () => setOpen(!isOpen()));
+
+		// Click-outside. The panel is now an inset card with the page visible around
+		// it, so tapping beside it is the first thing anyone tries.
+		//
+		// `pointerdown` rather than `click` so the menu is already going away as the
+		// finger lands. The toggle is excluded because its own handler runs after
+		// this one — without the guard, opening would immediately close again.
+		document.addEventListener('pointerdown', (event) => {
+			if (!isOpen()) return;
+			const target = event.target as Node;
+			if (panel.contains(target) || toggle.contains(target)) return;
+			setOpen(false);
 		});
 
 		// Esc closes and returns focus to the control that opened it.
@@ -201,7 +233,17 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 	// The plaque is --pp-ink-strong (#16130F) and the bar it sits on when scrolled
 	// is espresso (#322F2C) — about 1.6:1 apart, so the plaster hairline is what
 	// keeps its edge defined in the solid state.
+	// Both parts of the brand scale from one number, so the icon and the wordmark
+	// can never drift out of proportion. 30px on phones and 38px from `sm`: at
+	// 390px the brand had only 61px of slack before the toggle, and the wordmark
+	// is ~2.5x wider than the live text it replaces.
 	.header__brand {
+		--pp-header-mark-h: 34px;
+
+		@include from('sm') {
+			--pp-header-mark-h: 38px;
+		}
+
 		display: inline-flex;
 		align-items: center;
 		gap: var(--pp-space-xs);
@@ -219,24 +261,47 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 	// the two forms closes up; 67px is comfortably clear of it. The old 34px
 	// square placeholder was well below that line.
 	:global(.header__mark) {
-		height: 38px;
+		height: var(--pp-header-mark-h);
 		width: auto;
 		flex: none;
 		// currentColor on the inlined SVG — plaster on the plaque.
 		color: var(--pp-plaster);
 	}
 
-	// Public Sans letter-spaced caps rather than Fraunces. The mark's own
-	// lettering is a geometric sans, and setting the name in a serif right next
-	// to it reads as two competing voices. This echoes the logo instead.
-	.header__wordmark {
-		font-family: var(--pp-font-body);
-		font-size: var(--pp-text-xs);
-		font-weight: var(--pp-weight-semibold);
-		letter-spacing: var(--pp-tracking-caps);
-		text-transform: uppercase;
-		line-height: 1.2;
+	// The client's own wordmark rather than Public Sans set to look like it.
+	// PORTAGE over rule–PLACE–rule, exactly as drawn, just placed beside the icon
+	// instead of under it — a stacked lockup would need ~90px of height in a 72px
+	// bar. Nothing is redrawn: the paths are the master's, cropped to a tight box.
+	//
+	// Height is driven off the icon rather than set independently, so the two can
+	// never drift apart. Matched 1:1 rather than at the master's 0.814 ratio:
+	// that ratio is right at lockup size, but in a 72px bar it put PLACE at a
+	// 7.9px cap and the rules at 0.84px, and a sub-pixel stroke gets dithered to
+	// pale grey by the rasteriser. At 1:1 the rules land on ~1.04px.
+	:global(.header__wordmark) {
+		height: var(--pp-header-mark-h);
+		width: auto;
+		flex: none;
 		color: var(--pp-plaster);
+	}
+
+	// The two rules are a 3-unit stroke in a 109.9-unit box, so they scale to
+	// 1.04px at desktop and 0.93px on a phone. Both are sub-pixel, and a sub-pixel
+	// stroke gets spread across two rows and dimmed — measured at 1x DPR the rules
+	// came out 133/255 against the plaster they are supposed to match. Pinning
+	// them to 1.25px puts that at 150/255 and holds at every size.
+	//
+	// Invisible on a 2x display, which is why this looks fine on a laptop and thin
+	// on an external monitor. Nothing is redrawn: this is a stroke width on two
+	// straight lines, and no letterform is touched.
+	//
+	// Matched on `stroke` rather than on an id: the header strips ids, because the
+	// footer's draw animation owns #rules / #rule-left / #rule-right and two of
+	// each on one page is invalid HTML. Only the rules are stroked — every
+	// letterform is filled — so the attribute IS the selector.
+	:global(.header__wordmark path[stroke]) {
+		vector-effect: non-scaling-stroke;
+		stroke-width: 1.25px;
 	}
 
 	// ---------------------------------------------------------------------------
@@ -346,13 +411,78 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		}
 	}
 
+	// ---------------------------------------------------------------------------
+	// Mobile panel
+	// ---------------------------------------------------------------------------
+	// An inset card anchored under the toggle, not a full-width slab. Full width
+	// took 100% of the viewport and 48% of its height on a 390px phone, which read
+	// as a takeover rather than a menu; anchoring it to the button that opened it
+	// is the thing that makes it feel attached rather than imposed.
+	//
+	// Espresso rather than plaster because the bar is forced solid while the panel
+	// is open — a light panel hanging off a dark bar met at a hard seam and read as
+	// two materials colliding. As one dark form it reads as the bar extending.
+	//
+	// `position: absolute` against the header (which is sticky, so it establishes
+	// the containing block) keeps the panel pinned to the bar while the page is
+	// locked behind it.
 	.header__panel {
-		border-block-start: 1px solid var(--pp-rule);
-		background-color: var(--pp-plaster);
-		padding-block: var(--pp-space-s) var(--pp-space-l);
+		position: absolute;
+		inset-block-start: 100%;
+		inset-inline-end: var(--pp-gutter);
+		z-index: 1;
 
-		@include from('lg') {
-			display: none;
+		width: min(20rem, calc(100vw - 2 * var(--pp-gutter)));
+		margin-block-start: var(--pp-space-2xs);
+		padding: var(--pp-space-2xs) var(--pp-space-s);
+
+		// Five items come to 298px, so this never bites today. It is here because
+		// the page behind is scroll-locked while the panel is open: without it, a
+		// sixth or seventh nav item would push rows off the bottom of a short
+		// screen with no way to reach them.
+		max-block-size: calc(100svh - var(--pp-header-h) - var(--pp-space-l));
+		overflow-y: auto;
+		overscroll-behavior: contain;
+
+		background-color: var(--pp-espresso);
+		border: 1px solid var(--pp-rule-inverse);
+		border-radius: var(--pp-radius-l);
+		box-shadow: var(--pp-shadow-l);
+
+		// `display` is not interpolable, so it needs `allow-discrete` to flip at the
+		// right end of the transition — at the start when opening, at the end when
+		// closing, which is what lets the panel animate *out* instead of vanishing.
+		// Same mechanism as ContactModal; browsers without it get today's instant
+		// appearance, which is a clean degrade rather than a broken one.
+		display: none;
+		opacity: 0;
+		scale: 0.97;
+		translate: 0 -6px;
+		transform-origin: top right;
+		transition: opacity var(--pp-duration-base) var(--pp-ease-entrance),
+			scale var(--pp-duration-base) var(--pp-ease-entrance),
+			translate var(--pp-duration-base) var(--pp-ease-entrance),
+			display var(--pp-duration-base) allow-discrete;
+
+	}
+
+	// Guarded with `until` rather than giving the closed state `display: none
+	// !important` at lg: the open rule is more specific, so the breakpoint has to
+	// sit on the rule that would otherwise win.
+	@include until('lg') {
+		.header.is-nav-open .header__panel {
+			display: block;
+			opacity: 1;
+			scale: 1;
+			translate: 0 0;
+
+			// The from-state for an element entering `display: block`. Without it the
+			// panel would pop straight to its open values with nothing to travel from.
+			@starting-style {
+				opacity: 0;
+				scale: 0.97;
+				translate: 0 -6px;
+			}
 		}
 	}
 
@@ -363,19 +493,76 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		padding: 0;
 	}
 
+	// Each row arrives a beat after the one above it. `--i` is set per item in the
+	// markup, so the stagger is arithmetic rather than five hand-written rules —
+	// and it costs no JS.
+	//
+	// The delay is deliberately NOT part of the reduced-motion story: the duration
+	// tokens collapse to 1ms there, but a delay would still hold each row back, so
+	// it is zeroed explicitly below.
+	.header__panel-item {
+		opacity: 0;
+		translate: 0 -4px;
+		transition: opacity var(--pp-duration-fast) var(--pp-ease-out),
+			translate var(--pp-duration-fast) var(--pp-ease-out);
+	}
+
+	.header.is-nav-open .header__panel-item {
+		opacity: 1;
+		translate: 0 0;
+		transition-delay: calc(60ms + var(--i) * 40ms);
+
+		// The rows need their own from-state, not just the panel. They are not
+		// individually `display: none` — they simply aren't rendered while their
+		// parent is — so on open they go straight from unrendered to final with no
+		// previous value to interpolate from, and the stagger silently does
+		// nothing. Measured: without this the first row read opacity 1 at +30ms.
+		@starting-style {
+			opacity: 0;
+			translate: 0 -4px;
+		}
+	}
+
+	@include reduced-motion {
+		.header.is-nav-open .header__panel-item {
+			transition-delay: 0ms;
+		}
+	}
+
 	.header__panel-link {
-		display: block;
-		padding-block: var(--pp-space-s);
-		border-block-end: 1px solid var(--pp-rule);
+		display: flex;
+		align-items: center;
+		gap: var(--pp-space-xs);
+		// 56px rather than the old 72: with the panel no longer eating half the
+		// screen the rows do not need to carry it, and 56 is still well clear of the
+		// 44px minimum target (SC 2.5.8).
+		min-height: 56px;
+		padding-block: var(--pp-space-2xs);
+		border-block-end: 1px solid var(--pp-rule-inverse);
 		font-family: var(--pp-font-display);
-		font-size: var(--pp-text-h4);
-		color: var(--pp-ink-strong);
+		font-size: var(--pp-text-lede);
+		color: var(--pp-text);
 		text-decoration: none;
 
 		@include focusable(-2px);
 
+		// Bronze marks the current page, but as a RULE rather than as lettering:
+		// bronze is 3.51:1 on espresso, which clears the 3:1 non-text threshold and
+		// fails the 4.5:1 text one. The text colour comes from `.pp-on-dark`, which
+		// remaps --pp-green-link to --pp-green-on-dark (6.68:1). The unremapped
+		// token would have been 1.91:1 — invisible.
 		&[aria-current='page'] {
 			color: var(--pp-green-link);
+
+			&::before {
+				content: '';
+				flex: none;
+				width: 3px;
+				align-self: stretch;
+				margin-block: var(--pp-space-2xs);
+				background-color: var(--pp-bronze);
+				border-radius: var(--pp-radius-s);
+			}
 		}
 	}
 

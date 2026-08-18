@@ -1,6 +1,7 @@
 ---
 import lockupSvg from '../assets/logo/lockup.svg?raw';
 import iconSvg from '../assets/logo/icon.svg?raw';
+import wordmarkSvg from '../assets/logo/wordmark.svg?raw';
 
 /**
  * The Portage Place mark.
@@ -14,8 +15,14 @@ import iconSvg from '../assets/logo/icon.svg?raw';
  * Figma export and the source of truth. Re-export, re-run the transform, done.
  */
 interface Props {
-	/** `lockup` = icon + PORTAGE + rules + PLACE. `icon` = the interlock alone. */
-	variant?: 'lockup' | 'icon';
+	/**
+	 * `lockup`   = icon + PORTAGE + rules + PLACE, stacked as designed.
+	 * `icon`     = the interlock alone.
+	 * `wordmark` = PORTAGE + rules + PLACE with the icon removed, so the two can
+	 *              be set side by side in the header where a stacked lockup would
+	 *              need ~90px of height in a 72px bar.
+	 */
+	variant?: 'lockup' | 'icon' | 'wordmark';
 	class?: string;
 	/**
 	 * Keep the element ids (`#icon-left`, `#wordmark-portage`, …).
@@ -31,7 +38,7 @@ interface Props {
 
 const { variant = 'lockup', class: className, keepIds = false } = Astro.props;
 
-const raw = variant === 'lockup' ? lockupSvg : iconSvg;
+const raw = { lockup: lockupSvg, icon: iconSvg, wordmark: wordmarkSvg }[variant];
 
 const markup = raw
 	// Let CSS own the size; the intrinsic attributes would win otherwise.
@@ -67,5 +74,12 @@ const markup = raw
 
 	.logo--lockup {
 		aspect-ratio: 555 / 400;
+	}
+
+	// Tight box around PORTAGE + rules + PLACE, from getBBox on the master:
+	// 429 wide × 109.9 tall. Not the lockup's ratio minus a guess — the icon sits
+	// inset from the wordmark's left edge, so cropping by eye would misalign it.
+	.logo--wordmark {
+		aspect-ratio: 429 / 109.9;
 	}
 </style>
