@@ -67,27 +67,32 @@ const TYPE_SCALE = [
 	{ token: '--pp-text-h2', label: 'H2', px: '34 → 46', sample: 'Room to think, room to work' },
 	{ token: '--pp-text-h3', label: 'H3', px: '29 → 36', sample: 'The Ward Baking Company' },
 	{ token: '--pp-text-h4', label: 'H4', px: '24 → 29', sample: 'Twenty private offices' },
-	{ token: '--pp-text-lede', label: 'Lede', px: '20 → 23', sample: 'Spaces from 200 to 2,000 square feet' },
+	{ token: '--pp-text-lede', label: 'Lede', px: '20 → 23', sample: 'Spaces from 200 to 1,800 square feet' },
 	{ token: '--pp-text-base', label: 'Body', px: '17 → 18', sample: 'Abandoned in 2012, rescued and fully renovated.' },
 	{ token: '--pp-text-s', label: 'Small', px: '15 → 16', sample: 'Near Northwest Neighborhood' },
 	{ token: '--pp-text-xs', label: 'Caption', px: '14 → 15', sample: 'Photograph: South Bend Tribune, 2022' },
 ];
 ---
 
-<BaseLayout title="Specimen" description="Portage Place design system specimen." noindex>
+<BaseLayout
+	title="Specimen"
+	description="Portage Place design system specimen."
+	noindex
+	renderHold={null}
+>
 	<Section>
 		<p class="pp-eyebrow muted">Phase 1</p>
 		<h1>Design system</h1>
 		<p class="lede">
 			Fraunces and Public Sans, a palette measured off the building, and every pairing
-			contrast-verified. Colour values marked <em>measured</em> were sampled from photographs
+			contrast-verified. Color values marked <em>measured</em> were sampled from photographs
 			white-balanced against a neutral card in frame.
 		</p>
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
 	<Section tone="limestone">
-		<h2 class="section-heading">Colour</h2>
+		<h2 class="section-heading">Color</h2>
 		{
 			COLORS.map((group) => (
 				<div class="group">
@@ -156,7 +161,7 @@ const TYPE_SCALE = [
 			<div class="face">
 				<p class="pp-eyebrow muted">Public Sans — body</p>
 				<p class="face__sample face__sample--body">
-					Spaces range from 200 to 2,000 square feet, <em>starting at $300 a month</em>.
+					Spaces range from 200 to 1,800 square feet, <em>starting at $300 a month</em>.
 				</p>
 				<p class="face__weights">
 					<span style="font-weight: 400">Regular 400</span>
@@ -250,7 +255,7 @@ const TYPE_SCALE = [
 	}
 
 	// ---------------------------------------------------------------------------
-	// Colour
+	// Color
 	// ---------------------------------------------------------------------------
 	.group {
 		margin-block-end: var(--pp-space-xl);

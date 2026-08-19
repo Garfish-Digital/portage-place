@@ -13,14 +13,14 @@ beforeAfter:
       filled with brick and glass block under an overcast sky, the street deserted.
     nowAlt: >-
       The same corner after renovation, with reopened glazing in black frames, tidy
-      kerbs and planting, under a bright sky.
+      curbs and planting, under a bright sky.
     thenCaption: Vacant
     nowCaption: Thriving
   - then: ../../assets/before-after/then-2.png
     now: ../../assets/before-after/now-2.png
     thenAlt: >-
-      The west elevation before renovation: two storeys of brick with every window
-      opening filled in, under a grey winter sky.
+      The west elevation before renovation: two stories of brick with every window
+      opening filled in, under a gray winter sky.
     nowAlt: >-
       The same elevation today, the window openings reopened and glazed, brickwork
       cleaned and the stone trim restored.

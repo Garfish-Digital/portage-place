@@ -1,7 +1,8 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Container from './primitives/Container.astro';
 import Logo from './Logo.astro';
-import { NAV_ITEMS, CONTACT } from '../config/nav';
+import { NAV_ITEMS, CONTACT, SOCIAL } from '../config/nav';
 
 const year = new Date().getFullYear();
 ---
@@ -37,10 +38,43 @@ const year = new Date().getFullYear();
 				</ul>
 			</nav>
 
-			<address class="footer__address">
-				{CONTACT.address.street}<br />
-				{CONTACT.address.city}, {CONTACT.address.region} {CONTACT.address.postalCode}
-			</address>
+			{/*
+				Address and social sit in one column: both answer "how do I reach
+				this place", and splitting them would leave the icon orphaned in the
+				grid on desktop.
+			*/}
+			<div class="footer__reach">
+				<address class="footer__address">
+					{CONTACT.address.street}<br />
+					{CONTACT.address.city}, {CONTACT.address.region} {CONTACT.address.postalCode}
+				</address>
+
+				<ul class="footer__social" role="list">
+					{
+						SOCIAL.map((account) => (
+							<li>
+								<a
+									class="footer__social-link"
+									href={account.href}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<Icon name={account.icon} class="footer__social-icon" aria-hidden="true" />
+									{/*
+										Platform is announced but not shown; the handle is both.
+										That makes the accessible name "Instagram,
+										@portage_place_sb" while the visible label stays the
+										handle alone — and keeps the visible text inside the
+										accessible name, which SC 2.5.3 requires.
+									*/}
+									<span class="pp-visually-hidden">{account.platform},</span>
+									<span class="footer__social-handle">@{account.handle}</span>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
 		</div>
 
 		<p class="footer__legal">
@@ -107,7 +141,7 @@ const year = new Date().getFullYear();
 		// to the pages — where it can offer a secondary action the footer never
 		// could. Near-symmetric now; the footer anchors, it doesn't sell.
 		padding-block: var(--pp-space-2xl) var(--pp-space-l);
-		// Colour comes from .pp-on-dark, which remaps the semantic aliases for
+		// Color comes from .pp-on-dark, which remaps the semantic aliases for
 		// everything inside — the logo included, which is why it renders plaster on
 		// espresso with no variant of its own.
 	}
@@ -269,11 +303,58 @@ const year = new Date().getFullYear();
 		}
 	}
 
+	.footer__reach {
+		display: grid;
+		gap: var(--pp-space-s);
+		// Otherwise the grid stretches the social row to the column width and the
+		// 44px hit area lands nowhere near the glyph.
+		justify-items: start;
+	}
+
 	.footer__address {
 		font-size: var(--pp-text-s);
 		font-style: normal;
 		line-height: var(--pp-leading-normal);
 		color: var(--pp-text-muted);
+	}
+
+	.footer__social {
+		display: flex;
+		gap: var(--pp-space-2xs);
+		margin: 0;
+		padding: 0;
+	}
+
+	// `min-target` puts the 44px hit area on a pseudo-element (SC 2.5.8) rather
+	// than padding the link out. A padded link would push the glyph off the
+	// address's left edge — this keeps the target large and the optical
+	// alignment intact, which is the whole reason that mixin exists.
+	.footer__social-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--pp-space-2xs);
+		font-size: var(--pp-text-s);
+		text-decoration: none;
+		color: var(--pp-text-muted);
+		transition: color var(--pp-duration-fast) var(--pp-ease-out);
+
+		@include min-target;
+		@include focusable;
+
+		@include hover-capable {
+			&:hover {
+				color: var(--pp-text-strong);
+			}
+		}
+	}
+
+	// 20px, matching the use-type grid rather than the 24px a bare glyph wanted —
+	// beside 16px text a 24px mark reads as an icon with a caption stuck to it
+	// instead of one label.
+	.footer__social-icon {
+		flex: none;
+		width: 20px;
+		height: 20px;
 	}
 
 	.footer__legal {

@@ -70,7 +70,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		lost — see the style block.
 
 		`.pp-on-dark` is the surface context, not a modifier: it remaps the semantic
-		aliases so the links, the muted text and the current-page colour all resolve
+		aliases so the links, the muted text and the current-page color all resolve
 		correctly on espresso with no inverse variants of their own.
 	*/}
 	<div class="header__panel pp-on-dark" id="header-mobile-nav" data-nav-panel>
@@ -107,15 +107,46 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		// the open state's `display: block` and the panel would never appear.
 		// `display: none` when closed already keeps it out of the tab order and the
 		// accessibility tree.
+		// Everything we marked inert on open, so close only clears what it set. If
+		// something else on the page is legitimately inert already, we leave it that
+		// way rather than "restoring" it to interactive.
+		let inerted: Element[] = [];
+
+		// The panel scroll-locks the page behind it, so anything reachable back
+		// there is reachable but not visible and not scrollable-to — focus
+		// disappears. Marking the rest of <body> inert removes it from the tab order
+		// and the accessibility tree for as long as the panel is open.
+		//
+		// Everything except the header: the toggle has to stay operable to close the
+		// panel, and the panel itself lives inside the header.
+		const setBackgroundInert = (on: boolean) => {
+			if (on) {
+				inerted = Array.from(document.body.children).filter(
+					(el) => el !== header && !el.hasAttribute('inert'),
+				);
+				for (const el of inerted) el.setAttribute('inert', '');
+			} else {
+				for (const el of inerted) el.removeAttribute('inert');
+				inerted = [];
+			}
+		};
+
+		// NOTE: this deliberately does NOT touch `is-solid`. The observer below is
+		// the sole owner of that class — the bar's appearance answers "has the hero
+		// scrolled past", and nothing else. Opening a menu is not an answer to that
+		// question, and when this function also wrote the class it added it without
+		// ever removing it, so the bar stayed opaque over the hero after the panel
+		// closed. Two writers, no arbitration. Now there is one writer.
+		//
+		// The panel carries its own surface (espresso fill, border, shadow, and a
+		// gap below the bar), and the hero's header scrim already keeps the toggle
+		// legible over the photograph, so the bar has no reason to react at all.
 		const setOpen = (open: boolean) => {
 			toggle.setAttribute('aria-expanded', String(open));
 			header.classList.toggle('is-nav-open', open);
-			// The bar has to be opaque while the panel hangs off it — over a hero the
-			// transparent bar would leave the toggle sitting on the photograph with
-			// the panel's own edge starting a few pixels below.
-			if (open) header.classList.add('is-solid');
 			// Lock the page behind the panel, but only while it's actually open.
 			document.documentElement.style.overflow = open ? 'hidden' : '';
+			setBackgroundInert(open);
 		};
 
 		const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
@@ -227,7 +258,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 	// Brand
 	// ---------------------------------------------------------------------------
 	// The client's mark is designed to sit on black, so it keeps its own plaque in
-	// both header states rather than adopting the bar's colour. Square corners:
+	// both header states rather than adopting the bar's color. Square corners:
 	// their asset is a hard-edged rectangle, not a rounded chip.
 	//
 	// The plaque is --pp-ink-strong (#16130F) and the bar it sits on when scrolled
@@ -277,7 +308,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 	// never drift apart. Matched 1:1 rather than at the master's 0.814 ratio:
 	// that ratio is right at lockup size, but in a 72px bar it put PLACE at a
 	// 7.9px cap and the rules at 0.84px, and a sub-pixel stroke gets dithered to
-	// pale grey by the rasteriser. At 1:1 the rules land on ~1.04px.
+	// pale gray by the rasterizer. At 1:1 the rules land on ~1.04px.
 	:global(.header__wordmark) {
 		height: var(--pp-header-mark-h);
 		width: auto;
@@ -329,7 +360,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		position: relative;
 		display: block;
 		padding-block: var(--pp-space-2xs);
-		// One colour in both states: the bar is either a dark-scrimmed photograph
+		// One color in both states: the bar is either a dark-scrimmed photograph
 		// or espresso, so plaster reads on both and nothing needs to flip.
 		color: var(--pp-plaster);
 		text-decoration: none;
@@ -419,9 +450,12 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 	// as a takeover rather than a menu; anchoring it to the button that opened it
 	// is the thing that makes it feel attached rather than imposed.
 	//
-	// Espresso rather than plaster because the bar is forced solid while the panel
-	// is open — a light panel hanging off a dark bar met at a hard seam and read as
-	// two materials colliding. As one dark form it reads as the bar extending.
+	// Espresso rather than plaster. This originally read "because the bar is forced
+	// solid while the panel is open" — that coupling is gone (see setOpen), and the
+	// color choice outlives it: the panel can sit over a photographic hero, a
+	// plaster section, or a solid espresso bar depending on scroll position, and
+	// espresso is the one fill that holds its own against all three. A plaster card
+	// disappears into a light page section the moment you scroll.
 	//
 	// `position: absolute` against the header (which is sticky, so it establishes
 	// the containing block) keeps the panel pinned to the bar while the page is
@@ -548,7 +582,7 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 
 		// Bronze marks the current page, but as a RULE rather than as lettering:
 		// bronze is 3.51:1 on espresso, which clears the 3:1 non-text threshold and
-		// fails the 4.5:1 text one. The text colour comes from `.pp-on-dark`, which
+		// fails the 4.5:1 text one. The text color comes from `.pp-on-dark`, which
 		// remaps --pp-green-link to --pp-green-on-dark (6.68:1). The unremapped
 		// token would have been 1.91:1 — invisible.
 		&[aria-current='page'] {

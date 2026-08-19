@@ -314,7 +314,7 @@ const entries = await Promise.all(
 				// (vh - s·vh/(elH+vh)), which stays on screen at every scroll offset for
 				// any element/viewport ratio. Measured, the line sits 92%→8% down the
 				// screen on a Pixel 9 and 85%→15% on a desktop — near-identical
-				// behaviour, and more of the travel used than the trimmed range gave.
+				// behavior, and more of the travel used than the trimmed range gave.
 				animation-range: cover 0% cover 100%;
 			}
 
@@ -372,7 +372,7 @@ const entries = await Promise.all(
 		from {
 			// Same hue at zero alpha, not `transparent` — interpolating from
 			// `transparent` resolves to transparent *black* in some engines and the
-			// ring greys out on the way in.
+			// ring grays out on the way in.
 			box-shadow: 0 0 0 0 rgb(var(--pp-bronze-rgb) / 0);
 		}
 	}

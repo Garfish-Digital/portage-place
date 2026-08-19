@@ -9,6 +9,26 @@
 	box-sizing: border-box;
 }
 
+// The `hidden` attribute has to actually hide things.
+//
+// The UA rule is `[hidden] { display: none }` — an ordinary author declaration
+// beats it, because author styles win over user-agent styles no matter how
+// specific the UA selector is. So any component that gives an element a display
+// value silently un-hides it: `.modal__success { display: grid }` is exactly how
+// the contact modal ended up painting its confirmation on top of its form.
+//
+// That failure is invisible in review, because the markup says `hidden` and the
+// JS toggles `hidden` and both are correct. Only the rendering is wrong.
+//
+// `!important` is deliberate and is why this works at all — without it we would
+// be back to a specificity race with every component that sets display. The
+// trade-off is that an element cannot animate its own `hidden` state; nothing
+// here does, because the disclosure and dialog patterns transition `display` on
+// `[open]` and `::details-content` instead.
+[hidden] {
+	display: none !important;
+}
+
 * {
 	margin: 0;
 }
@@ -31,7 +51,7 @@ body {
 
 // Media defaults. `display: block` prevents the inline-descender gap; the
 // max-width guard keeps an oversized asset from forcing a horizontal scrollbar
-// before its explicit dimensions are honoured.
+// before its explicit dimensions are honored.
 img,
 picture,
 video,

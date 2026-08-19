@@ -75,7 +75,7 @@ export async function getSpaces(wing?: 'commercial' | 'office' | 'shared') {
 
 /**
  * The overall size range quoted in marketing copy, derived from the data rather
- * than typed into a template. Keeps "200–2,000 sq ft" from going stale silently
+ * than typed into a template. Keeps "200–1,800 sq ft" from going stale silently
  * when the real floor plans land.
  *
  * `min` is the smallest usable figure and `max` the largest usable figure — NOT

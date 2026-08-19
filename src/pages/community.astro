@@ -9,14 +9,14 @@ import TenantCard from '../components/TenantCard.astro';
 import PersonCard from '../components/PersonCard.astro';
 import { getTenants, getOwners, getMentors, getNeighborhood } from '../lib/content';
 
-// Order is locked in BUILD_PLAN: tenants → owners → neighbourhood → partners.
+// Order is locked in BUILD_PLAN: tenants → owners → neighborhood → partners.
 // Tenants lead because "look at this ecosystem, and here are the people who built
 // it" earns the owners more credit than a bio page in isolation would.
 const commercial = await getTenants({ category: 'commercial' });
 const office = await getTenants({ category: 'office' });
 const owners = await getOwners();
 const mentors = await getMentors();
-const neighbours = await getNeighborhood('neighbor');
+const neighbors = await getNeighborhood('neighbor');
 const partners = await getNeighborhood('partner');
 
 // NOT derived from how many cards we happen to show. The building has 20 tenants
@@ -31,13 +31,13 @@ import heroImage from '../assets/heroes/community.jpg';
 
 <BaseLayout
 	title="Community"
-	description="The businesses, owners, neighbours and partners behind Portage Place — a restored 1919 bakery in South Bend's Near Northwest Neighborhood."
+	description="The businesses, owners, neighbors and partners behind Portage Place — a restored 1919 bakery in South Bend's Near Northwest Neighborhood."
 >
 	<PageHero
 		image={heroImage}
 		alt="The shared kitchenette and dining area, with a long counter, exposed brick and a row of glazed offices behind."
 		eyebrow="Who's here"
-		title="A building as unique as the people in it."
+		title="A building as unique as the people in it"
 		lede="Shops, wellness, & offices — a mix the neighborhood itself wanted."
 		position="center 50%"
 		priority
@@ -49,9 +49,9 @@ import heroImage from '../assets/heroes/community.jpg';
 	<Section tone="limestone" id="tenants">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Tenants</p>
-			<h2>Twenty businesses, one roof.</h2>
+			<h2>Twenty businesses, one roof</h2>
 			<p class="block-head__lede">
-				Commercial spaces front Portage Avenue alongside private offices.
+				Commercial suites front Portage Avenue alongside private offices.
 			</p>
 		</div>
 
@@ -79,21 +79,21 @@ import heroImage from '../assets/heroes/community.jpg';
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
-	{/* 2 — Neighbourhood */}
+	{/* 2 — Neighborhood */}
 	{/* ------------------------------------------------------------------ */}
 	<Section id="neighborhood">
 		<div class="block-head">
-			<p class="pp-eyebrow block-head__eyebrow">Neighbourhood</p>
-			<h2>The corridor, not just the building.</h2>
+			<p class="pp-eyebrow block-head__eyebrow">Neighborhood</p>
+			<h2>The corridor, not just the building</h2>
 			<p class="block-head__lede">
-				Portage Place anchors Portage Midtown. These are the neighbours who make the
+				Portage Place anchors Portage Midtown. These are the neighbors who make the
 				block worth walking.
 			</p>
 		</div>
 
 		<ul class="links" role="list">
 			{
-				neighbours.map((item) => (
+				neighbors.map((item) => (
 					<li class:list={['link-card', item.data.placeholder && 'link-card--placeholder']}>
 						<h3 class="link-card__name">
 							{item.data.url ? (
@@ -121,7 +121,7 @@ import heroImage from '../assets/heroes/community.jpg';
 	<Section tone="limestone" id="owners">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Owners</p>
-			<h2>Four people pulled a neglected bakery out of tax arrears.</h2>
+			<h2>Four people pulled a neglected bakery out of tax arrears</h2>
 			<p class="block-head__lede">
 				Six attempts to rescue this building had failed, then they took it on.
 			</p>
@@ -175,7 +175,7 @@ import heroImage from '../assets/heroes/community.jpg';
 	<Section id="partners">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Partners</p>
-			<h2>It took a lot of group effort and patience.</h2>
+			<h2>It took a lot of group effort and patience</h2>
 			<p class="block-head__lede">
 				Tax abatements, a façade grant, READI funds and two loans — the renovation
 				would not have happened without them.
@@ -204,7 +204,7 @@ import heroImage from '../assets/heroes/community.jpg';
 		<div class="cta">
 			<div>
 				<p class="pp-eyebrow cta__eyebrow">Room for one more</p>
-				<h2 class="cta__title">Your business would fit here.</h2>
+				<h2 class="cta__title">Your business would fit here</h2>
 				<p class="cta__lede">
 					Tell us what you're looking for. Send a simple email.
 				</p>
@@ -340,7 +340,7 @@ import heroImage from '../assets/heroes/community.jpg';
 	}
 
 	// ---------------------------------------------------------------------------
-	// Neighbourhood / partners
+	// Neighborhood / partners
 	// ---------------------------------------------------------------------------
 	.links {
 		display: grid;

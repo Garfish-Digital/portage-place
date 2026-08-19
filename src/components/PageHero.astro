@@ -51,7 +51,12 @@ const {
 } = Astro.props;
 ---
 
-<section class:list={['hero', `hero--${size}`]} data-hero>
+{/*
+	`id` is not decorative — BaseLayout's `<link rel="expect" blocking="render">`
+	points at it to hold first paint until this section has been parsed. Renaming
+	it silently turns that hold into "wait for the whole document".
+*/}
+<section id="hero" class:list={['hero', `hero--${size}`]} data-hero>
 	<div class="hero__media">
 		{/*
 			<Picture> rather than <Image> so the hero ships AVIF with a WebP fallback.

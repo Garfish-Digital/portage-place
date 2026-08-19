@@ -39,14 +39,19 @@ export const SPACE_TYPE_ICON_FALLBACK = 'lucide:square';
 
 /**
  * Stat strip. Every figure here is sourced:
- * - 200–2,000 sq ft — client, and derived from the spaces collection
+ * - 200–1,800 sq ft — client-confirmed 2026-08-19, superseding their earlier
+ *   rounded "2,000". It now agrees with what `getSpaceRange()` derives from
+ *   spaces.yaml (largest usable figure is 1,789), so the quoted range and the
+ *   floor-plan data no longer contradict each other. The old 2,000 was most
+ *   likely a rentable figure — that plan reaches 2,433 RSF — and quoting
+ *   rentable as though it were usable is how a first conversation goes wrong.
  * - 1919 — the datestone on the building's own parapet
  * - 20 private offices — client (9 commercial + 11 office tenants currently)
  * - $300/mo — confirmed with the client; supersedes the live site's stale $350
  * - $4.2M — WNDU, South Bend Tribune, March 2022
  */
 export const STATS = [
-	{ value: '200–2,000', unit: 'sq ft', label: 'Space sizes' },
+	{ value: '200–1,800', unit: 'sq ft', label: 'Suite sizes' },
 	{ value: '1919', label: 'Built' },
 	// { value: '20', label: 'Private offices' },
 	{ value: '$300', unit: '/mo', label: 'Starting rent' },
@@ -104,9 +109,9 @@ export const PROXIMITY = [
 	},
 ] as const;
 
-/** Neighbourhood context, from the current site's copy. */
+/** Neighborhood context, from the current site's copy. */
 export const ACCESS = [
 	'Pedestrian and bike friendly',
-	'On a public transport route',
+	'On a public transit route',
 	'Easy access to the toll road',
 ] as const;

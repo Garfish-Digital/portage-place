@@ -26,9 +26,14 @@ interface Props {
 	noindex?: boolean;
 	/** Path to an OG image in /public. Hand-made per page in Figma (Phase 7). */
 	ogImage?: string;
+	/**
+	 * Element id to hold first paint for. Defaults to the hero, which every real
+	 * page has; pass `null` on pages without one (see the head for why).
+	 */
+	renderHold?: string | null;
 }
 
-const { title, description, noindex = false, ogImage } = Astro.props;
+const { title, description, noindex = false, ogImage, renderHold = 'hero' } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const ogImageUrl = ogImage ? new URL(ogImage, canonical) : undefined;
@@ -54,6 +59,26 @@ const fullTitle = title === 'Portage Place' ? title : `${title} — Portage Plac
 		*/}
 		<link rel="preload" href={frauncesUrl} as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href={publicSansUrl} as="font" type="font/woff2" crossorigin />
+
+		{/*
+			Hold first paint until the hero has been parsed.
+
+			Cross-document view transitions snapshot the incoming page at its first
+			render opportunity. Without this the browser can reach that moment before
+			the hero exists, so the fade lands on a page whose main element is not
+			there yet and the hero drops in afterwards.
+
+			What it does NOT do is wait for the photograph to download or decode —
+			images are not render-blocking, and nothing short of stalling the
+			navigation would make that guarantee. This buys the image the parse time
+			as a head start; it does not remove the possibility of a late paint on a
+			cold cache.
+
+			⚠️ If the id is absent, rendering is held until the document finishes
+			parsing instead. That is harmless on these pages but wasteful on a long
+			one, which is why `specimen` and `deploy-check` pass `renderHold={null}`.
+		*/}
+		{renderHold && <link rel="expect" href={`#${renderHold}`} blocking="render" />}
 
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />

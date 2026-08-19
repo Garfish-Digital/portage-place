@@ -20,7 +20,7 @@ body {
 // pairing holds up across the scale.
 //
 // WONK is not in the loaded subset (we ship the `standard` file: opsz + wght
-// only), which is deliberate — the wonky single-storey `g` and swashes read as
+// only), which is deliberate — the wonky single-story `g` and swashes read as
 // artisanal-coffee-brand rather than restored-landmark. If we ever want SOFT,
 // switch the import to `full.css` at +53KB.
 h1,
@@ -201,10 +201,21 @@ button {
 
 // The page cross-fades on its own timing rather than the browser default, so it
 // reads as deliberate instead of merely quick.
+//
+// `base` (240ms), not `slow` (420ms). During a cross-document transition the
+// outgoing page is a frozen bitmap — nothing on it can respond — so every
+// millisecond here is a millisecond the site is inert. 420ms of that reads as the
+// page being slow to arrive, which is the opposite of the intended impression.
+// Below ~300ms the freeze goes unnoticed and the fade still registers.
+//
+// `linear`, not `ease-out`. Both halves of a cross-fade previously ran on the
+// same decelerating curve, so both sat near half opacity through the middle and
+// the two pages briefly ghosted through each other. Linear opacity is what makes
+// the sum of the two read as one continuous image.
 ::view-transition-old(root),
 ::view-transition-new(root) {
-	animation-duration: var(--pp-duration-slow);
-	animation-timing-function: var(--pp-ease-out);
+	animation-duration: var(--pp-duration-base);
+	animation-timing-function: linear;
 }
 
 // Naming an element lifts it out of the page cross-fade and transitions it in its

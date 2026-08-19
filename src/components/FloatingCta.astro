@@ -59,7 +59,7 @@ import { Icon } from 'astro-icon/components';
 		// iOS Safari's bottom toolbar overlaps exactly this corner while scrolling.
 		// The safe-area inset is what keeps the button reachable rather than sitting
 		// under the browser chrome — needs verifying on real hardware, not just
-		// DevTools, because the simulator doesn't reproduce the toolbar behaviour.
+		// DevTools, because the simulator doesn't reproduce the toolbar behavior.
 		inset-block-end: calc(var(--pp-space-m) + env(safe-area-inset-bottom, 0px));
 
 		transition: opacity var(--pp-duration-base) var(--pp-ease-out),

@@ -14,7 +14,7 @@ figures:
   - src: ../../assets/history/facade-underway.jpg
     alt: >-
       The Portage Avenue elevation with plywood boards filling the window
-      openings and a forklift and skip at the kerb, the 1919 datestone and Ward
+      openings and a forklift and dumpster at the curb, the 1919 datestone and Ward
       Baking Co sign visible above.
     caption: Openings cut back, plywood in, work under way.
     # credit: 'Photographer unknown — placeholder'

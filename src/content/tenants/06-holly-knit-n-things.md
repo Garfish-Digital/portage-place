@@ -1,7 +1,7 @@
 ---
 name: 'Holly & Oak Yarn Co.'
 category: commercial
-type: Yarn & fibre arts
+type: Yarn & fiber arts
 icon: ../../assets/tenant-icons/tenant-yarn.png
 iconAlt: 'Pencil drawing of a ball of yarn with a loose trailing strand.'
 quote: >-
@@ -17,4 +17,4 @@ draft: false
 #   · confirmation the tenant approves this wording being published.
 ---
 
-Yarn & fibre arts in the commercial wing.
+Yarn & fiber arts in the commercial wing.

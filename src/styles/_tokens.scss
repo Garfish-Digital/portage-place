@@ -101,7 +101,7 @@
 	--pp-surface-alt: var(--pp-limestone);
 	// The surface for anything sitting ON the current surface — cards, quiet
 	// buttons, wells. Section flips it per tone, so a filled element never ends up
-	// the same colour as its own background. Hard-coding `--pp-plaster` on a card
+	// the same color as its own background. Hard-coding `--pp-plaster` on a card
 	// is what turned cards and quiet buttons into ghosts inside plaster sections.
 	--pp-raised: var(--pp-limestone);
 	--pp-text: var(--pp-ink);
@@ -191,14 +191,30 @@
 	// ---------------------------------------------------------------------------
 	--pp-duration-instant: 90ms;
 	--pp-duration-fast: 160ms; // micro-interactions
-	--pp-duration-base: 240ms; // most transitions
-	--pp-duration-slow: 420ms; // modals, reveals
+	--pp-duration-base: 240ms; // most transitions — and every exit, see below
+	--pp-duration-slow: 420ms; // modal and disclosure entrances
 	--pp-duration-slower: 680ms; // scroll reveals
 
+	// ENTER SLOW, LEAVE QUICK. An entrance is the thing you want looked at, so it
+	// gets room to arrive; an exit is the visitor having already decided to move
+	// on, and making them wait out a leisurely fade is how "considered" turns into
+	// "sluggish". Modals and disclosures open on `slow` and close on `base`.
 	--pp-ease-out: cubic-bezier(0.22, 1, 0.36, 1); // decelerate — default
 	--pp-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); // symmetric
 	--pp-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1); // things arriving
 	--pp-ease-overshoot: cubic-bezier(0.34, 1.4, 0.64, 1); // slight spring
+
+	// The mirror of `entrance`, and the token this palette was missing: every
+	// curve above decelerates, so exits were borrowing an entrance curve and
+	// inheriting its shape — most of the travel spent in the first third, then a
+	// long crawl to nothing. Run backwards that reads as an element hanging
+	// motionless and then vanishing, which is what made the bio disclosure and the
+	// modal both close harder than they opened.
+	//
+	// Accelerating away is the correct shape for something leaving: it commits
+	// immediately and gathers speed, so the eye reads departure rather than a
+	// disappearance. Pair with `--pp-duration-base`, never `slow`.
+	--pp-ease-exit: cubic-bezier(0.4, 0, 1, 1); // things leaving
 
 	// ---------------------------------------------------------------------------
 	// Layers
@@ -241,6 +257,12 @@
 // the site still feels alive rather than inert.
 @media (prefers-reduced-motion: reduce) {
 	:root {
+		// `instant` is collapsed with the rest even though nothing uses it today.
+		// This layer is the ONLY place reduced motion is implemented — a component
+		// that reaches for an uncollapsed token silently opts out of it, and the
+		// failure is invisible unless you are testing with the setting on. Leaving
+		// one duration live was a trap set for whoever uses it next.
+		--pp-duration-instant: 1ms;
 		--pp-duration-fast: 1ms;
 		--pp-duration-base: 1ms;
 		--pp-duration-slow: 120ms;

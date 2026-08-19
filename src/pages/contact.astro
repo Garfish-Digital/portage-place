@@ -9,13 +9,13 @@ import Button from '../components/Button.astro';
 import { CONTACT, MAP_EMBED_URL } from '../config/nav';
 
 // Static map over Thunderforest/OSM tiles. Attribution is baked into the image,
-// which is what the ODbL licence requires.
+// which is what the ODbL license requires.
 //
 // PNG, not the SVG export. That .svg is 3.4 MB of base64-encoded raster — two
 // embedded PNGs, zero vector paths — so it is the same picture at the same
 // resolution, ~5x the bytes, and Astro passes SVGs through its image pipeline
 // untouched. This PNG is that SVG flattened at its native 2480x1460, which the
-// optimiser then serves as a ~90 KB webp.
+// optimizer then serves as a ~90 KB webp.
 import mapImage from '../assets/maps/location.png';
 import { ACCESS } from '../config/site';
 
@@ -34,13 +34,13 @@ import heroImage from '../assets/heroes/contact.jpg';
 
 <BaseLayout
 	title="Contact"
-	description="Visit or email Portage Place — 908 Portage Avenue, South Bend, Indiana. Commercial and office space from 200 to 2,000 sq ft."
+	description="Visit or email Portage Place — 908 Portage Avenue, South Bend, Indiana. Commercial and office space from 200 to 1,800 sq ft."
 >
 	<PageHero
 		image={heroImage}
 		alt="The building entrance from inside: glazed double doors and a tall window wall throwing afternoon light across the concrete floor."
 		eyebrow="Reach out"
-		title="Tell us about the space you need."
+		title="Tell us about the space you need"
 		lede="No forms, no commitment. Simply send an email."
 		position="center 45%"
 		priority
@@ -137,7 +137,7 @@ import heroImage from '../assets/heroes/contact.jpg';
 		<div class="cta">
 			<div>
 				<p class="pp-eyebrow cta__eyebrow">Still deciding?</p>
-				<h2 class="cta__title">Have a look at what's here.</h2>
+				<h2 class="cta__title">Have a look at what's here</h2>
 				<p class="cta__lede">
 					Sizes, wings and what fits where — plus the hundred-year story behind the
 					building.
@@ -169,7 +169,7 @@ import heroImage from '../assets/heroes/contact.jpg';
 
 			const frame = document.createElement('iframe');
 			frame.src = MAP_EMBED_URL;
-			// Without a title the frame is announced as an unlabelled region.
+			// Without a title the frame is announced as an unlabeled region.
 			frame.title = 'Google Maps showing Portage Place, 908 Portage Avenue, South Bend, Indiana';
 			frame.loading = 'lazy';
 			frame.referrerPolicy = 'no-referrer-when-downgrade';
@@ -341,7 +341,7 @@ import heroImage from '../assets/heroes/contact.jpg';
 		height: 100%;
 		object-fit: cover;
 		// The pin sits high and left in the artwork, so any crop has to come off the
-		// bottom-right rather than be centred, or the marker is the first thing lost.
+		// bottom-right rather than be centered, or the marker is the first thing lost.
 		object-position: 20% 30%;
 	}
 
@@ -366,7 +366,7 @@ import heroImage from '../assets/heroes/contact.jpg';
 	}
 
 	// Kept even once the embed loads. Google's iframe is patchy for keyboard users,
-	// and anyone actually travelling here wants the destination on their phone.
+	// and anyone actually traveling here wants the destination on their phone.
 	.map__escape {
 		margin-block-start: var(--pp-space-s);
 		font-size: var(--pp-text-s);

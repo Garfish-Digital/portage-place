@@ -16,7 +16,7 @@ beforeAfter:
       bricked over, bare trees and snow along an empty street.
     nowAlt: >-
       The same south end in summer: brickwork cleaned, tall windows reinstated in
-      black frames, a vehicle parked at the kerb.
+      black frames, a vehicle parked at the curb.
     thenCaption: Sealed
     nowCaption: Reopened
 sources:

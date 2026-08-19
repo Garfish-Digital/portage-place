@@ -23,88 +23,109 @@ import Button from './Button.astro';
 		</button>
 	</form>
 
-	<div class="modal__body" data-modal-body>
-		<p class="pp-eyebrow modal__eyebrow">Get in touch</p>
-		<h2 class="modal__title" id="contact-modal-title">Email us so we can talk</h2>
-		<p class="modal__lede">
-			Tell us as much or as little as you like. An address on its own is plenty — we'll take
-			it from there.
-		</p>
-
-		{/*
-			Netlify Forms: `data-netlify` registers the form at build time, and the
-			hidden form-name field is what identifies it on submit. The honeypot is a
-			decoy field — bots fill it, humans never see it — which keeps spam down
-			without a CAPTCHA. At <=10 submissions/month a CAPTCHA would add friction
-			and a third-party script to solve a problem we don't have.
-		*/}
-		<form
-			class="modal__form"
-			name="contact"
-			method="POST"
-			data-netlify="true"
-			netlify-honeypot="bot-field"
-			data-contact-form
-		>
-			<input type="hidden" name="form-name" value="contact" />
-			<p class="modal__honeypot">
-				<label>
-					Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" />
-				</label>
+	{/*
+		The two panels share one grid cell so the outgoing form and the incoming
+		confirmation cross-fade in place instead of stacking. Without this wrapper
+		the swap was a single-frame `hidden` flip — the dialog jumped to a new size
+		instantly at the one moment in the whole site that most needs to feel good.
+	*/}
+	<div class="modal__panels" data-modal-panels>
+		<div class="modal__body" data-modal-body>
+			<p class="pp-eyebrow modal__eyebrow">Get in touch</p>
+			<h2 class="modal__title" id="contact-modal-title">Email us so we can talk</h2>
+			<p class="modal__lede">
+				Tell us as much or as little as you like. An address on its own is plenty — we'll take
+				it from there.
 			</p>
 
-			<div class="field">
-				<label class="field__label" for="contact-email">Email address</label>
-				<input
-					class="field__input"
-					id="contact-email"
-					name="email"
-					type="email"
-					autocomplete="email"
-					inputmode="email"
-					required
-					aria-describedby="contact-email-error"
-				/>
-				{/*
-					aria-live so the message is announced when it appears. It stays in
-					the DOM empty rather than being inserted, because content added to a
-					live region at the same moment the region appears is unreliably read.
-				*/}
-				<p class="field__error" id="contact-email-error" role="alert" data-error-for="email"></p>
-			</div>
+			{/*
+				Netlify Forms: `data-netlify` registers the form at build time, and the
+				hidden form-name field is what identifies it on submit. The honeypot is a
+				decoy field — bots fill it, humans never see it — which keeps spam down
+				without a CAPTCHA. At <=10 submissions/month a CAPTCHA would add friction
+				and a third-party script to solve a problem we don't have.
+			*/}
+			<form
+				class="modal__form"
+				name="contact"
+				method="POST"
+				data-netlify="true"
+				netlify-honeypot="bot-field"
+				data-contact-form
+			>
+				<input type="hidden" name="form-name" value="contact" />
+				<p class="modal__honeypot">
+					<label>
+						Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" />
+					</label>
+				</p>
 
-			<div class="field">
-				<label class="field__label" for="contact-message">
-					Message <span class="field__optional">(optional)</span>
-				</label>
-				<textarea
-					class="field__input field__input--textarea"
-					id="contact-message"
-					name="message"
-					rows="4"
-					placeholder="What kind of space are you looking for?"></textarea>
-			</div>
+				<div class="field">
+					<label class="field__label" for="contact-email">Email address</label>
+					<input
+						class="field__input"
+						id="contact-email"
+						name="email"
+						type="email"
+						autocomplete="email"
+						inputmode="email"
+						required
+						aria-describedby="contact-email-error"
+					/>
+					{/*
+						aria-live so the message is announced when it appears. It stays in
+						the DOM empty rather than being inserted, because content added to a
+						live region at the same moment the region appears is unreliably read.
+					*/}
+					<p class="field__error" id="contact-email-error" role="alert" data-error-for="email"></p>
+				</div>
 
-			<Button type="submit" size="lg" fullWidth iconEnd="lucide:arrow-right" data-submit>Send</Button>
+				<div class="field">
+					<label class="field__label" for="contact-message">
+						Message <span class="field__optional">(optional)</span>
+					</label>
+					<textarea
+						class="field__input field__input--textarea"
+						id="contact-message"
+						name="message"
+						rows="4"
+						placeholder="What kind of space are you looking for?"></textarea>
+				</div>
 
-			<p class="modal__form-error" role="alert" data-form-error></p>
-		</form>
-	</div>
+				<Button type="submit" size="lg" fullWidth iconEnd="lucide:arrow-right" data-submit>Send</Button>
 
-	{/*
-		Success replaces the modal contents in place. Redirecting to Netlify's
-		default success page would break the low-commitment feel entirely — the
-		visitor would leave the site to be told their email was received.
-	*/}
-	<div class="modal__success" data-modal-success hidden>
-		<div class="modal__success-mark" aria-hidden="true">
-			<Icon name="lucide:check" />
+				<p class="modal__form-error" role="alert" data-form-error></p>
+			</form>
 		</div>
-		<h2 class="modal__title">Thanks — we've got it</h2>
-		<p class="modal__lede">
-			We'll be in touch soon. If it's urgent, you're always welcome to stop by.
-		</p>
-		<Button variant="quiet" data-modal-close-success>Close</Button>
+
+		{/*
+			Success replaces the modal contents in place. Redirecting to Netlify's
+			default success page would break the low-commitment feel entirely — the
+			visitor would leave the site to be told their email was received.
+		*/}
+		<div class="modal__success" data-modal-success hidden>
+			<div class="modal__success-mark" aria-hidden="true">
+				<Icon name="lucide:check" />
+			</div>
+			{/*
+				Same eyebrow → title → lede → full-width button structure as the form
+				panel. The visitor watches one become the other, so mirroring the
+				skeleton is what makes the swap read as one modal changing state
+				rather than a second modal arriving.
+			*/}
+			<p class="pp-eyebrow modal__eyebrow">Message sent</p>
+			<h2 class="modal__title">Thanks — we've got it</h2>
+			<p class="modal__lede">
+				We'll be in touch soon. If it's urgent, you're always welcome to stop by.
+			</p>
+			{/*
+				`quiet` rather than `primary`: closing is a dismissal, and a green
+				button here would compete with the action the visitor just completed.
+				`lg` + `fullWidth` match Send's footprint so the button occupies the
+				same slot in the same shape.
+			*/}
+			<Button variant="quiet" size="lg" fullWidth data-modal-close-success>Close</Button>
+		</div>
 	</div>
 </dialog>
 
@@ -113,6 +134,7 @@ import Button from './Button.astro';
 	const form = modal?.querySelector<HTMLFormElement>('[data-contact-form]');
 	const body = modal?.querySelector<HTMLElement>('[data-modal-body]');
 	const success = modal?.querySelector<HTMLElement>('[data-modal-success]');
+	const panels = modal?.querySelector<HTMLElement>('[data-modal-panels]');
 	const formError = modal?.querySelector<HTMLElement>('[data-form-error]');
 	const emailInput = modal?.querySelector<HTMLInputElement>('#contact-email');
 	const emailError = modal?.querySelector<HTMLElement>('[data-error-for="email"]');
@@ -156,6 +178,56 @@ import Button from './Button.astro';
 			success.hidden = true;
 			formError.textContent = '';
 			clearEmailError();
+		};
+
+		// Form → confirmation, with the dialog's height animated across the swap.
+		//
+		// This used to be two `hidden` flips in one frame, so the dialog jumped
+		// straight to the confirmation's height — a hard cut at the single moment
+		// the site most wants to feel good. CSS can't do this alone: the panels are
+		// content-sized, so both the old and new heights are `auto`, and a computed
+		// value that never changes is a transition that never fires. Measuring is
+		// the only way to give the box two numbers to travel between.
+		//
+		// Read → write → read is deliberate and unavoidable here: measure the form,
+		// swap, measure the confirmation, then pin the start height and animate to
+		// the end. It forces one synchronous layout, once, on an interaction that
+		// has just completed a network round trip.
+		const swapToSuccess = () => {
+			const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+			// No panels element, or the visitor asked for less motion: the plain
+			// swap is the correct result, not a degraded one.
+			if (!panels || reduced) {
+				body.hidden = true;
+				success.hidden = false;
+				return;
+			}
+
+			const from = panels.getBoundingClientRect().height;
+			body.hidden = true;
+			success.hidden = false;
+			const to = panels.getBoundingClientRect().height;
+
+			panels.style.blockSize = `${from}px`;
+			// Force the pinned height to be committed before the target is set, or
+			// the two writes coalesce into one and there is nothing to animate.
+			void panels.getBoundingClientRect().height;
+
+			panels.classList.add('is-swapping');
+			panels.style.blockSize = `${to}px`;
+
+			// Hand the box back to its content. Leaving an inline height on it would
+			// clip the confirmation if the viewport later got narrower and the text
+			// rewrapped taller.
+			const settle = () => {
+				panels.style.blockSize = '';
+				panels.classList.remove('is-swapping');
+			};
+			panels.addEventListener('transitionend', settle, { once: true });
+			// transitionend never fires if the two heights happen to match, which
+			// would strand the inline height permanently.
+			if (from === to) settle();
 		};
 
 		// -- validation -----------------------------------------------------------
@@ -207,8 +279,7 @@ import Button from './Button.astro';
 
 				if (!response.ok) throw new Error(`Netlify responded ${response.status}`);
 
-				body.hidden = true;
-				success.hidden = false;
+				swapToSuccess();
 				// Move focus into the success panel or it stays on a now-hidden
 				// button, which strands screen-reader and keyboard users.
 				success.querySelector<HTMLElement>('h2')?.setAttribute('tabindex', '-1');
@@ -249,12 +320,18 @@ import Button from './Button.astro';
 
 		// `display` can't be transitioned directly, so @starting-style + allow-discrete
 		// is what lets a dialog animate *in* rather than appearing instantly.
+		//
+		// Declared on the base state, this is the CLOSING transition — quicker, and
+		// on the exit curve. Previously both directions shared `--pp-ease-entrance`,
+		// an extreme decelerate that spends ~90% of its travel in the first third;
+		// run backwards that left the dialog hanging almost motionless and then
+		// simply gone. See the motion tokens.
 		opacity: 0;
 		scale: 0.97;
 		translate: 0 8px;
-		transition: opacity var(--pp-duration-base) var(--pp-ease-entrance),
-			scale var(--pp-duration-base) var(--pp-ease-entrance),
-			translate var(--pp-duration-base) var(--pp-ease-entrance),
+		transition: opacity var(--pp-duration-base) var(--pp-ease-exit),
+			scale var(--pp-duration-base) var(--pp-ease-exit),
+			translate var(--pp-duration-base) var(--pp-ease-exit),
 			display var(--pp-duration-base) allow-discrete,
 			overlay var(--pp-duration-base) allow-discrete;
 
@@ -263,6 +340,15 @@ import Button from './Button.astro';
 			scale: 1;
 			translate: 0 0;
 
+			// The opening transition, on the longer duration the tokens reserve for
+			// modals. This is the site's single conversion action — it earns the room
+			// to arrive.
+			transition: opacity var(--pp-duration-slow) var(--pp-ease-entrance),
+				scale var(--pp-duration-slow) var(--pp-ease-entrance),
+				translate var(--pp-duration-slow) var(--pp-ease-entrance),
+				display var(--pp-duration-slow) allow-discrete,
+				overlay var(--pp-duration-slow) allow-discrete;
+
 			@starting-style {
 				opacity: 0;
 				scale: 0.97;
@@ -270,20 +356,54 @@ import Button from './Button.astro';
 			}
 		}
 
+		// The backdrop now shares the dialog's curves and durations in both
+		// directions. It was on `--pp-ease-out` while the dialog was on
+		// `--pp-ease-entrance` — two curves for two things the eye reads as one
+		// movement, which is the kind of mismatch nobody can name but everybody
+		// feels.
 		&::backdrop {
 			opacity: 0;
-			transition: opacity var(--pp-duration-base) var(--pp-ease-out),
+			transition: opacity var(--pp-duration-base) var(--pp-ease-exit),
 				display var(--pp-duration-base) allow-discrete,
 				overlay var(--pp-duration-base) allow-discrete;
 		}
 
 		&[open]::backdrop {
 			opacity: 1;
+			transition: opacity var(--pp-duration-slow) var(--pp-ease-entrance),
+				display var(--pp-duration-slow) allow-discrete,
+				overlay var(--pp-duration-slow) allow-discrete;
 
 			@starting-style {
 				opacity: 0;
 			}
 		}
+	}
+
+	// Both panels share one grid cell. Stacked in normal flow they would briefly
+	// sum their heights during the swap and the dialog would balloon before it
+	// settled; overlaid, the box only ever has to travel between the two heights.
+	//
+	// `max-height: inherit` is load-bearing, not decoration. The panels below
+	// inherit their cap through this element, so without it the chain from
+	// `.modal`'s own max-height breaks and a long form stops being scrollable
+	// inside a capped dialog.
+	.modal__panels {
+		display: grid;
+		max-height: inherit;
+
+		> * {
+			grid-area: 1 / 1;
+		}
+	}
+
+	// Only while JS is animating between the two measured heights. Kept off the
+	// resting state so the dialog is content-sized at every other moment — an
+	// always-on height transition would fight the form growing when a validation
+	// message appears.
+	.modal__panels.is-swapping {
+		overflow: hidden;
+		transition: block-size var(--pp-duration-slow) var(--pp-ease-entrance);
 	}
 
 	.modal__body,
@@ -293,16 +413,51 @@ import Button from './Button.astro';
 		overflow-y: auto;
 	}
 
+	// The confirmation arrives rather than appearing. `--pp-ease-entrance` front-
+	// loads its travel, so the panel is near-opaque within about a third of the
+	// duration — which is what keeps the shrinking box from ever reading as empty
+	// while the outgoing form is already gone.
+	//
+	// Scoped to `:not([hidden])` so it only ever runs on the real success moment;
+	// `resetToForm()` re-hides this panel while the dialog is closed, so reopening
+	// never replays it.
+	@media (prefers-reduced-motion: no-preference) {
+		.modal__success:not([hidden]) {
+			animation: panel-in var(--pp-duration-slow) var(--pp-ease-entrance) both;
+		}
+	}
+
+	@keyframes panel-in {
+		from {
+			opacity: 0;
+			translate: 0 6px;
+		}
+	}
+
+	// A plain block, exactly like the form panel — centred only in its text axis.
+	//
+	// It was `display: grid` with a `gap`, and `.modal__title` / `.modal__lede` are
+	// shared with the form panel and carry their own `margin-block-end`. Gap and
+	// margin compounded, so the confirmation ran 16px looser at every step than the
+	// form it replaced. Matching the box model means the shared margins are the
+	// only thing setting rhythm, in both panels, and the two now step identically.
+	//
+	// Dropping `display` here also happens to remove the declaration that was
+	// defeating the `hidden` attribute — but the `[hidden]` guard in _reset.scss
+	// stays regardless, because the next component to set a display value would
+	// walk into exactly the same trap.
 	.modal__success {
 		text-align: center;
-		display: grid;
-		justify-items: center;
-		gap: var(--pp-space-s);
 	}
 
 	.modal__success-mark {
 		display: grid;
 		place-items: center;
+		// `justify-items: center` on the old grid parent used to do this. As a
+		// block child it centres itself, and the margin below matches the lede's,
+		// so the mark sits in the same rhythm as everything under it.
+		margin-inline: auto;
+		margin-block-end: var(--pp-space-m);
 		width: 48px;
 		height: 48px;
 		color: #fff;

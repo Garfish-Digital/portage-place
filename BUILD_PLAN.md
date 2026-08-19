@@ -235,21 +235,39 @@ plans** — which is the site's single most important job. Proposed revision:
 | Page | Purpose |
 |---|---|
 | **Home** | Hero, the pitch, location, teasers into the other pages, CTA. |
-| **Find Your Space** ⭐ *new* | Floor plans, size ranges, amenities, "what fits here," location map. The leasing page. |
+| **Suites** ⭐ *new* | Floor plans, size ranges, amenities, "what fits here," location map. The leasing page. Route stays `/spaces`. |
 | **History** | Vertical timeline, 5–10 milestones. |
 | **Community** | Tenants → Owners → Neighborhood → Partners, on one shared expandable-card component. |
 | **Contact** | Address, hours, directions, the form inline. |
 
-#### Naming the leasing page
+#### Naming the leasing page — ✅ CLIENT DECISION 2026-08-19: **"Suites"**
 
-Working title **"Find Your Space"** — action-oriented, and it rhymes with the
+The client asked for **"Suites"**, replacing our "Find Your Space" / "Spaces"
+pair. It is now a single label used on all three surfaces — desktop header,
+mobile panel, footer.
+
+That single-label change fixed a real inconsistency nobody had noticed: the
+desktop header rendered `shortLabel` ("Spaces") while the mobile panel and the
+footer rendered `label` ("Find Your Space"), so the same destination had two
+different names depending on where a visitor found it.
+
+The route stays `/spaces` and the filenames stay `spaces.astro` / `spaces.yaml`
+— URLs are not worth churning for a label change, and nothing user-facing shows
+them.
+
+~~Working title **"Find Your Space"** — action-oriented, and it rhymes with the
 existing copy voice (*room to think, room to work, room to create, room to
-play*). Nav can shorten to **"Spaces"** if the full phrase crowds the header.
+play*). Nav can shorten to **"Spaces"** if the full phrase crowds the header.~~
 
-**Do not name it "Availability."** That is the CRE convention, but it promises
-live vacancy data we have explicitly decided not to maintain. A visitor who
-clicks "Availability" and finds static floor plans feels misled — the one thing
-this site cannot afford, given the goal is trust and recall.
+**Do not name it "Availability."** Still true, and unaffected by the rename.
+That is the CRE convention, but it promises live vacancy data we have explicitly
+decided not to maintain. A visitor who clicks "Availability" and finds static
+floor plans feels misled — the one thing this site cannot afford, given the goal
+is trust and recall.
+
+⚠️ **Open:** whether "suite" should propagate past the nav into body copy. The
+page's own `<title>` is still "Find Your Space", and the Home stat strip still
+reads "Space sizes". See the questions logged against this rename.
 
 #### Community page order — LOCKED
 
@@ -452,8 +470,18 @@ was wrong in the part that mattered.
 | `maps?q=…&output=embed` | No | Constructible, widely used, but undocumented. Currently in `MAP_EMBED_URL` as a stopgap. |
 | Maps Embed API `/maps/embed/v1/` | Yes | Also free at unlimited usage, but needs a key + billing project. Only worth it for *directions mode* (an actual drawn route). |
 
-**No account or billing is required.** ⚠️ Still to do: paste the Share→Embed URL
-into `MAP_EMBED_URL` in `src/config/nav.ts`.
+**No account or billing is required.**
+
+✅ **The Contact map is built and working as designed** (verified 2026-08-19): a
+styled static map over Thunderforest/OSM tiles renders on load, and the Google
+iframe is injected only on an explicit click. Zero third-party requests until the
+visitor asks. Nothing about it is broken.
+
+⚠️ One low-priority nit remains: `MAP_EMBED_URL` still holds the constructible
+`maps?q=…&output=embed` form. It works, but it is **undocumented**, so Google can
+retire it without notice and the click-to-load would silently start failing. The
+fix is a two-minute paste of the Share→Embed `pb=` URL — worth doing whenever
+Google Maps is open, not worth a special trip.
 
 Note the share-embed shows a **place**, not a route — "Get directions" opens a map
 centred on the building, and the visitor taps through to Google for turn-by-turn.
@@ -845,6 +873,10 @@ This is the single highest-risk item in the entire build.
 
 ### ✅ RESOLVED — the risk is much smaller than assumed (verified 2026-08-06)
 
+> ⚠️ **Superseded in part — see "Update 2026-08-19" below.** Mail records are
+> expected to exist on the domain by cutover, so the reassuring finding here is
+> a point-in-time snapshot, not the state you will migrate.
+
 The production contact address is **`tyler@regensb.com`** — a *different domain*.
 A DNS check settles what that implies:
 
@@ -871,14 +903,25 @@ touch.
 scariest item in the build is largely gone. The zone is also trivial — apex A
 records, a `www` CNAME, and nothing else.
 
+### Update 2026-08-19 — MX records *will* exist by cutover
+
+Rob confirms the swap is roughly **two weeks out (early September 2026)**, and
+that **proper MX records will be in place on `portageplacesb.com` at that time**.
+The client is aware of the matter and is handling it.
+
+This flips the assumption above. The 2026-08-06 snapshot showed no MX at all,
+which made the cutover nearly risk-free; by launch day that will no longer be
+true. **Treat the full MX checklist below as in force, not as a contingency** —
+step 5 (recreate every non-web record in Netlify DNS *before* flipping
+nameservers) is now load-bearing rather than precautionary.
+
 Two things that stay true regardless:
 
 - **Still export the zone before cutover.** It costs a minute and it is the
   rollback artifact. Records can exist that a bare query doesn't reveal.
-- **Still re-verify on the day.** This snapshot is from 2026-08-06; if the client
-  adds Workspace to `portageplacesb.com` between now and launch, the full MX
-  checklist below comes straight back into force. Re-run the `dig` before
-  touching nameservers.
+- **Still re-verify on the day.** Re-run the `dig` immediately before touching
+  nameservers and capture whatever mail records exist at that moment — that
+  snapshot, not this document, is what you replicate into Netlify DNS.
 
 **If we point nameservers at Netlify without first replicating the MX records,
 the client's email stops working immediately** — and mail sent during the outage
@@ -1192,11 +1235,16 @@ every one of these credits.
 
 - **Press blurbs** — revisit for consistent length so the cards stop stretching
   their grid rows unevenly. The unused `pullQuote` field is the bigger win.
-- **The size range now differs between pages.** Home, Community and the footer say
-  "200 to 2,000 sq ft" (the client's rounded figure); Spaces derives "200 to 1,800"
-  from the 2021 plan's usable figures. Rentable on that plan reaches 2,433, so the
-  client's 2,000 is probably rentable, or covers space not on this drawing. Worth
-  settling on one number and one basis before launch.
+- ~~**The size range now differs between pages.**~~ ✅ **Settled 2026-08-19: the
+  site quotes "200 to 1,800 sq ft" everywhere**, on the *usable* basis. That is
+  what `getSpaceRange()` derives from `spaces.yaml` (largest `sqftMin` is 1,789),
+  so the quoted figure and the data now agree. The client's rounded "2,000" is
+  most likely rentable — the 2021 plan reaches 2,433 RSF — and quoting rentable
+  as though it were usable is how a first conversation goes wrong.
+  Still to change: `STATS` in `src/config/site.ts`, the meta descriptions on
+  `index.astro` and `contact.astro`, the body copy in `history.astro`, and the
+  `StatStrip.astro` comment. (`specimen.astro` also carries it but is deleted at
+  launch.)
 - **`then-1` is graded differently from the other three.** See Archival image
   treatment.
 
@@ -1275,17 +1323,19 @@ finished copy.
 - `BUILD_PLAN.md` — this file, delete before launch.
 - `/reference/` — shared scratch space (design research, building photos, partner
   marks). Gitignored and never published; nothing to clean up at launch.
-- `CLAUDE.md` / `AGENTS.md` — still `create-astro` boilerplate. The token layer
-  and component patterns now exist, so this is ready to be rewritten with real
-  conventions.
+- `CLAUDE.md` / `AGENTS.md` — ✅ rewritten with the real conventions (token layer,
+  surface contexts, motion, accessibility, the content rules, the facts the copy
+  keeps getting wrong). `CLAUDE.md` is a **symlink** to `AGENTS.md`, so there is
+  one file under two names — edit `AGENTS.md`. Unlike the other entries here,
+  these two **stay** at launch.
 - `src/pages/deploy-check.astro` — the old smoke test, moved off `/` when Phase 1
   began. `noindex`. Still useful for confirming a Netlify build carried the commit
   you think it did. Delete before launch.
 - `src/pages/specimen.astro` — design system specimen. `noindex`. Delete before
   launch, but capture it for the carousel first.
-- `CONTACT` in `src/config/nav.ts` — **every value is a placeholder.** The real
-  recipient address is the one already live on `portageplacesb.com`; the street
-  address has to come from the client. Do not ship as-is.
+- `CONTACT` in `src/config/nav.ts` — **`email` is the only remaining dev alias**
+  (`testing@garfishdigital.com`). The street address is client-confirmed:
+  908 Portage Avenue, South Bend, IN 46616. Swap the email at cutover.
 - **Netlify Forms detection is unverified.** The form is inside a `<dialog>`, and
   Netlify's build bot parses static HTML for `data-netlify`. It should be found,
   but confirm the form appears in the Netlify dashboard on the first deploy

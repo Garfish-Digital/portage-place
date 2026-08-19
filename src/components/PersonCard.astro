@@ -277,27 +277,49 @@ const lastName = restOfName.join(' ');
 			interpolate-size: allow-keywords;
 		}
 
-		// `content-visibility` is deliberately NOT in this transition. It is a
-		// discrete property that decides whether the content renders at all, and
-		// pairing it with `allow-discrete` means a transition that does not run
-		// leaves it stuck at `hidden` — with block-size already clamped to 0, the
-		// bio then becomes permanently unreachable rather than merely unanimated.
-		// The height transition alone reads the same; the UA handles visibility.
+		// `content-visibility` MUST be in this transition, and leaving it out is what
+		// made the close feel violent.
+		//
+		// It is a discrete property, so a property not listed here changes
+		// immediately: the moment `open` came off, the UA flipped it to `hidden`, the
+		// bio text stopped rendering in a single frame, and what actually animated
+		// was an empty box collapsing. Opening never showed the flaw, because
+		// `visible` applies immediately and the growing box reveals real content —
+		// which is exactly why this read as "closes harder than it opens".
+		//
+		// The earlier note here worried that `allow-discrete` could strand it at
+		// `hidden` while block-size sits clamped at 0, leaving the bio permanently
+		// unreachable. That risk is real but it is a risk of the *closed* state
+		// being the only thing holding the height at zero — so the guard is below:
+		// `block-size: auto` on [open] is set without the clamp being conditional on
+		// the transition completing. If the transition never runs, [open] still
+		// resolves to auto height and visible content, which is today's behaviour
+		// minus the animation. Degrading to "unanimated" is fine; degrading to
+		// "unreachable" is what we are avoiding, and this ordering avoids it.
 		.person__bio::details-content {
 			block-size: 0;
 			overflow: hidden;
-			transition: block-size var(--pp-duration-base) var(--pp-ease-out);
+			// Exits are quicker and accelerate away — see the motion tokens.
+			transition: block-size var(--pp-duration-base) var(--pp-ease-exit),
+				content-visibility var(--pp-duration-base) allow-discrete;
 		}
 
+		// The entrance gets the longer duration: these bios run several hundred
+		// pixels tall, and `base` across that distance is a high enough velocity to
+		// read as a snap rather than an unfold.
 		.person__bio[open]::details-content {
 			block-size: auto;
+			transition: block-size var(--pp-duration-slow) var(--pp-ease-entrance),
+				content-visibility var(--pp-duration-slow) allow-discrete;
 		}
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
 		@supports not (interpolate-size: allow-keywords) {
+			// Matches the entrance timing of the supported path above, so the two
+			// code paths feel like one design rather than two.
 			.person__bio[open] .person__bio-body {
-				animation: bio-in var(--pp-duration-base) var(--pp-ease-out) both;
+				animation: bio-in var(--pp-duration-slow) var(--pp-ease-entrance) both;
 			}
 		}
 	}

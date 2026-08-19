@@ -102,7 +102,7 @@ const milestones = defineCollection({
 			 * Documentary images for a milestone — adverts, archive photographs, shots
 			 * of the derelict building. Distinct from `beforeAfter`, which is a matched
 			 * pair from one camera position and carries Then/Now labels; these are
-			 * unrelated images that happen to document the same moment, so labelling
+			 * unrelated images that happen to document the same moment, so labeling
 			 * them would assert a relationship that isn't there.
 			 *
 			 * Alt and caption are both required. `credit` is optional in the schema but

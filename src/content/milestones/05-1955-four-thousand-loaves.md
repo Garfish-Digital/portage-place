@@ -17,7 +17,7 @@ figures:
     # credit: 'Photographer unknown — placeholder, date unconfirmed'
   - src: ../../assets/history/inside-the-bakery.jpeg
     alt: >-
-      Colour photograph inside the bakery: a man in white stands beside tall
+      Color photograph inside the bakery: a man in white stands beside tall
       wheeled racks loaded with trays of bread and rolls, under exposed pipework.
     caption: Inside the plant, racks loaded for the ovens.
     # credit: 'Photographer unknown — placeholder, date unconfirmed'
@@ -35,4 +35,4 @@ On **16 October 1955**, the bakery exploded.
 
 Damage came to around $5,000 and soot coated a good portion of the building. Nobody
 was hurt. The open house scheduled to show off the new equipment was quietly
-cancelled.
+canceled.

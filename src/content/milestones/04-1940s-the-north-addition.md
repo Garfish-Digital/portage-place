@@ -14,12 +14,12 @@ figures:
     alt: >-
       Black and white photograph of the addition under construction: new steel
       roof framing over an open floor, timber and covered materials stacked
-      below, a workman standing at the centre.
+      below, a workman standing at the center.
     caption: The north addition going up, steel framing in place.
     credit: '⚠️ Thos. L. Hickey, Inc. — permission pending, watermarked placeholder'
   - src: ../../assets/history/addition-complete.jpg
     alt: >-
-      Black and white photograph of the completed single-storey addition on a
+      Black and white photograph of the completed single-story addition on a
       corner, in dark brick with bands of glass-block windows and a tall metal
       flue, a "Ward Tip-Top Cake" sign on the building beyond.
     caption: The finished block, glass block instead of windows.

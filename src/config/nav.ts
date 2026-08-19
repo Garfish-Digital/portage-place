@@ -3,9 +3,19 @@
  * future sitemap. Adding a page means editing this file and nothing else.
  *
  * `shortLabel` is what the header uses when the full phrase would crowd the bar.
- * "Find Your Space" is deliberately NOT called "Availability": that's the CRE
+ * No item needs it today — the leasing page's label is already short — but it
+ * stays on the interface because the next long page name will want it.
+ *
+ * The leasing link is deliberately NOT called "Availability": that's the CRE
  * convention, but it promises live vacancy data we've decided not to maintain,
- * and a visitor who clicks it and finds static floor plans feels misled.
+ * and a visitor who clicks it and finds static floor plans feels misled. That
+ * reasoning is unaffected by what the link is called instead.
+ *
+ * ⚠️ "Suites" is the CLIENT'S wording, requested 2026-08-19, replacing our
+ * "Find Your Space" / "Spaces" pair. It is deliberately one label rather than a
+ * long-and-short pair: the header used to read "Spaces" while the footer and the
+ * mobile panel read "Find Your Space", so the same destination had two names
+ * depending on where you found it. One word everywhere fixes that.
  */
 export interface NavItem {
 	label: string;
@@ -20,8 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
 		href: '/',
 	},
 	{
-		label: 'Find Your Space',
-		shortLabel: 'Spaces',
+		label: 'Suites',
 		href: '/spaces',
 		description: 'Floor plans, sizes, and what fits here.',
 	},
@@ -33,7 +42,7 @@ export const NAV_ITEMS: NavItem[] = [
 	{
 		label: 'Community',
 		href: '/community',
-		description: 'Tenants, owners, neighbourhood, partners.',
+		description: 'Tenants, owners, neighborhood, partners.',
 	},
 	{
 		label: 'Contact',
@@ -47,12 +56,15 @@ export const NAV_ITEMS: NavItem[] = [
  *
  * Address: confirmed by the client.
  *
- * 🚨 `email` IS A DEV ALIAS, NOT THE PRODUCTION RECIPIENT.
- * Production is `tyler@regensb.com`. Swap it at launch — and note the recipient
- * is on **regensb.com**, a different domain from portageplacesb.com. That may
- * mean the DNS cutover carries far less email risk than BUILD_PLAN.md currently
- * assumes, but it has to be confirmed rather than inferred: there may still be a
- * separate mailbox on portageplacesb.com. See the cutover checklist.
+ * 🚨 `email` IS A DEV ALIAS, NOT THE PRODUCTION RECIPIENT — and it is the only
+ * placeholder left in this file. Production is `tyler@regensb.com`; swap it at
+ * cutover.
+ *
+ * Note the recipient is on **regensb.com**, a different domain. That does NOT
+ * make the DNS cutover safe on its own: proper MX records are expected on
+ * portageplacesb.com by launch, so mail records have to be replicated into
+ * Netlify DNS before nameservers are flipped. See the cutover checklist in
+ * BUILD_PLAN.md.
  *
  * The Netlify Forms recipient is configured in the Netlify UI, not here — this
  * constant is only for what the site itself renders or links to.
@@ -67,6 +79,35 @@ export const CONTACT = {
 		postalCode: '46616',
 	},
 } as const;
+
+/**
+ * Social profiles. An array rather than a single constant so adding a second
+ * platform later is a data change and not a template change.
+ *
+ * The handle renders visibly — name recall is the client's stated #1 goal, and
+ * "@portage_place_sb" on the page does more for it than a bare glyph. `platform`
+ * is then announced but not shown, so the accessible name reads "Instagram,
+ * @portage_place_sb" while the visible label stays just the handle. Note the
+ * accessible name has to *contain* the visible text verbatim (SC 2.5.3 Label in
+ * Name) or speech-input users can't activate what they can see — which is why
+ * the platform is a prefix rather than a rewrite.
+ *
+ * ⚠️ `lucide:instagram` is one of Lucide's legacy brand glyphs, inherited from
+ * Feather and now marked `hidden` upstream — Lucide is steering brand marks to
+ * simple-icons. It resolves today and it matches the stroke weight of every
+ * other icon on the site, which a filled simple-icons mark would not. If a
+ * future Lucide bump removes it, `astro-icon` fails the build loudly rather than
+ * rendering nothing, so this degrades safely. The fallback is
+ * `@iconify-json/simple-icons` and a `simple-icons:instagram` swap here.
+ */
+export const SOCIAL = [
+	{
+		platform: 'Instagram',
+		handle: 'portage_place_sb',
+		href: 'https://www.instagram.com/portage_place_sb/',
+		icon: 'lucide:instagram',
+	},
+] as const;
 
 /**
  * Google Maps embed for the Contact page's click-to-load map.
