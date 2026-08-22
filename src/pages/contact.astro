@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -8,15 +8,24 @@ import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
 import { CONTACT, MAP_EMBED_URL } from '../config/nav';
 
-// Static map over Thunderforest/OSM tiles. Attribution is baked into the image,
-// which is what the ODbL license requires.
+// Static map over Thunderforest/OSM tiles.
 //
-// PNG, not the SVG export. That .svg is 3.4 MB of base64-encoded raster — two
-// embedded PNGs, zero vector paths — so it is the same picture at the same
-// resolution, ~5x the bytes, and Astro passes SVGs through its image pipeline
-// untouched. This PNG is that SVG flattened at its native 2480x1460, which the
-// optimizer then serves as a ~90 KB webp.
-import mapImage from '../assets/maps/location.png';
+// ART DIRECTION, not just resizing. Two separate crops, because scaling one
+// image down does not survive the trip to a phone: the desktop artwork is 2300px
+// wide shown in roughly 350 CSS px, a 0.15x reduction that turns every street
+// label into about four pixels of noise. The mobile crop is zoomed in far enough
+// that its labels stay readable at the size they are actually displayed.
+//
+// That needs `<picture>` with `media`, which `<Image>`/`<Picture>` can't express
+// — they vary resolution and format, not artwork. Hence `getImage()` and a
+// hand-written <picture>: the browser then downloads exactly one of the two, so
+// a phone never pays for the 2 MB desktop crop.
+//
+// Attribution is NOT baked into these files. It is rendered as a caption below
+// the map, which satisfies ODbL and Thunderforest just as well and keeps the
+// credit in the site's own type instead of the tile renderer's.
+import desktopMap from '../assets/maps/desktop-location.png';
+import mobileMap from '../assets/maps/mobile-location.png';
 import { ACCESS } from '../config/site';
 
 const { street, city, region, postalCode } = CONTACT.address;
@@ -25,8 +34,26 @@ const { street, city, region, postalCode } = CONTACT.address;
 // the destination pre-filled rather than embedding a 1 MB third-party iframe that
 // sets cookies before they've done anything.
 const mapQuery = encodeURIComponent(`Portage Place, ${street}, ${city}, ${region} ${postalCode}`);
-const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`;
 const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
+// 768px is `md` in $breakpoints, and it has to stay in step with the aspect-ratio
+// switch in the style block below. If they drift, the container's shape and the
+// artwork's shape disagree and one of the two crops gets cut.
+const MAP_MEDIA = '(min-width: 768px)';
+
+// `widths` stop at each source's own width — beyond that Astro upscales, which
+// costs bytes and adds nothing. AVIF first, WebP second: these are flat-colour
+// vector renders, exactly the content AVIF handles best.
+const [desktopAvif, desktopWebp, mobileAvif, mobileWebp, mapFallback] = await Promise.all([
+	getImage({ src: desktopMap, format: 'avif', widths: [768, 1240, 1860, 2300], sizes: '70vw' }),
+	getImage({ src: desktopMap, format: 'webp', widths: [768, 1240, 1860, 2300], sizes: '70vw' }),
+	getImage({ src: mobileMap, format: 'avif', widths: [360, 720, 1006], sizes: '94vw' }),
+	getImage({ src: mobileMap, format: 'webp', widths: [360, 720, 1006], sizes: '94vw' }),
+	getImage({ src: desktopMap, format: 'webp', width: 1240 }),
+]);
+
+const mapAlt =
+	'Street map of the Near Northwest Neighborhood with Portage Place marked on Portage Avenue, between California Avenue and the St. Joseph River.';
 
 // ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
 import heroImage from '../assets/heroes/contact.jpg';
@@ -89,9 +116,9 @@ import heroImage from '../assets/heroes/contact.jpg';
 					aria-controls="map-region"
 					data-load-map
 				>
-					Get directions
+					Show map
 				</Button>
-				<p class="detail__hint">Click to open Google Maps</p>
+				<p class="detail__hint">Click to load Google Maps</p>
 			</div>
 		</div>
 	</Section>
@@ -99,6 +126,22 @@ import heroImage from '../assets/heroes/contact.jpg';
 	{/* ------------------------------------------------------------------ */}
 	{/* ------------------------------------------------------------------ */}
 	<Section>
+		{/*
+			Two-line block-head, matching the Suites floor plan — the closest analogue
+			on the site: a section whose whole content is one static artefact that
+			becomes interactive on demand. No lede, because `.map__escape` below the
+			map already carries the explanatory sentence.
+
+			It also gives the map region a heading of its own. Before this the only
+			heading naming the map was "Interactive map" two sections up, attached to
+			the button rather than to the map, so anyone navigating by heading landed
+			on a control and found the map itself unannounced.
+		*/}
+		<div class="block-head">
+			<p class="pp-eyebrow block-head__eyebrow">Find us</p>
+			<h2>In the Near Northwest Neighborhood</h2>
+		</div>
+
 		<div class="map" id="map-region" tabindex="-1" data-map-region>
 			{/*
 				Facade. The styled static map (Phase 4) sits here until clicked; only
@@ -107,14 +150,33 @@ import heroImage from '../assets/heroes/contact.jpg';
 				visitor who opens Contact is what this pattern avoids.
 			*/}
 			<div class="map__facade" data-map-facade>
-				<Image
-					src={mapImage}
-					alt="Street map of the Near Northwest Neighborhood with Portage Place marked on Portage Avenue, between California Avenue and the St. Joseph River, with Leeper Park and downtown to the east."
-					class="map__static"
-					widths={[620, 1240, 1860]}
-					sizes="(min-width: 1024px) 70vw, 94vw"
-					loading="lazy"
-				/>
+				{/*
+					Source order matters: the browser takes the FIRST matching <source>,
+					so the desktop crop has to be tested before the unconditional mobile
+					one. Within each crop, AVIF precedes WebP for the same reason.
+
+					No `width`/`height` on the <img>, deliberately. The two crops have
+					DIFFERENT ratios (1.49 mobile, 1.70 desktop), so a single pair of
+					intrinsic dimensions would describe the wrong shape at one breakpoint
+					and let the browser infer an aspect ratio that never renders. Nothing
+					is lost: `.map` reserves the box with its own aspect-ratio and
+					`.map__static` fills it, so there is no layout shift to protect
+					against. It also keeps Astro from emitting the untouched 2 MB PNG
+					alongside the optimised variants.
+				*/}
+				<picture>
+					<source media={MAP_MEDIA} type="image/avif" srcset={desktopAvif.srcSet.attribute} sizes="70vw" />
+					<source media={MAP_MEDIA} type="image/webp" srcset={desktopWebp.srcSet.attribute} sizes="70vw" />
+					<source type="image/avif" srcset={mobileAvif.srcSet.attribute} sizes="94vw" />
+					<source type="image/webp" srcset={mobileWebp.srcSet.attribute} sizes="94vw" />
+					<img
+						src={mapFallback.src}
+						alt={mapAlt}
+						class="map__static"
+						loading="lazy"
+						decoding="async"
+					/>
+				</picture>
 				<div class="map__control">
 					<Button variant="quiet" type="button" icon="lucide:map" data-load-map>
 						Load Google Maps
@@ -122,6 +184,14 @@ import heroImage from '../assets/heroes/contact.jpg';
 				</div>
 			</div>
 		</div>
+
+		{/*
+			Required credit, not decoration. OSM's ODbL obliges attribution on a
+			produced work and Thunderforest requires their own; a caption adjacent to
+			the map satisfies both, and unlike the baked-in version it stays in Public
+			Sans and survives the eventual hand-drawn replacement.
+		*/}
+		<p class="map__credit">Maps &copy; Thunderforest, Data &copy; OpenStreetMap contributors</p>
 
 		<p class="map__escape">
 			Or <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
@@ -298,6 +368,24 @@ import heroImage from '../assets/heroes/contact.jpg';
 	// ---------------------------------------------------------------------------
 	// Map
 	// ---------------------------------------------------------------------------
+	// `.block-head` is NOT global — Home, Suites and Community each carry their own
+	// copy in their own scoped style block, so a page using the markup without the
+	// rules gets a completely unstyled heading. That is what happened here: with no
+	// `margin-block-end` the h2 sat directly on the map and the descender of the
+	// "g" in Neighborhood crossed into the image.
+	//
+	// Matching the other three exactly rather than inventing a local variant. See
+	// the note in BUILD_PLAN about consolidating these four copies.
+	.block-head {
+		max-width: 44rem;
+		margin-block-end: var(--pp-space-xl);
+	}
+
+	.block-head__eyebrow {
+		color: var(--pp-brick-dark);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
 	.map {
 		// Reserved before anything loads, so swapping the facade for the iframe
 		// costs no layout shift.
@@ -310,14 +398,17 @@ import heroImage from '../assets/heroes/contact.jpg';
 		// Widening the ratio on large screens caps the height without ever
 		// under-filling the column.
 		width: 100%;
-		// Matches the static artwork (1240 x 730) so the desktop view shows it
-		// uncropped. Narrower viewports crop via object-position rather than
-		// letterboxing, which would waste vertical space on a phone.
-		aspect-ratio: 4 / 3;
+		// One ratio per crop, each matching its own artwork exactly, so NEITHER view
+		// is cropped and object-position never has to rescue anything. The
+		// breakpoint here must stay in step with MAP_MEDIA in the frontmatter.
+		//
+		// mobile-location.png is 1006 x 674; desktop-location.png is 2300 x 1354,
+		// which is the same 1.699 ratio as the 1240 x 730 this was written against.
+		aspect-ratio: 1006 / 674;
 		overflow: hidden;
 
 		@include from('md') {
-			aspect-ratio: 1240 / 730;
+			aspect-ratio: 2300 / 1354;
 		}
 		border-radius: var(--pp-radius-m);
 		background-color: var(--pp-limestone);
@@ -340,9 +431,13 @@ import heroImage from '../assets/heroes/contact.jpg';
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		// The pin sits high and left in the artwork, so any crop has to come off the
-		// bottom-right rather than be centered, or the marker is the first thing lost.
-		object-position: 20% 30%;
+		// The pin is centred in both crops now, so a centred crop is the safe one —
+		// this used to be `20% 30%`, tuned for older artwork whose marker sat high
+		// and left. With each container ratio matched to its own artwork there is
+		// nothing to crop at either size; this only governs the in-between states
+		// (a ratio the media query hasn't caught up with, or a future re-crop), and
+		// centring keeps the marker the last thing lost rather than the first.
+		object-position: center;
 	}
 
 	// The trigger sits on a solid chip rather than floating on the map: a
@@ -367,6 +462,17 @@ import heroImage from '../assets/heroes/contact.jpg';
 
 	// Kept even once the embed loads. Google's iframe is patchy for keyboard users,
 	// and anyone actually traveling here wants the destination on their phone.
+	// Right-aligned under the map, where a baked-in tile credit would have sat —
+	// familiar position, but in Public Sans at the smallest step and in muted ink,
+	// so it satisfies the licence without competing with the escape link beneath
+	// it. `xs` on `--pp-ink-muted` is 6.84:1, comfortably past 4.5:1.
+	.map__credit {
+		margin-block-start: var(--pp-space-2xs);
+		font-size: var(--pp-text-xs);
+		color: var(--pp-ink-muted);
+		text-align: end;
+	}
+
 	.map__escape {
 		margin-block-start: var(--pp-space-s);
 		font-size: var(--pp-text-s);

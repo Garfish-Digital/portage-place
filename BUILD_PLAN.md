@@ -1233,6 +1233,25 @@ every one of these credits.
 
 ## Open reminders
 
+- **`.block-head` is copy-pasted into four scoped style blocks** — Home, Suites,
+  Community and now Contact each carry their own `.block-head` /
+  `.block-head__eyebrow` rules, byte-identical apart from the lede. That is not a
+  cosmetic duplication: a page that uses the markup without remembering the rules
+  gets a heading with **no bottom margin at all**, which is exactly how the
+  Contact map ended up with the h2's descender crossing into the image
+  (2026-08-22).
+
+  Consolidating it means a global in `_base.scss`, which raises a naming
+  question: every other global there is `pp-`-prefixed (`pp-eyebrow`,
+  `pp-visually-hidden`, `pp-on-dark`), so it would want to become
+  `.pp-block-head` and take a markup change across four pages with it. Worth
+  doing, but as its own task rather than folded into something else.
+
+  ⚠️ While consolidating, note `index.astro`'s `.block-head__lede` uses
+  `--pp-ink-muted` where Community and Suites use `--pp-text-muted`. The semantic
+  alias is the correct one per the conventions — the raw ramp value would fail to
+  remap inside `.pp-on-dark`.
+
 - **Press blurbs** — revisit for consistent length so the cards stop stretching
   their grid rows unevenly. The unused `pullQuote` field is the bigger win.
 - ~~**The size range now differs between pages.**~~ ✅ **Settled 2026-08-19: the
