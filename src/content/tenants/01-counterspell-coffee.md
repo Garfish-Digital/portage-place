@@ -1,5 +1,5 @@
 ---
-name: 'Counterspell'
+name: 'Counterspell Cafe'
 category: commercial
 type: Coffee shop
 icon: ../../assets/tenant-icons/tenant-coffee.png

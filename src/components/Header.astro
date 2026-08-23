@@ -2,10 +2,11 @@
 import { Icon } from 'astro-icon/components';
 import Container from './primitives/Container.astro';
 import Logo from './Logo.astro';
-import { NAV_ITEMS } from '../config/nav';
+import { NAV_ITEMS, isCurrentPath } from '../config/nav';
 
-const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
-const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+// Shared with the footer via nav.ts, so the two navs can't disagree about which
+// page is current.
+const isCurrent = (href: string) => isCurrentPath(Astro.url.pathname, href);
 ---
 
 <header class="header" data-header>
@@ -201,16 +202,91 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		if (!hero || !('IntersectionObserver' in window)) {
 			headerEl.classList.add('is-solid');
 		} else {
+			// HYSTERESIS. One boundary at threshold 0 had no dead zone, so the class
+			// flipped on the smallest jitter and every flip restarted the fade —
+			// it strobed instead of settling. Three things reliably caused it:
+			// trackpad momentum easing to a stop exactly on the line, iOS
+			// rubber-banding, and worst of all the mobile URL bar collapsing, which
+			// changes the viewport height and therefore moves the hero's base
+			// relative to the root without the user scrolling at all.
+			//
+			// Two observers now, one per direction, with their boundaries
+			// DEAD_ZONE apart. Going solid requires the hero's base to travel
+			// DEAD_ZONE past the bar; going transparent again requires DEAD_ZONE
+			// back the other way. Between them neither fires, so jitter has to
+			// become real movement before anything changes.
+			//
+			// THE BAND IS DELIBERATELY NOT CENTRED ON THE BOUNDARY. Splitting it
+			// evenly either side was the first attempt and it broke the entry: going
+			// solid waited until the hero's base was 24px PAST the bar, so for that
+			// stretch the bottom of the header had plaster page content behind it
+			// while the fill was still fully transparent — and the fade only started
+			// afterwards. The nav sits at roughly y=20–52 in a 72px bar, so the text
+			// was touching incoming page content before anything began to fade.
+			//
+			// The two directions are not symmetric in consequence:
+			//
+			//   Entering LATE is a legibility failure — light nav, no backing.
+			//   Entering EARLY costs nothing. The hero's own header scrim is 80%
+			//   espresso across the top of the photograph, so a solid espresso bar
+			//   arriving while the hero is still behind it is very nearly the same
+			//   pixels. You cannot see it happen.
+			//
+			// So the whole band sits BELOW the boundary: commit early, release late.
+			//
+			// Both knobs are independent. Widening the band means moving `EXIT_LAG`,
+			// NOT `ENTER_EARLY` — raising the latter with the exit fixed would narrow
+			// the band, which is the opposite of what it looks like it should do.
+			const ENTER_EARLY = 24; // go solid this far before the base reaches the bar
+			const EXIT_LAG = 40; // extra travel back up before releasing — the band
 			const headerHeight = () => headerEl.offsetHeight;
-			let observer: IntersectionObserver | null = null;
+
+			let toSolid: IntersectionObserver | null = null;
+			let toClear: IntersectionObserver | null = null;
+			let started = false;
 
 			const watch = () => {
-				observer?.disconnect();
-				observer = new IntersectionObserver(
-					([entry]) => headerEl.classList.toggle('is-solid', !entry.isIntersecting),
-					{ rootMargin: `-${headerHeight()}px 0px 0px 0px`, threshold: 0 },
+				toSolid?.disconnect();
+				toClear?.disconnect();
+
+				const h = headerHeight();
+				// Both expressed as the hero's `bottom` at the moment each fires.
+				const solidAt = h + ENTER_EARLY;
+				const clearAt = solidAt + EXIT_LAG;
+
+				// Commit while the hero still covers the whole bar.
+				toSolid = new IntersectionObserver(
+					([entry]) => {
+						if (!entry.isIntersecting) headerEl.classList.add('is-solid');
+					},
+					{ rootMargin: `-${solidAt}px 0px 0px 0px`, threshold: 0 },
 				);
-				observer.observe(hero);
+
+				// Release only once the hero has come back down well clear of it.
+				toClear = new IntersectionObserver(
+					([entry]) => {
+						if (entry.isIntersecting) headerEl.classList.remove('is-solid');
+					},
+					{ rootMargin: `-${clearAt}px 0px 0px 0px`, threshold: 0 },
+				);
+
+				toSolid.observe(hero);
+				toClear.observe(hero);
+
+				// Neither observer acts inside the dead zone — correct once running,
+				// but on the very first pass it would leave the bar at its default
+				// transparent state even if the page loaded already scrolled into
+				// that band (a restored scroll position on back-navigation). Settle
+				// the initial state from geometry once, then hand over.
+				// Resolved against the ENTRY boundary, not the raw header height, so a
+				// page that loads inside the band starts solid — the safe side.
+				if (!started) {
+					started = true;
+					headerEl.classList.toggle(
+						'is-solid',
+						hero.getBoundingClientRect().bottom <= solidAt,
+					);
+				}
 			};
 
 			watch();
@@ -230,20 +306,49 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 		position: sticky;
 		inset-block-start: 0;
 		z-index: var(--pp-z-header);
-		background-color: transparent;
+	}
+
+	// THE BAR'S FILL LIVES ON A PSEUDO-ELEMENT AND FADES BY OPACITY.
+	//
+	// It used to be `background-color: transparent` → `var(--pp-espresso)` on the
+	// header itself. Two reasons that changed, neither of which alters how it
+	// looks:
+	//
+	// 1. `background-color` is a paint property. Every frame of the fade repainted
+	//    the full-width bar with a large hero photograph directly underneath —
+	//    the expensive case. `opacity` on its own element is composited, so the
+	//    same 240ms runs on the GPU instead.
+	//
+	// 2. It interpolated from the `transparent` KEYWORD, which resolves to
+	//    transparent *black* in some engines and greys the colour on the way in.
+	//    Timeline.astro already carries that lesson for its bronze ring; the
+	//    header had the same latent bug. Fading a layer's opacity sidesteps the
+	//    question entirely — there is no colour being interpolated any more.
+	//
+	// `z-index: -1` keeps it behind the bar's own content while staying inside the
+	// stacking context the header creates with `--pp-z-header`, so it cannot
+	// escape behind the page. The mobile panel sits at `z-index: 1` and is
+	// unaffected — and because the panel hangs BELOW the header box, `inset: 0`
+	// deliberately does not extend the fill behind it.
+	.header::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background-color: var(--pp-espresso);
 		// Rule drawn as an inset shadow, not a border: a 1px border adds to the
 		// header's height, and the hero tucks up by exactly --pp-header-h — so the
 		// border left a 1px plaster line across the top of every hero.
-		transition: background-color var(--pp-duration-base) var(--pp-ease-out),
-			box-shadow var(--pp-duration-base) var(--pp-ease-out);
+		box-shadow: inset 0 -1px 0 var(--pp-rule-inverse), var(--pp-shadow-s);
+		opacity: 0;
+		transition: opacity var(--pp-duration-base) var(--pp-ease-out);
 	}
 
 	// Set by the observer once the hero's base passes under the header — and the
 	// default for any page with no hero at all, so the nav is never light text on
 	// a light page.
-	.header.is-solid {
-		background-color: var(--pp-espresso);
-		box-shadow: inset 0 -1px 0 var(--pp-rule-inverse), var(--pp-shadow-s);
+	.header.is-solid::before {
+		opacity: 1;
 	}
 
 	:global(.header__inner) {
@@ -368,9 +473,22 @@ const isCurrent = (href: string) => (href === '/' ? pathname === '/' : pathname.
 
 		@include focusable;
 
-		// Bronze underline as the active/hover marker. Bronze can't carry text
-		// (3.48:1), but as a 2px rule it's non-text UI and clears 3:1 comfortably —
-		// which is why the label itself stays ink.
+		// Limestone-deep underline as the active/hover marker.
+		//
+		// ⚠️ This comment used to say "bronze", which the code has never done. Read
+		// the value, not the prose, if they ever disagree again.
+		//
+		// Not bronze, deliberately, and for two reasons. This bar sits over either
+		// espresso or a scrimmed photograph, and bronze is only 3.51:1 on espresso —
+		// past the 3:1 non-text threshold but with almost no margin, and it erodes
+		// further over a bright sky behind the scrim. `--pp-limestone-deep` is
+		// 8.20:1 on espresso and still 4.74:1 against the worst-case scrimmed band.
+		// Bronze is also the site-wide focus ring, so using it here would make one
+		// color mean two different things on the same control.
+		//
+		// Bronze DOES mark the current page in the mobile panel below — as a 3px
+		// vertical bar on a solid espresso surface, where the margin is known and
+		// no focus ring is competing with it.
 		&::after {
 			content: '';
 			position: absolute;

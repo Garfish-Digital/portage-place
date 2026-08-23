@@ -32,10 +32,33 @@ import { STATS } from '../config/site';
 		padding-block: var(--pp-space-l);
 		border-block: 1px solid var(--pp-rule);
 
+		// ONE COLUMN PER STAT, however many there are — `grid-auto-flow: column`
+		// derives the count from the content instead of restating it.
+		//
+		// It was `repeat(5, auto)`, written when a fifth stat ("20 private offices")
+		// was live. That stat is currently commented out in site.ts, so the grid
+		// went on reserving a fifth track, it resolved to zero width, and
+		// `space-between` dutifully pushed that empty track to the right edge —
+		// parking all the free space at the end and bunching the four real stats
+		// to the left. The symptom looked like `flex-start`; the cause was a column
+		// count that had stopped matching the data.
 		@include from('md') {
-			grid-template-columns: repeat(5, auto);
-			justify-content: space-between;
+			grid-auto-flow: column;
+			grid-template-columns: none;
+			justify-content: space-evenly;
 			gap: var(--pp-space-l);
+		}
+
+		// Equal cells, but only once there is room for them. At 768px four equal
+		// columns come to 154px each, and "200–1,800 sq ft" needs roughly 190 at
+		// this type size — with `text-wrap: nowrap` on the value that overflows
+		// rather than wraps. By 1024px a cell is 216px and the widest stat fits
+		// with margin to spare, so the strip can switch to a true even rhythm.
+		//
+		// Below that, `space-evenly` over content-sized tracks gets the same
+		// distribution without ever risking the overflow.
+		@include from('lg') {
+			grid-auto-columns: 1fr;
 		}
 	}
 
@@ -43,6 +66,25 @@ import { STATS } from '../config/site';
 		display: flex;
 		flex-direction: column-reverse;
 		gap: var(--pp-space-3xs);
+
+		// Centre the label under its value. The two are very different widths —
+		// "Suite sizes" against "200–1,800 sq ft" — so left-aligning them left every
+		// label hanging off the start of a much wider number, which read as
+		// accidental rather than composed.
+		//
+		// ⚠️ MOBILE STAYS LEFT-ALIGNED, and this was tried the other way. Centring
+		// the 2-up grid was built and rejected on sight (2026-08-22): at that size
+		// the stats read as a list rather than a band, and a list wants a shared
+		// left edge — four centred items over two ragged columns look scattered.
+		//
+		// Note there is no `justify-content` fix available on mobile either: the
+		// 2-up tracks are `1fr` and already fill the row, so there is no free space
+		// between them to distribute. Cell-content alignment is the only lever
+		// there, and left is the one we want.
+		@include from('md') {
+			align-items: center;
+			text-align: center;
+		}
 	}
 
 	.stat__value {

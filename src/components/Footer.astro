@@ -2,9 +2,14 @@
 import { Icon } from 'astro-icon/components';
 import Container from './primitives/Container.astro';
 import Logo from './Logo.astro';
-import { NAV_ITEMS, CONTACT, SOCIAL } from '../config/nav';
+import { NAV_ITEMS, CONTACT, SOCIAL, isCurrentPath } from '../config/nav';
 
 const year = new Date().getFullYear();
+
+// Same helper the header uses. This nav mirrors the primary nav item for item,
+// so it has to identify the current page the same way (SC 3.2.4) — it was
+// previously the only nav on the site that marked nothing at all.
+const isCurrent = (href: string) => isCurrentPath(Astro.url.pathname, href);
 ---
 
 <footer class="footer pp-on-dark">
@@ -29,7 +34,11 @@ const year = new Date().getFullYear();
 					{
 						NAV_ITEMS.map((item) => (
 							<li>
-								<a class="footer__link" href={item.href}>
+								<a
+									class="footer__link"
+									href={item.href}
+									aria-current={isCurrent(item.href) ? 'page' : undefined}
+								>
 									{item.label}
 								</a>
 							</li>
@@ -78,7 +87,7 @@ const year = new Date().getFullYear();
 		</div>
 
 		<p class="footer__legal">
-			&copy; {year} Portage Place. A restored 1919 bakery in South Bend, Indiana.
+			&copy; {year} Portage Place, South Bend, Indiana.
 		</p>
 	</Container>
 </footer>
@@ -152,7 +161,12 @@ const year = new Date().getFullYear();
 
 		@include from('md') {
 			grid-template-columns: auto 1fr auto;
-			align-items: start;
+			// Centred, not `start`. The plaque is ~152px tall against a 20px row of
+			// links and an ~84px address block, so top-aligning left the bottom two
+			// thirds of the footer as a ragged shelf of empty space — three things
+			// hung from a ceiling rather than one row. Centring is what makes them
+			// read as a composed row.
+			align-items: center;
 			gap: var(--pp-space-xl);
 		}
 	}
@@ -286,9 +300,34 @@ const year = new Date().getFullYear();
 		gap: var(--pp-space-xs) var(--pp-space-m);
 		margin: 0;
 		padding: 0;
+
+		// Desktop only. The nav sits in the `1fr` column, so the links occupy about
+		// 376px of roughly 644px and the remaining ~270px used to pool as one gap
+		// before the address; splitting it either side centres them between the mark
+		// and the address block.
+		//
+		// Kept out of the mobile rule deliberately: below `md` the meta is a single
+		// column and the links share a left edge with the address beneath them, so
+		// centring there would break an alignment that currently works.
+		@include from('md') {
+			justify-content: center;
+		}
 	}
 
+	// Current-page marker, built the same way as the header's: the underline is
+	// the state, the colour lift is the emphasis.
+	//
+	// Hover and current MUST NOT resolve to the same appearance, or neither one
+	// means anything. Hover changes colour only; current changes colour AND draws
+	// the rule. That is the header's logic exactly — there, hover draws the rule
+	// and current adds white — so each state is the other plus one property.
+	//
+	// `--pp-limestone-deep` (#d2cabf) on espresso is 8.20:1, far past the 3:1 that
+	// SC 1.4.11 asks of a non-text indicator. The footer is always espresso, so
+	// unlike the header's copy of this rule there is no scrimmed-photograph case
+	// to hold up against.
 	.footer__link {
+		position: relative;
 		font-size: var(--pp-text-s);
 		color: var(--pp-text-muted);
 		text-decoration: none;
@@ -296,9 +335,33 @@ const year = new Date().getFullYear();
 
 		@include focusable;
 
+		// -5px, where the header uses -2px. The header's links are set in the
+		// `eyebrow` mixin — small caps, which have no descenders — so a rule can sit
+		// tight under the baseline. These are sentence case, and "History" and
+		// "Community" both drop a `y` straight through a rule at -2px.
+		&::after {
+			content: '';
+			position: absolute;
+			inset-block-end: -5px;
+			inset-inline: 0;
+			height: 2px;
+			background-color: var(--pp-limestone-deep);
+			scale: 0 1;
+			transform-origin: left center;
+			transition: scale var(--pp-duration-base) var(--pp-ease-out);
+		}
+
 		@include hover-capable {
 			&:hover {
 				color: var(--pp-text-strong);
+			}
+		}
+
+		&[aria-current='page'] {
+			color: var(--pp-text-strong);
+
+			&::after {
+				scale: 1 1;
 			}
 		}
 	}
@@ -359,6 +422,7 @@ const year = new Date().getFullYear();
 
 	.footer__legal {
 		margin-block-start: var(--pp-space-xl);
+        text-align: center; 
 		font-size: var(--pp-text-xs);
 		color: var(--pp-text-muted);
 	}

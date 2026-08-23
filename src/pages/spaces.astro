@@ -53,6 +53,7 @@ const approx = { min: roundDown(range.min, 50), max: roundUp(range.max, 100) };
 
 // ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
 import heroImage from '../assets/heroes/spaces.jpg';
+import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 ---
 
 <BaseLayout
@@ -61,6 +62,7 @@ import heroImage from '../assets/heroes/spaces.jpg';
 >
 	<PageHero
 		image={heroImage}
+		mobileImage={heroImageMobile}
 		alt="A glazed private office inside the building, framed in black steel against exposed brick and painted ductwork, with polished concrete floors."
 		eyebrow="Space available"
 		title="Find the one that fits"

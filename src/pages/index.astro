@@ -17,6 +17,7 @@ import { getMilestones } from '../lib/content';
 // photography and video replace these in Phase 8. The hero is currently a still;
 // the brief calls for a short silent loop with a poster frame once footage lands.
 import heroImage from '../assets/heroes/home.jpg';
+import heroImageMobile from '../assets/heroes/home-mobile.jpg';
 import then2 from '../assets/before-after/then-2.png';
 import now2 from '../assets/before-after/now-2.png';
 
@@ -33,6 +34,7 @@ const milestones = await getMilestones();
 	{/* ================================================================== */}
 	<PageHero
 		image={heroImage}
+		mobileImage={heroImageMobile}
 		alt="The restored Ward Baking Co. building on Portage Avenue, its two stories of windows reopened behind red brick and pale stone trim."
 		eyebrow="South Bend · Near Northwest"
 		title="Your place to be"

@@ -40,41 +40,55 @@ const {
 } = Astro.props;
 ---
 
+{/*
+	One <figure> per frame, nested inside the pair's own <figure> — the same
+	construction MilestoneFigures uses, and the reason its captions have always
+	stacked correctly.
+
+	This used to be a single <figcaption> holding two <span>s, laid out as a
+	two-column grid. That works on desktop only by coincidence: the frames are a
+	two-column grid and the caption is a matching two-column grid, so the columns
+	happen to line up. Collapse both to one column on mobile and the DOM order is
+	what you actually get — image, image, caption, caption — with both captions
+	orphaned under the second photograph.
+
+	Putting each caption inside its own figure makes the pairing structural
+	instead of coincidental, so it survives any layout the grid is put into, and
+	it ties each caption to its image for assistive tech rather than leaving one
+	caption to describe two images.
+*/}
 <figure class:list={['ba', `ba--${layout}`, className]}>
 	<div class="ba__frames">
-		<div class="ba__frame">
-			<Image
-				src={then}
-				alt={thenAlt}
-				sizes={sizes}
-				widths={[440, 700, 880]}
-				loading={priority ? 'eager' : 'lazy'}
-				fetchpriority={priority ? 'high' : 'auto'}
-			/>
-			<span class="ba__tag ba__tag--then">Then</span>
-		</div>
+		<figure class="ba__item">
+			<div class="ba__frame">
+				<Image
+					src={then}
+					alt={thenAlt}
+					sizes={sizes}
+					widths={[440, 700, 880]}
+					loading={priority ? 'eager' : 'lazy'}
+					fetchpriority={priority ? 'high' : 'auto'}
+				/>
+				<span class="ba__tag ba__tag--then">Then</span>
+			</div>
+			{thenCaption && <figcaption class="ba__label">{thenCaption}</figcaption>}
+		</figure>
 
-		<div class="ba__frame">
-			<Image
-				src={now}
-				alt={nowAlt}
-				sizes={sizes}
-				widths={[440, 700, 880]}
-				loading={priority ? 'eager' : 'lazy'}
-				fetchpriority={priority ? 'high' : 'auto'}
-			/>
-			<span class="ba__tag ba__tag--now">Now</span>
-		</div>
+		<figure class="ba__item">
+			<div class="ba__frame">
+				<Image
+					src={now}
+					alt={nowAlt}
+					sizes={sizes}
+					widths={[440, 700, 880]}
+					loading={priority ? 'eager' : 'lazy'}
+					fetchpriority={priority ? 'high' : 'auto'}
+				/>
+				<span class="ba__tag ba__tag--now">Now</span>
+			</div>
+			{nowCaption && <figcaption class="ba__label">{nowCaption}</figcaption>}
+		</figure>
 	</div>
-
-	{
-		(thenCaption || nowCaption) && (
-			<figcaption class="ba__caption">
-				{thenCaption && <span>{thenCaption}</span>}
-				{nowCaption && <span>{nowCaption}</span>}
-			</figcaption>
-		)
-	}
 </figure>
 
 <style lang="scss">
@@ -82,15 +96,28 @@ const {
 		margin: 0;
 	}
 
+	// Rows and columns need different gaps now. A row gap separates one complete
+	// image-plus-caption unit from the next, which wants more air than the column
+	// gap between two frames sitting shoulder to shoulder. Side-by-side on desktop
+	// is a single row, so only the column value applies there and that layout is
+	// unchanged.
 	.ba__frames {
 		display: grid;
-		gap: var(--pp-space-xs);
+		row-gap: var(--pp-space-s);
+		column-gap: var(--pp-space-xs);
 
 		.ba--side-by-side & {
 			@include from('md') {
 				grid-template-columns: 1fr 1fr;
 			}
 		}
+	}
+
+	// Nested <figure>, so it carries a UA margin that has to go.
+	.ba__item {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
 	}
 
 	.ba__frame {
@@ -135,18 +162,19 @@ const {
 		background-color: color-mix(in srgb, var(--pp-plaster) 92%, transparent);
 	}
 
-	.ba__caption {
-		display: grid;
-		gap: var(--pp-space-3xs);
-		margin-block-start: var(--pp-space-xs);
+	// `margin-block-start: auto` pins the caption to the bottom of a stretched
+	// grid row, so the two captions share a baseline even if the frames ever end
+	// up different heights; the padding is what actually creates the gap under the
+	// image. Same construction as MilestoneFigures' `.fig__caption`.
+	//
+	// Today the frames are locked to one aspect-ratio so their heights already
+	// match — this is the guard for the day a replacement image isn't 875×512.
+	.ba__label {
+		margin-block-start: auto;
+		padding-block-start: var(--pp-space-xs);
 		font-size: var(--pp-text-xs);
+		line-height: var(--pp-leading-normal);
 		color: var(--pp-text-muted);
-
-		.ba--side-by-side & {
-			@include from('md') {
-				grid-template-columns: 1fr 1fr;
-				gap: var(--pp-space-xs);
-			}
-		}
+		text-wrap: pretty;
 	}
 </style>

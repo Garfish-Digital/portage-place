@@ -24,6 +24,23 @@ export interface NavItem {
 	description?: string;
 }
 
+/**
+ * Whether a nav item points at the page currently being rendered.
+ *
+ * Lives here rather than in a component because BOTH navs need it and they must
+ * agree — the header had this inline and the footer simply went without, which
+ * is why the footer never marked the current page at all. One implementation is
+ * the only way two navs stay in step.
+ *
+ * Home is an exact match; everything else matches by prefix so a future
+ * `/spaces/unit-04` still lights up its parent. Trailing slashes are stripped
+ * first, since Astro's `pathname` carries one and `href` doesn't.
+ */
+export function isCurrentPath(pathname: string, href: string): boolean {
+	const current = pathname.replace(/\/+$/, '') || '/';
+	return href === '/' ? current === '/' : current.startsWith(href);
+}
+
 export const NAV_ITEMS: NavItem[] = [
 	{
 		label: 'Home',

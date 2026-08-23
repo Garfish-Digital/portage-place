@@ -51,11 +51,10 @@ export const SPACE_TYPE_ICON_FALLBACK = 'lucide:square';
  * - $4.2M — WNDU, South Bend Tribune, March 2022
  */
 export const STATS = [
-	{ value: '200–1,800', unit: 'sq ft', label: 'Suite sizes' },
 	{ value: '1919', label: 'Built' },
-	// { value: '20', label: 'Private offices' },
-	{ value: '$300', unit: '/mo', label: 'Starting rent' },
+	{ value: '200–1,800', unit: 'sq ft', label: 'Suite sizes' },
 	{ value: '$4.2M', label: 'Renovation' },
+	{ value: '$300', unit: '/mo', label: 'Starting rent' }
 ] as const;
 
 /**

@@ -15,6 +15,7 @@ const firstYear = milestones[0]?.data.year ?? '1919';
 
 // ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
 import heroImage from '../assets/heroes/history.jpg';
+import heroImageMobile from '../assets/heroes/history-mobile.jpg';
 ---
 
 <BaseLayout
@@ -24,6 +25,7 @@ import heroImage from '../assets/heroes/history.jpg';
 	{/* ------------------------------------------------------------------ */}
 	<PageHero
 		image={heroImage}
+		mobileImage={heroImageMobile}
 		alt="The restored building seen along Portage Avenue: two stories of red brick with stepped stone parapets, tall windows and young street trees."
 		eyebrow={`Since ${firstYear}`}
 		title="A building that keeps reinventing itself"
