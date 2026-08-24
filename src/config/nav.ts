@@ -51,15 +51,19 @@ export const NAV_ITEMS: NavItem[] = [
 		href: '/spaces',
 		description: 'Floor plans, sizes, and what fits here.',
 	},
-	{
-		label: 'History',
-		href: '/history',
-		description: 'Ward Baking Company, 1920 to now.',
-	},
+	// Community before History, per the client 2026-08-24. Array order IS render
+	// order for the desktop bar, the mobile panel and the footer — all three map
+	// over NAV_ITEMS — so this one edit moves every instance. Nothing else in the
+	// codebase depends on the sequence.
 	{
 		label: 'Community',
 		href: '/community',
 		description: 'Tenants, owners, neighborhood, partners.',
+	},
+	{
+		label: 'History',
+		href: '/history',
+		description: 'Ward Baking Company, 1920 to now.',
 	},
 	{
 		label: 'Contact',

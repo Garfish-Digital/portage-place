@@ -45,6 +45,16 @@ interface Props {
 	position?: string;
 	/** Focal point of the portrait crop. Purpose-composed, so centred by default. */
 	mobilePosition?: string;
+	/**
+	 * Veil strength over the text block, 0–100. MEASURED, not chosen —
+	 * `node scripts/hero-scrim.mjs` prints the value for each photograph.
+	 *
+	 * One global number made every page as dark as the darkest photograph. These
+	 * heroes need between 44% and 63%, so a single value had to sit at 69% and
+	 * eight of the ten were carrying scrim they never needed. Re-run the script
+	 * when a hero is replaced.
+	 */
+	veil?: number;
 }
 
 const {
@@ -58,7 +68,14 @@ const {
 	priority = false,
 	position = 'center 45%',
 	mobilePosition = 'center',
+	// Defaults to the old global value. A page that forgets to pass one is too
+	// dark rather than illegible — the safe direction to fail in.
+	veil = 68,
 } = Astro.props;
+
+// The block deepens slightly toward the bottom, as it always has. 6 points is
+// what the original 70→80 ramp amounted to once the ramp itself was fixed.
+const veilBottom = Math.min(100, veil + 6);
 
 // Must stay in step with the `md` breakpoint used by the hero's own min-height
 // below. If they drift, a phone gets the portrait crop in a landscape box (or the
@@ -91,7 +108,7 @@ const [desktopAvif, desktopWebp, mobileAvif, mobileWebp, fallback] = await Promi
 <section
 	id="hero"
 	class:list={['hero', `hero--${size}`]}
-	style={`--hero-pos: ${position}; --hero-pos-mobile: ${mobilePosition}`}
+	style={`--hero-pos: ${position}; --hero-pos-mobile: ${mobilePosition}; --hero-veil: ${veil}%; --hero-veil-bottom: ${veilBottom}%`}
 	data-hero
 >
 	<div class="hero__media">
@@ -256,13 +273,22 @@ const [desktopAvif, desktopWebp, mobileAvif, mobileWebp, fallback] = await Promi
 
 	// Layer 1 — a light wash over the whole photograph. Enough to settle it into
 	// the palette; nowhere near enough to carry text on its own.
+	// 0 → 8%, down from 10 → 22%.
+	//
+	// This is the layer the "too dark" note was actually about. The veil sits
+	// behind text, where darkness is load-bearing; the wash covers the WHOLE
+	// photograph, so it is the only layer muting the part of the picture anyone is
+	// looking at. Measured across all ten heroes, the brightest 5% of each text
+	// zone needs between 44% and 63% espresso for plaster text at 4.5:1 — the wash
+	// contributes almost nothing to that, so cutting it costs no contrast and
+	// hands back most of the photograph.
 	.hero__wash {
 		position: absolute;
 		inset: 0;
 		background: linear-gradient(
 			to bottom,
-			color-mix(in srgb, var(--pp-espresso) 10%, transparent) 0%,
-			color-mix(in srgb, var(--pp-espresso) 22%, transparent) 100%
+			color-mix(in srgb, var(--pp-espresso) 0%, transparent) 0%,
+			color-mix(in srgb, var(--pp-espresso) 8%, transparent) 100%
 		);
 	}
 
@@ -290,19 +316,44 @@ const [desktopAvif, desktopWebp, mobileAvif, mobileWebp, fallback] = await Promi
 	//
 	// The `background` shorthand below resets background-color, so .pp-on-dark's
 	// espresso fill is discarded and the gradient becomes the surface.
+	// THE RAMP NOW ENDS AT THE PADDING, IN THE SAME UNIT AS THE PADDING.
+	//
+	// It used to reach full strength at `38%` — a percentage of the veil's own
+	// height, which is set by how much text the page happens to carry. The comment
+	// here claimed the fade therefore "happens inside the top padding, so text
+	// always sits in the fully-opaque part". That was never true. For 38% to land
+	// inside a 96px padding the whole veil would have to be under 253px, and the
+	// smallest possible veil on this site — one line of h1, a two-line lede, no
+	// CTA — is already 270px. Every real page is taller still.
+	//
+	// So the first line of text sat ON the ramp, at roughly 51–57% composite.
+	// History's phone crop needs 58%, which means its eyebrow was failing 4.5:1.
+	//
+	// Driving both the padding and the colour stop from one custom property makes
+	// the guarantee structural: the veil is at full strength exactly where the text
+	// begins, at any text length, on any page, forever. `--hero-veil-pad` is the
+	// single knob — change it and the ramp follows.
 	.hero__veil {
+		--hero-veil-pad: var(--pp-space-2xl);
+
 		position: relative;
-		padding-block: var(--pp-space-3xl) var(--pp-space-l);
+		padding-block: var(--hero-veil-pad) var(--pp-space-l);
+		// 68% / 74%, down from 70% / 80%. Ending the ramp early adds protection at
+		// the top, which buys the headroom to lighten the heaviest band at the
+		// bottom — so the text is better covered than before AND the block reads
+		// lighter. Worst hero of the ten needs 63%; this holds ≥70% throughout.
 		background: linear-gradient(
 			to bottom,
-			color-mix(in srgb, var(--pp-espresso) 0%, transparent) 0%,
-			color-mix(in srgb, var(--pp-espresso) 70%, transparent) 38%,
-			color-mix(in srgb, var(--pp-espresso) 80%, transparent) 100%
+			color-mix(in srgb, var(--pp-espresso) 0%, transparent) 0,
+			color-mix(in srgb, var(--pp-espresso) var(--hero-veil), transparent) var(--hero-veil-pad),
+			color-mix(in srgb, var(--pp-espresso) var(--hero-veil-bottom), transparent) 100%
 		);
 	}
 
 	.hero--display .hero__veil {
-		padding-block: var(--pp-space-3xl) var(--pp-space-2xl);
+		--hero-veil-pad: var(--pp-space-3xl);
+
+		padding-block: var(--hero-veil-pad) var(--pp-space-2xl);
 	}
 
 	// Plaster, not limestone: at the worst-case scrim/photo blend plaster reaches

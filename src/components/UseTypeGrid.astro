@@ -41,12 +41,16 @@ const { items = USE_TYPES } = Astro.props;
 		margin: 0;
 		padding: 0;
 
+		// Caps at 3, not 4. Both lists that use this component are six items, and at
+		// four across that lands as a row of four over a row of two — the orphan row
+		// reads as something missing rather than as a deliberate shape. Six over
+		// three is two even rows; six over two (mobile) is three even rows. The 4-up
+		// rule was written when these lists were eight.
+		//
+		// If a list ever grows past six, revisit: at seven or eight, 4-up is the
+		// better fit again and this cap becomes the thing making an orphan row.
 		@include from('sm') {
 			grid-template-columns: repeat(3, 1fr);
-		}
-
-		@include from('lg') {
-			grid-template-columns: repeat(4, 1fr);
 		}
 	}
 

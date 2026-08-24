@@ -12,16 +12,43 @@ import { SPACE_TYPE_ICONS, SPACE_TYPE_ICON_FALLBACK } from '../config/site';
 
 // ⚠️ 2021 PROPOSED PLAN — for rough-in only. Carries Kil Architecture's title
 // block; must be cropped or redrawn before anything ships.
-import planImage from '../assets/plans/first-floor-2021.webp';
+import planImage from '../assets/plans/floor-plan.png';
 
 // Phase 2 in progress, shot 2026. Evidence that "more coming" is actually
 // happening — which is the only reason these earn space on a leasing page.
 import phase2Skylight from '../assets/phase-2/skylight.jpg';
 import phase2Openings from '../assets/phase-2/openings.jpg';
 
+// Unit types to keep out of BOTH the "kinds of suites" grid and the sizes table.
+//
+// There was nothing to comment out before this, which is why it couldn't be
+// found: neither list is written down. Both are DERIVED from the `type` field on
+// every unit in spaces.yaml, so a type appears the moment any unit carries it and
+// disappears when the last one stops. This is the one place to intervene without
+// editing floor-plan data that the table's figures also depend on.
+//
+// Filtering both together is deliberate. Hiding a type from the grid alone would
+// leave the page contradicting itself — "6 kinds of suites under one roof" above
+// a table listing eight, Warehouse included.
+//
+// ⚠️ See the note on `range` below before enabling anything here.
+const HIDDEN_TYPES: string[] = [
+	'Warehouse',
+	// 'Office',
+    'Resale retail',
+];
+
+// ⚠️ `range` still reads EVERY unit, including hidden types — and the largest
+// usable figure in the plan, 1,789, belongs to a Warehouse unit. Hiding Warehouse
+// therefore makes the site's quoted "200 to 1,800 sq ft" a number no advertised
+// suite can supply; the honest ceiling without it is 1,624. That figure appears
+// on Home, History, Contact, the footer and this page's own hero, so it is not a
+// local fix. Settle it before enabling HIDDEN_TYPES.
 const range = await getSpaceRange();
-const types = await getSpaceTypes();
-const typeSummary = await getSpaceTypeSummary();
+const types = (await getSpaceTypes()).filter((entry) => !HIDDEN_TYPES.includes(entry.type));
+const typeSummary = (await getSpaceTypeSummary()).filter(
+	(entry) => !HIDDEN_TYPES.includes(entry.type),
+);
 
 // Seven types come out of the floor plan; "Health" is the eighth and is NOT in
 // spaces.yaml. It's a use rather than a unit type — Alchemy Healing Arts is a
@@ -58,15 +85,16 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 
 <BaseLayout
 	title="Find Your Space"
-	description="Commercial, studio and office space for lease at Portage Place — a restored 1919 bakery in South Bend. Units from roughly 200 to 1,800 usable square feet."
+	description="Commercial, studio and office space for lease at Portage Place — a restored 1919 bakery in South Bend. Units from roughly 200 to 1,800 square feet."
 >
 	<PageHero
 		image={heroImage}
 		mobileImage={heroImageMobile}
+		veil={55}
 		alt="A glazed private office inside the building, framed in black steel against exposed brick and painted ductwork, with polished concrete floors."
 		eyebrow="Space available"
 		title="Find the one that fits"
-		lede={`Roughly ${fmt(approx.min)} to ${fmt(approx.max)} usable square feet, starting at $300 a month.`}
+		lede={`Roughly ${fmt(approx.min)} to ${fmt(approx.max)} square feet, starting at $300 a month.`}
 		position="center 50%"
 		priority
 	>
@@ -123,7 +151,7 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 				sizes="(min-width: 1024px) 70vw, 94vw"
 				loading="lazy"
 			/>
-			<figcaption class="plan__caption">
+			<!-- <figcaption class="plan__caption">
 				<Icon name="lucide:triangle-alert" aria-hidden="true" />
 				<span>
 					<strong>Placeholder.</strong> Kil Architecture's <em>proposed</em> first-floor
@@ -131,14 +159,14 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 					carries the architect's title block. Replaced before launch by a current plan,
 					redrawn as an interactive vector.
 				</span>
-			</figcaption>
+			</figcaption> -->
 		</figure>
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
 	{/* Unit list */}
 	{/* ------------------------------------------------------------------ */}
-	<Section tone="limestone">
+	<!-- <Section tone="limestone">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Every unit</p>
 			<h2>Sizes at a glance</h2>
@@ -199,7 +227,7 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 			publish live availability — email us and we'll tell you what's actually available
 			today, unit by unit.
 		</p>
-	</Section>
+	</Section> -->
 
 	{/* ------------------------------------------------------------------ */}
 	{/* Phase 2 */}

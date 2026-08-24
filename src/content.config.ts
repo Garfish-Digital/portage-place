@@ -204,18 +204,32 @@ const tenants = defineCollection({
 // ---------------------------------------------------------------------------
 const neighborhood = defineCollection({
 	loader: file('./src/content/neighborhood.yaml'),
-	schema: z.object({
-		id: z.string(),
-		name: z.string(),
-		blurb: z.string(),
-		url: z.string().url().optional(),
-		address: z.string().optional(),
-		/** Path under /public — these are third-party marks, not our optimized assets. */
-		logo: z.string().optional(),
-		relationship: z.enum(['neighbor', 'partner']).default('neighbor'),
-		order: z.number().int().default(999),
-		placeholder: z.boolean().default(false),
-	}),
+	schema: ({ image }) =>
+		z.object({
+			id: z.string(),
+			name: z.string(),
+			/**
+			 * One sentence. The street address is folded into this rather than carried
+			 * separately — "a few doors up the corridor at 1005 Portage Avenue" reads as
+			 * a neighbour; a bare address line under a card reads as a directory entry.
+			 */
+			blurb: z.string(),
+			url: z.string().url().optional(),
+			address: z.string().optional(),
+			/**
+			 * The business's own mark, used with permission.
+			 *
+			 * Was a plain string pointing under /public. Now `image()`, so these go
+			 * through the asset pipeline like every other picture on the site — AVIF and
+			 * WebP variants, correct srcset, hashed filenames. Paths are relative to this
+			 * YAML file's own directory.
+			 */
+			logo: image().optional(),
+			logoAlt: z.string().optional(),
+			relationship: z.enum(['neighbor', 'partner']).default('neighbor'),
+			order: z.number().int().default(999),
+			placeholder: z.boolean().default(false),
+		}),
 });
 
 // ---------------------------------------------------------------------------

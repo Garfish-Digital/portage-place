@@ -29,7 +29,10 @@ import { STATS } from '../config/site';
 		grid-template-columns: repeat(2, 1fr);
 		gap: var(--pp-space-m) var(--pp-space-s);
 		margin: 0;
-		padding-block: var(--pp-space-l);
+		// Halved from `--pp-space-l` (32px). Client asked for a more slender strip —
+		// see also the value's step down from h3 to h4 below. Together they take the
+		// band from ~117px to ~78px without touching the horizontal rhythm.
+		padding-block: var(--pp-space-s);
 		border-block: 1px solid var(--pp-rule);
 
 		// ONE COLUMN PER STAT, however many there are — `grid-auto-flow: column`
@@ -90,7 +93,11 @@ import { STATS } from '../config/site';
 	.stat__value {
 		margin: 0;
 		font-family: var(--pp-font-display);
-		font-size: var(--pp-text-h3);
+		// h4 (24→29px), down one step from h3 (29→36px). At h3 the values sat within
+		// a few pixels of the page's h2 (34→46px) at mobile widths, so a stat read
+		// with the weight of a section heading. h4 keeps the number as the loudest
+		// thing in the strip without competing with the headings around it.
+		font-size: var(--pp-text-h4);
 		font-weight: var(--pp-weight-semibold);
 		line-height: 1;
 		letter-spacing: var(--pp-tracking-tight);

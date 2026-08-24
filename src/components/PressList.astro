@@ -45,7 +45,16 @@ const formatDate = (date?: Date) =>
 					</span>
 
 					<span class="press__cue">
-						<span class="press__cue-text">Read at {item.data.outlet}</span>
+						{/*
+							Visible short label + hidden context. The arrow alone was a thin
+							affordance for something that navigates off-site, but "Read at
+							South Bend–Elkhart Regional Partnership" would widen this column
+							and squeeze the headlines. The outlet already appears in the left
+							column, so the visible half loses nothing — and the accessible
+							name still names the destination.
+						*/}
+						<span class="press__cue-text">Read article</span>
+						<span class="pp-visually-hidden">at {item.data.outlet}</span>
 						{/*
 							The only place on the site where sending the visitor away is
 							acceptable — so say where they're going, and open a new tab so we
@@ -183,15 +192,12 @@ const formatDate = (date?: Date) =>
 		}
 	}
 
-	// From md the outlet name is already the first thing in the row, so spelling
-	// out "Read at <outlet>" a second time is visual noise — and with names this
-	// long it would set the width of the third column and pull the headlines in.
-	// Hidden visually only: the link's accessible name still says where it goes.
-	@include from('md') {
-		.press__cue-text {
-			@include visually-hidden;
-		}
-	}
+	// The label used to be hidden from `md` up, leaving desktop with a bare arrow.
+	// That was the wrong trade: an arrow on its own is a weak signal for a link
+	// that leaves the site, and this is the one place on the site where we send a
+	// visitor away deliberately. It now reads "Read article" at every width, with
+	// the outlet name carried in adjacent visually-hidden text so the column stays
+	// narrow and the accessible name stays complete.
 
 	@include hover-capable {
 		.press__link:hover .press__cue :global(svg) {

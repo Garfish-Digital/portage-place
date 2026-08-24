@@ -10,10 +10,10 @@
  */
 export const USE_TYPES = [
 	{ icon: 'lucide:store', label: 'Retail & business' },
-	{ icon: 'lucide:briefcase', label: 'Offices' },
+	// { icon: 'lucide:briefcase', label: 'Offices' },
 	{ icon: 'lucide:palette', label: 'Artist studios' },
 	{ icon: 'lucide:scale', label: 'Professional services' },
-	{ icon: 'lucide:wrench', label: 'Light industrial' },
+	// { icon: 'lucide:wrench', label: 'Light industrial' },
 	{ icon: 'lucide:hammer', label: 'Maker space' },
 	{ icon: 'lucide:heart-pulse', label: 'Health & wellness' },
 	{ icon: 'lucide:graduation-cap', label: 'Education & non-profits' },
@@ -51,9 +51,9 @@ export const SPACE_TYPE_ICON_FALLBACK = 'lucide:square';
  * - $4.2M — WNDU, South Bend Tribune, March 2022
  */
 export const STATS = [
-	{ value: '1919', label: 'Built' },
+	// { value: '1919', label: 'Built' },
 	{ value: '200–1,800', unit: 'sq ft', label: 'Suite sizes' },
-	{ value: '$4.2M', label: 'Renovation' },
+	// { value: '$4.2M', label: 'Renovation' },
 	{ value: '$300', unit: '/mo', label: 'Starting rent' }
 ] as const;
 

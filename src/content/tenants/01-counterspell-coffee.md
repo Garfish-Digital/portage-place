@@ -2,8 +2,9 @@
 name: 'Counterspell Cafe'
 category: commercial
 type: Coffee shop
-icon: ../../assets/tenant-icons/tenant-coffee.png
-iconAlt: 'Pencil drawing of a steaming cup of coffee on a saucer.'
+logo: ../../assets/marks/counterspell.png
+imageAlt: "Counterspell Cafe logo: a hand-drawn cloud enclosing the words Cloud Walking."
+url: https://cloudwalkingcoffee.com/
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true

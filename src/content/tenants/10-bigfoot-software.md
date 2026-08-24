@@ -9,7 +9,10 @@ quote: >-
 featured: false
 order: 10
 placeholder: false
-draft: false
+# Dropped from the page at the client's request 2026-08-24 (Software Development).
+# Kept rather than deleted — nothing else references it, so flipping this
+# back to false is the whole restore.
+draft: true
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:
 #   · attribution — a person's name and role. An unattributed testimonial reads
 #     as written by the landlord, which is the opposite of what it's for.

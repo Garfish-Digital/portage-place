@@ -2,8 +2,9 @@
 name: 'Alchemy Healing Arts'
 category: commercial
 type: Massage & wellness
-icon: ../../assets/tenant-icons/tenant-wellness.png
-iconAlt: 'Pencil drawing of a watering can watering a young seedling.'
+logo: ../../assets/marks/alchemy.png
+imageAlt: "Alchemy Healing Arts logo: the name in serif capitals above a row of moon phases."
+url: https://www.alchemysb.co/
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true

@@ -1,0 +1,193 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { Icon } from 'astro-icon/components';
+
+/**
+ * A logo-led tile: mark, name, one line of context, and a cue off-site.
+ *
+ * Serves BOTH tenants and neighbours. They render identically now, so one
+ * component is the only way they stay identical — two lookalikes drift the first
+ * time one of them is touched.
+ *
+ * ── Why a tile and not a press-style row ────────────────────────────────────
+ *
+ * The client's reference was the press cards on History, and the *treatment*
+ * here is deliberately the same: raised surface, hairline border, radius, the
+ * whole card as one link, hover lift, green cue with a nudging arrow.
+ *
+ * The GEOMETRY is not, and that is on purpose. A press row carries a headline
+ * plus a blurb — about 139 characters. A tenant carries a name and a two-word
+ * type, about 37. Dropped into the same full-width row, that left roughly 60% of
+ * the body column empty on every card. A press row spans the section because a
+ * headline earns the width; a logo and two words is a tile.
+ *
+ * ── The mark box ────────────────────────────────────────────────────────────
+ *
+ * The supplied marks range from 1.00 (a square roundel) to 3.47 (a wide
+ * wordmark) in aspect. A fixed-WIDTH column would have made the square one
+ * enormous and the wide one a strip, so the mark sits in a fixed-HEIGHT box and
+ * is contained within it: shared baseline, shared cap, aspect preserved.
+ */
+interface Props {
+	name: string;
+	/** The short line under the name — a tenant's type, a neighbour's blurb. */
+	meta: string;
+	url?: string;
+	mark?: ImageMetadata;
+	markAlt?: string;
+}
+
+const { name, meta, url, mark, markAlt } = Astro.props;
+
+// `mark` is optional so a card without artwork still renders rather than
+// breaking the row. The name carries it in that case — see `.tile__fallback`.
+const Tag = url ? 'a' : 'div';
+const linkProps = url
+	? { href: url, target: '_blank', rel: 'noopener noreferrer' }
+	: {};
+---
+
+<Tag class:list={['tile', url && 'tile--link']} {...linkProps}>
+	<div class="tile__mark">
+		{
+			mark ? (
+				<Image
+					src={mark}
+					alt={markAlt ?? `${name} logo`}
+					widths={[160, 320, 480]}
+					sizes="160px"
+					loading="lazy"
+				/>
+			) : (
+				<span class="tile__fallback" aria-hidden="true">
+					{name.charAt(0)}
+				</span>
+			)
+		}
+	</div>
+
+	<h3 class="tile__name">{name}</h3>
+	<p class="tile__meta">{meta}</p>
+
+	{
+		url && (
+			<span class="tile__cue">
+				<span>Visit site</span>
+				<Icon name="lucide:arrow-up-right" aria-hidden="true" />
+				{/*
+					The visible label is short enough to keep the tile tidy; the hidden
+					half is what makes the accessible name say WHICH site and warn about
+					the new tab. Sighted users get the affordance, everyone gets the
+					destination.
+				*/}
+				<span class="pp-visually-hidden">— {name}, opens in a new tab</span>
+			</span>
+		)
+	}
+</Tag>
+
+<style lang="scss">
+	// Column, not the press card's 3-up row. `1fr` on the name row is what pushes
+	// the cue to the bottom edge, so cues line up across a row of tiles whose
+	// names wrap to different depths.
+	.tile {
+		display: grid;
+		grid-template-rows: auto auto 1fr auto;
+		height: 100%;
+		padding: var(--pp-space-m);
+		text-decoration: none;
+		color: var(--pp-ink);
+		background-color: var(--pp-raised);
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+	}
+
+	// Same hover language as `.press__link` — this is the family resemblance the
+	// client asked for, and it lives here rather than in the geometry.
+	.tile--link {
+		transition: border-color var(--pp-duration-base) var(--pp-ease-out),
+			box-shadow var(--pp-duration-base) var(--pp-ease-out),
+			translate var(--pp-duration-base) var(--pp-ease-out);
+
+		@include focusable;
+
+		@include hover-capable {
+			&:hover {
+				border-color: var(--pp-brick-mid);
+				translate: 0 -2px;
+				box-shadow: var(--pp-shadow-m);
+			}
+		}
+	}
+
+	// Fixed HEIGHT, free width. Every mark gets the same vertical space and the
+	// same optical baseline no matter its proportions; `contain` means none of
+	// them is ever cropped or stretched.
+	.tile__mark {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		block-size: 56px;
+		margin-block-end: var(--pp-space-m);
+
+		:global(img) {
+			max-block-size: 100%;
+			max-inline-size: 100%;
+			inline-size: auto;
+			block-size: auto;
+			object-fit: contain;
+		}
+	}
+
+	// Only for an entry with no artwork yet. A monogram keeps the row's rhythm
+	// instead of collapsing the tile to a different height.
+	.tile__fallback {
+		display: grid;
+		place-items: center;
+		inline-size: 44px;
+		block-size: 44px;
+		font-family: var(--pp-font-display);
+		font-size: var(--pp-text-h4);
+		color: var(--pp-brick-dark);
+		background-color: var(--pp-limestone);
+		border-radius: var(--pp-radius-s);
+	}
+
+	.tile__name {
+		font-size: var(--pp-text-h4);
+		line-height: var(--pp-leading-snug);
+		color: var(--pp-ink-strong);
+		text-wrap: balance;
+	}
+
+	.tile__meta {
+		margin-block-start: var(--pp-space-3xs);
+		font-size: var(--pp-text-s);
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	.tile__cue {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--pp-space-3xs);
+		margin-block-start: var(--pp-space-m);
+		font-size: var(--pp-text-xs);
+		font-weight: var(--pp-weight-semibold);
+		color: var(--pp-green-link);
+
+		:global(svg) {
+			width: 14px;
+			height: 14px;
+			transition: translate var(--pp-duration-fast) var(--pp-ease-out);
+		}
+	}
+
+	@include hover-capable {
+		.tile--link:hover .tile__cue :global(svg) {
+			translate: 2px -2px;
+		}
+	}
+</style>

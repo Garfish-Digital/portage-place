@@ -5,7 +5,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Section from '../components/primitives/Section.astro';
 import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
-import TenantCard from '../components/TenantCard.astro';
+// One component for both sections. Tenants and neighbours render identically
+// now, and two lookalike components would drift the first time either is
+// touched.
+import MarkTile from '../components/MarkTile.astro';
 import PersonCard from '../components/PersonCard.astro';
 import { getTenants, getOwners, getMentors, getNeighborhood } from '../lib/content';
 
@@ -37,6 +40,7 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 	<PageHero
 		image={heroImage}
 		mobileImage={heroImageMobile}
+		veil={69}
 		alt="The shared kitchenette and dining area, with a long counter, exposed brick and a row of glazed offices behind."
 		eyebrow="Who's here"
 		title="A building as unique as the people in it"
@@ -57,23 +61,22 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 			</p>
 		</div>
 
-		<h3 class="group-label">Commercial</h3>
-		<ul class="cards" role="list">
+		{/*
+			Commercial and office are one list now. The wing split earned its keep
+			when there were ten cards across two labelled groups; with four it
+			produced a heading over three tiles and a heading over one.
+		*/}
+		<ul class="tiles" role="list">
 			{
-				commercial.map((tenant) => (
+				[...commercial, ...office].map((tenant) => (
 					<li>
-						<TenantCard tenant={tenant} />
-					</li>
-				))
-			}
-		</ul>
-
-		<h3 class="group-label group-label--spaced">Office</h3>
-		<ul class="cards" role="list">
-			{
-				office.map((tenant) => (
-					<li>
-						<TenantCard tenant={tenant} />
+						<MarkTile
+							name={tenant.data.name}
+							meta={tenant.data.type}
+							url={tenant.data.url}
+							mark={tenant.data.logo}
+							markAlt={tenant.data.imageAlt}
+						/>
 					</li>
 				))
 			}
@@ -93,24 +96,22 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 			</p>
 		</div>
 
-		<ul class="links" role="list">
+		{/*
+			Same tile as the tenants above — that identity is the point. The address
+			now lives inside the blurb rather than on its own line, so a neighbour
+			reads as a sentence about a place rather than a directory entry.
+		*/}
+		<ul class="tiles" role="list">
 			{
 				neighbors.map((item) => (
-					<li class:list={['link-card', item.data.placeholder && 'link-card--placeholder']}>
-						<h3 class="link-card__name">
-							{item.data.url ? (
-								<a href={item.data.url} target="_blank" rel="noopener noreferrer">
-									{item.data.name}
-									<Icon name="lucide:arrow-up-right" aria-hidden="true" />
-									<span class="pp-visually-hidden">(opens in a new tab)</span>
-								</a>
-							) : (
-								item.data.name
-							)}
-						</h3>
-						<p class="link-card__blurb">{item.data.blurb}</p>
-						{item.data.address && <p class="link-card__address">{item.data.address}</p>}
-						{item.data.placeholder && <p class="link-card__flag">Placeholder entry</p>}
+					<li>
+						<MarkTile
+							name={item.data.name}
+							meta={item.data.blurb}
+							url={item.data.url}
+							mark={item.data.logo}
+							markAlt={item.data.logoAlt}
+						/>
 					</li>
 				))
 			}
@@ -120,7 +121,7 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 	{/* ------------------------------------------------------------------ */}
 	{/* 3 — Owners */}
 	{/* ------------------------------------------------------------------ */}
-	<Section tone="limestone" id="owners">
+	<!-- <Section tone="limestone" id="owners">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Owners</p>
 			<h2>Four people pulled a neglected bakery out of tax arrears</h2>
@@ -169,12 +170,12 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 				</div>
 			)
 		}
-	</Section>
+	</Section> -->
 
 	{/* ------------------------------------------------------------------ */}
 	{/* 4 — Partners */}
 	{/* ------------------------------------------------------------------ */}
-	<Section id="partners">
+	<!-- <Section id="partners">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Partners</p>
 			<h2>It took a lot of group effort and patience</h2>
@@ -199,7 +200,7 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 				))
 			}
 		</ul>
-	</Section>
+	</Section> -->
 
 	{/* ------------------------------------------------------------------ */}
 	<Section tone="limestone" data-cta-section>
@@ -267,6 +268,25 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 	// ---------------------------------------------------------------------------
 	// Card grids
 	// ---------------------------------------------------------------------------
+	// Both sections. `auto-fit` rather than `auto-fill` is the whole trick: it
+	// COLLAPSES the empty tracks, so three neighbours spread across three columns
+	// instead of sitting in three of four with a gap on the end.
+	//
+	// The 16rem floor is chosen so a 1120px container resolves to four columns —
+	// which lands four tenants and three neighbours each as a single clean row,
+	// with no orphan. Two-up at tablet, one-up on a phone. Worth rechecking if
+	// either count changes.
+	//
+	// `stretch` (the default) is wanted here: tiles are equal height and the cue
+	// pins to the bottom of each, so the cues line up across a row.
+	.tiles {
+		display: grid;
+		gap: var(--pp-space-s);
+		margin: 0;
+		padding: 0;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+	}
+
 	.cards {
 		display: grid;
 		gap: var(--pp-space-s);

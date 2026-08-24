@@ -12,19 +12,25 @@
 - id: the-portage-collective
   name: The Portage Collective
   blurb: >-
-    A co-op of independent, women-owned businesses on the same corridor.
-  address: 905 Portage Avenue
+    A co-op of independent, women-owned businesses on the same corridor at
+    905 Portage Avenue.
+  url: https://www.theportagecollective.com/
+  logo: ../assets/marks/portage-collective.webp
+  logoAlt: >-
+    The Portage Collective logo: a tree with exposed roots above the name.
   relationship: neighbor
   order: 1
   placeholder: false
 
-- id: botany
-  name: The Botany Shop
-  blurb: Directly across the street at 909 Portage Avenue.
-  address: 909 Portage Avenue
-  relationship: neighbor
-  order: 2
-  placeholder: false
+# Dropped from the page at the client's request 2026-08-24. Kept rather than
+# deleted; uncommenting restores it, though it would need a logo and a URL to
+# match its siblings.
+# - id: botany
+#   name: The Botany Shop
+#   blurb: Directly across the street at 909 Portage Avenue.
+#   relationship: neighbor
+#   order: 4
+#   placeholder: false
 
 - id: near-northwest-neighborhood
   name: Near Northwest Neighborhood, Inc.
@@ -55,17 +61,22 @@
 - id: brain-lair-books
   name: Brain Lair Books
   blurb: >-
-    An independent bookshop a few doors up the corridor.
-  address: 1005 Portage Avenue
+    An independent bookshop a few doors up the corridor at 1005 Portage Avenue.
+  url: https://www.brainlairbooks.com/
+  logo: ../assets/marks/brain-lair.png
+  logoAlt: 'Brain Lair Books logo: the shop name in blue display lettering.'
   relationship: neighbor
-  order: 3
+  order: 2
   placeholder: false
 
 - id: the-local-cup
   name: The Local Cup SB
   blurb: >-
-    Coffee and a place to sit, two doors further along.
-  address: 1009 Portage Avenue
+    Coffee and a place to sit, two doors further along at 1009 Portage Avenue.
+  url: https://www.thelocalcupsb.coffee/
+  logo: ../assets/marks/local-cup.png
+  logoAlt: >-
+    The Local Cup SB logo: hand-lettered type above a drawn coffee cup.
   relationship: neighbor
-  order: 4
+  order: 3
   placeholder: false
