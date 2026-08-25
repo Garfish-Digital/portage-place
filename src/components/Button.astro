@@ -65,6 +65,10 @@ const tagProps = href
 		--btn-bg-hover: var(--pp-green-hover);
 		--btn-bg-active: var(--pp-green-active);
 		--btn-fg: #fff;
+		// Defaults to the resting label. Only a variant that changes its label on
+		// hover overrides this — primary on a light section, where the fill
+		// brightens past what white can sit on.
+		--btn-fg-hover: var(--btn-fg);
 		--btn-ring: var(--pp-green-ring);
 		--btn-border: transparent;
 
@@ -96,31 +100,69 @@ const tagProps = href
 		// Only transform, opacity, background-color and box-shadow are animated —
 		// none of them trigger layout. Animating padding or width here would cost
 		// a reflow on every frame of the hover.
-		transition: background-color var(--pp-duration-fast) var(--pp-ease-out),
-			box-shadow var(--pp-duration-base) var(--pp-ease-out),
-			translate var(--pp-duration-base) var(--pp-ease-out),
-			color var(--pp-duration-fast) var(--pp-ease-out);
+		//
+		// ONE GESTURE. Every property that moves shares a duration and a curve.
+		// This was four properties on two clocks — fill at 160ms, shadow and lift at
+		// 240ms, and the arrow at 240ms on an overshoot spring. Nothing was wrong
+		// individually; they just never arrived together, and that desynchronisation
+		// is most of what made the hover read as generic.
+		//
+		// Declared on the base rule, this governs the RELEASE: `instant` on the exit
+		// curve, so letting go is quicker than arriving. That is the convention the
+		// token layer states — enter slow, leave quick — which buttons never
+		// followed.
+		transition: background-color var(--pp-duration-instant) var(--pp-ease-exit),
+			box-shadow var(--pp-duration-instant) var(--pp-ease-exit),
+			translate var(--pp-duration-instant) var(--pp-ease-exit),
+			color var(--pp-duration-instant) var(--pp-ease-exit);
 
 		@include focusable;
 
-		// The lift and the bright ring are hover-only. On touch there is no hover
-		// state to reveal them, and applying them on tap makes the button feel
-		// sticky — the pressed state below handles touch instead.
+		// Hover-only. On touch there is no hover state to reveal it, and applying it
+		// on tap makes the button feel sticky — the pressed state below handles
+		// touch instead.
 		@include hover-capable {
 			&:hover:not(:disabled):not([aria-disabled='true']) {
+				// The arrival, slower than the release.
+				transition: background-color var(--pp-duration-fast) var(--pp-ease-out),
+					box-shadow var(--pp-duration-fast) var(--pp-ease-out),
+					translate var(--pp-duration-fast) var(--pp-ease-out),
+					color var(--pp-duration-fast) var(--pp-ease-out);
+
 				background-color: var(--btn-bg-hover);
-				translate: 0 -1px;
-				box-shadow: 0 0 0 2px var(--btn-ring), var(--pp-shadow-m);
+				color: var(--btn-fg-hover);
+
+				// WEIGHT, NOT LIFT — and no ring.
+				//
+				// The 2px ring is gone. `0 0 0 2px var(--btn-ring)` was an unblurred
+				// band around the whole silhouette, which on a primary button meant a
+				// bright green halo blooming around a green fill. It also impersonated
+				// a focus indicator, blurring the outline-vs-box-shadow split this
+				// codebase drew on purpose.
+				//
+				// No translate either. A close, slightly darker shadow reads as the
+				// control settling INTO the surface rather than taking off from it —
+				// which suits a palette sampled off brick and painted steel better
+				// than a card levitating.
+				box-shadow: 0 1px 2px rgb(22 19 15 / 0.1), 0 2px 5px rgb(22 19 15 / 0.09);
 			}
 		}
 
+		// A real depress: 1px down, and an inset so the surface takes the finger.
+		//
+		// The two halves cover each other. On a dark fill the inset barely reads and
+		// `--btn-bg-active` carries the press; on a light fill the fill shift is
+		// subtle and the inset carries it.
+		//
+		// Duration is now a token rather than a hard-coded 60ms — a literal duration
+		// silently opts out of reduced motion, which is the one thing the motion
+		// rules say never to do.
 		&:active:not(:disabled):not([aria-disabled='true']) {
 			background-color: var(--btn-bg-active);
-			translate: 0 0;
-			box-shadow: 0 0 0 2px var(--btn-ring);
-			// Pressing should feel like pressing. 60ms is below the threshold where
-			// it reads as lag but above where it reads as nothing happening.
-			transition-duration: 60ms;
+			color: var(--btn-fg-hover);
+			translate: 0 1px;
+			box-shadow: inset 0 2px 3px rgb(22 19 15 / 0.28);
+			transition-duration: var(--pp-duration-instant);
 		}
 
 		&:disabled,
@@ -136,18 +178,52 @@ const tagProps = href
 	// Variants
 	// ---------------------------------------------------------------------------
 
-	// primary — white on green, 5.99:1 at rest and 4.60:1 on hover. The bright
-	// ring (#43A36A) never carries text and is never the component boundary, so
-	// its 2.88:1 against plaster is decorative rather than a failure.
+	// primary — ONE palette in both contexts, per the client 2026-08-25.
+	//
+	// Light and dark sections now share the same fills and the same espresso label,
+	// so a CTA looks and behaves identically wherever it lands. Only the boundary
+	// differs, because only the surface behind it differs.
 	.btn--primary {
+		// The hero CTA's exact palette, now on light sections too — same fills, same
+		// espresso label at every state. The label staying dark throughout is the
+		// point: nothing flips mid-interaction.
+		//
+		//   rest    #7fc79b   label 6.68:1
+		//   hover   #a9e0c0   label 8.94:1
+		//   active  #c2ebd3   label 10.21:1
+		//
+		// ⚠️ THE BORDER IS LOAD-BEARING HERE, and it is the one thing that has to
+		// differ from the hero. These fills were chosen against ESPRESSO, where the
+		// rest state is 6.68:1 and needs no edge. On near-white plaster the same
+		// fills are 1.99 / 1.48 / 1.30 — far under the 3:1 SC 1.4.11 wants of a
+		// component boundary, and the button would read as a faint green smudge.
+		//
+		// --pp-green-link carries it: 6.96:1 against plaster and 3.50:1 against the
+		// fill, so the edge is visible against the page AND against the button. The
+		// dark context below resets it to transparent, where the fill needs no help.
+		--btn-bg: var(--pp-green-on-dark);
+		--btn-bg-hover: #a9e0c0;
+		--btn-bg-active: #c2ebd3;
+		--btn-fg: var(--pp-espresso);
+		--btn-fg-hover: var(--pp-espresso);
+		--btn-border: var(--pp-green-link);
+
 		// Inside a dark section the mid-green collapses to 2.13:1 against
 		// espresso and the button all but disappears. The light-green fill with
 		// espresso text is the dark-context pairing: 6.68:1 both ways.
+		//
+		// Here brightness is free: the label is espresso, so a brighter fill RAISES
+		// contrast. #a9e0c0 is 8.94:1 and #c2ebd3 is 10.21:1, against 6.68:1 at
+		// rest — so the hero CTAs can swing hard without costing anything.
 		:global(.pp-on-dark) & {
 			--btn-bg: var(--pp-green-on-dark);
-			--btn-bg-hover: #93d1ab;
-			--btn-bg-active: #6fbb8c;
+			--btn-bg-hover: #a9e0c0;
+			--btn-bg-active: #c2ebd3;
 			--btn-fg: var(--pp-espresso);
+			--btn-fg-hover: var(--pp-espresso);
+			// The only thing that differs from the light context now: on espresso the
+			// fill is already 6.68:1 against its surface, so it needs no edge.
+			--btn-border: transparent;
 			--btn-ring: var(--pp-plaster);
 		}
 	}
@@ -159,10 +235,19 @@ const tagProps = href
 		--btn-fg: var(--pp-plaster);
 		--btn-ring: var(--pp-bronze);
 
+		// WARM DOWN, don't brighten. Plaster → #fff was a 1.00:1 step — five units
+		// on the blue channel, and literally nothing to see. It was always small,
+		// and brightening --pp-plaster to #fffffa closed the last of it.
+		//
+		// There is no headroom above a near-white fill, so the state has to be found
+		// below it: limestone is a 1.42:1 step and limestone-deep 1.62:1, both
+		// visible, and the label stays far clear at 9.31:1 and 8.20:1. White warming
+		// to stone also reads as the surface settling, which is the same language as
+		// the press.
 		:global(.pp-on-dark) & {
 			--btn-bg: var(--pp-plaster);
-			--btn-bg-hover: #fff;
-			--btn-bg-active: var(--pp-limestone);
+			--btn-bg-hover: var(--pp-limestone);
+			--btn-bg-active: var(--pp-limestone-deep);
 			--btn-fg: var(--pp-espresso);
 			--btn-ring: var(--pp-bronze);
 		}
@@ -175,12 +260,43 @@ const tagProps = href
 	// limestone section: an outline with nothing inside, i.e. exactly the ghost
 	// button the style guide rules out. The border (4.48 plaster / 3.41 limestone)
 	// is what satisfies 1.4.11; the fill is what keeps it reading as a button.
+	// EXPLORATORY — 2026-08-25, for the client to judge in context. Original
+	// values kept here for the revert:
+	//
+	//   --btn-bg: var(--pp-raised);
+	//   --btn-bg-hover: color-mix(in srgb, var(--pp-raised) 92%, var(--pp-ink));
+	//   --btn-bg-active: color-mix(in srgb, var(--pp-raised) 85%, var(--pp-ink));
+	//   --btn-fg: var(--pp-ink);
+	//   --btn-border: var(--pp-border);
+	//
+	// Rest is --pp-ink-strong: plaster label 18.46:1, and 18.46:1 against the
+	// section too, so the fill defines its own edge and needs no border.
+	//
+	// ⚠️ HOVER IS NOT --pp-bronze ITSELF. Bronze is 3.48:1 on plaster, and the
+	// token layer marks it "never a text color" for exactly this reason: a plaster
+	// label on #a97a3d measures 3.78:1 and fails. Every light label fails on it —
+	// only ink passes, at 4.88:1, which would mean the label flipping from light to
+	// dark mid-hover.
+	//
+	// So the label stays light and the bronze deepens instead. #8b6432 is the same
+	// hue and saturation 8% darker, carrying plaster at 5.28:1. It still reads as
+	// bronze; it just behaves as a surface rather than an ornament.
 	.btn--quiet {
-		--btn-bg: var(--pp-raised);
-		--btn-bg-hover: color-mix(in srgb, var(--pp-raised) 92%, var(--pp-ink));
-		--btn-bg-active: color-mix(in srgb, var(--pp-raised) 85%, var(--pp-ink));
-		--btn-fg: var(--pp-ink);
-		--btn-border: var(--pp-border);
+		// Rest ink-strong, warming to brick on interaction.
+		//
+		// ⚠️ Note this moves LIGHTER, not darker. --pp-brick-dark (#6b4931) is well
+		// above --pp-ink-strong (#16130f) in luminance — 7.98:1 against plaster
+		// versus 18.46:1 — so the button warms up rather than deepening. Both states
+		// clear 4.5:1 with the plaster label by a wide margin; the direction is the
+		// only thing worth a second look.
+		//
+		// Active takes a deeper brick so the press stays distinguishable from the
+		// hover rather than landing on the same colour.
+		--btn-bg: var(--pp-ink-strong);
+		--btn-bg-hover: var(--pp-brick-dark);
+		--btn-bg-active: #52371f;
+		--btn-fg: var(--pp-plaster);
+		--btn-border: transparent;
 		--btn-ring: var(--pp-bronze);
 
 		:global(.pp-on-dark) & {
@@ -213,14 +329,22 @@ const tagProps = href
 		flex: none;
 		width: 1.15em;
 		height: 1.15em;
-		// The icon leads the motion by a hair. Same duration, different easing —
-		// enough to read as crafted, not enough to notice as two things moving.
-		transition: translate var(--pp-duration-base) var(--pp-ease-overshoot);
+		// Same clock and curve as the button around it — the release half.
+		//
+		// It used to run 240ms on `--pp-ease-overshoot` while the fill ran 160ms on
+		// ease-out. A spring is imperceptible across 2px, so the overshoot bought
+		// nothing and cost synchronisation: the arrow was still settling after the
+		// button had finished.
+		transition: translate var(--pp-duration-instant) var(--pp-ease-exit);
 	}
 
 	@include hover-capable {
+		// 3px, up from 2. With the container no longer lifting, the arrow is the
+		// only thing that actually travels — so it carries more of the gesture and
+		// needs to be readable as movement rather than a nudge.
 		.btn:hover .btn__icon--end {
-			translate: 2px 0;
+			transition: translate var(--pp-duration-fast) var(--pp-ease-out);
+			translate: 3px 0;
 		}
 	}
 

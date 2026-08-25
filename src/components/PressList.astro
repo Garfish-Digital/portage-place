@@ -93,7 +93,10 @@ const formatDate = (date?: Date) =>
 		padding: var(--pp-space-m);
 		text-decoration: none;
 		color: var(--pp-ink);
-		background-color: var(--pp-raised);
+		// Plaster, per the client 2026-08-25 — was `--pp-raised`, which inverts with
+		// section tone and had turned these limestone once the section went plaster.
+		// Pinned so the card colour no longer follows the section.
+		background-color: var(--pp-plaster);
 		border: 1px solid var(--pp-rule);
 		border-radius: var(--pp-radius-m);
 

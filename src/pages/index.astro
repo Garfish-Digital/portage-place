@@ -61,7 +61,12 @@ const milestones = await getMilestones();
 	{/* ================================================================== */}
 	{/* Use types — replaces the wall of text */}
 	{/* ================================================================== */}
-	<Section tone="limestone">
+	{/*
+		Plaster, matching the sections above and below — the limestone alternation
+		is off here while the client looks at the page as one tone. Restore by
+		putting `tone="limestone"` back.
+	*/}
+	<Section>
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">All under one roof</p>
 			<h2>Room to think, work, and create</h2>
@@ -165,7 +170,8 @@ const milestones = await getMilestones();
 	{/* ================================================================== */}
 	{/* Closing CTA */}
 	{/* ================================================================== */}
-	<Section tone="limestone" data-cta-section>
+	{/* Plaster, per the client 2026-08-25. Restore with `tone="limestone"`. */}
+	<Section data-cta-section>
 		<div class="close">
 			<h2 class="close__title">Come see what works</h2>
 			<p class="close__lede">

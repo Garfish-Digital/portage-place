@@ -59,7 +59,14 @@ const { items = USE_TYPES } = Astro.props;
 		align-items: center;
 		gap: var(--pp-space-2xs);
 		padding: var(--pp-space-s);
-		background-color: var(--pp-raised);
+		// Pinned to plaster rather than following `--pp-raised`.
+		//
+		// `--pp-raised` inverts with section tone — plaster inside a limestone
+		// section, limestone inside a plaster one — so these tiles silently changed
+		// colour when the Home section dropped `tone="limestone"`. Pinning holds the
+		// colour they have always had. No effect on Suites, where the grid already
+		// sits in a limestone section and `--pp-raised` was resolving to plaster.
+		background-color: var(--pp-plaster);
 		border: 1px solid var(--pp-rule);
 		border-radius: var(--pp-radius-m);
 

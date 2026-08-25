@@ -2,13 +2,13 @@
 name: 'Holly & Oak Yarn Co.'
 category: commercial
 type: Yarn & fiber arts
-logo: ../../assets/marks/holly-and-oak.webp
+logo: ../../assets/marks/holly-and-oak.png
 imageAlt: "Holly & Oak Yarn Co. logo: a pink ball of yarn beside the shop name."
 url: https://www.hollyandoakyarnco.com/
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
-order: 6
+order: 3
 placeholder: false
 draft: false
 # Quote supplied by Rob 2026-08-09. STILL NEEDED before launch:

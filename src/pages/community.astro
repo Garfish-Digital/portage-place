@@ -15,8 +15,15 @@ import { getTenants, getOwners, getMentors, getNeighborhood } from '../lib/conte
 // Order is locked in BUILD_PLAN: tenants → owners → neighborhood → partners.
 // Tenants lead because "look at this ecosystem, and here are the people who built
 // it" earns the owners more credit than a bio page in isolation would.
-const commercial = await getTenants({ category: 'commercial' });
-const office = await getTenants({ category: 'office' });
+// ONE list, sorted by `order`. It was two calls concatenated as
+// `[...commercial, ...office]`, which forced every commercial tenant ahead of
+// every office one no matter what `order` said — so two tenants in different
+// wings could not be sequenced relative to each other at all.
+//
+// The wing split stopped being rendered when the two groups merged into a single
+// grid, so `category` is data about the building now, not a display control.
+// `order` is the field for sequence, and this lets it actually work.
+const tenants = await getTenants();
 const owners = await getOwners();
 const mentors = await getMentors();
 const neighbors = await getNeighborhood('neighbor');
@@ -26,7 +33,7 @@ const partners = await getNeighborhood('partner');
 // (9 commercial + 11 office); we surface a selection. Deriving the headline from
 // the array length would silently tell visitors the building is half empty.
 const TENANT_TOTAL = 20;
-const shown = commercial.length + office.length;
+const shown = tenants.length;
 
 // ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
 import heroImage from '../assets/heroes/community.jpg';
@@ -47,12 +54,26 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 		lede="Shops, wellness, & offices — a mix the neighborhood itself wanted."
 		position="center 50%"
 		priority
-	/>
+	>
+		{/*
+			Same hero CTA as Suites, per the client 2026-08-25 — `size="lg"`, arrow,
+			`data-open-contact`. It inherits the primary variant's dark-context pairing
+			from `.hero__veil.pp-on-dark`, so it renders light-green on espresso rather
+			than the mid-green that would collapse to 2.13:1 there.
+
+			History deliberately keeps no hero CTA: its closing ask ("There is room for
+			you") only means anything after the timeline has been read.
+		*/}
+		<Fragment slot="actions">
+			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Ask about a space</Button>
+		</Fragment>
+	</PageHero>
 
 	{/* ------------------------------------------------------------------ */}
 	{/* 1 — Tenants */}
 	{/* ------------------------------------------------------------------ */}
-	<Section tone="limestone" id="tenants">
+	{/* Plaster, per the client 2026-08-25. Restore with `tone="limestone"`. */}
+	<Section id="tenants">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Tenants</p>
 			<h2>Twenty businesses, one roof</h2>
@@ -65,10 +86,13 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 			Commercial and office are one list now. The wing split earned its keep
 			when there were ten cards across two labelled groups; with four it
 			produced a heading over three tiles and a heading over one.
+
+			Sequence comes from each entry's `order` field — see the note above the
+			fetch for why it is a single sorted call rather than two concatenated.
 		*/}
 		<ul class="tiles" role="list">
 			{
-				[...commercial, ...office].map((tenant) => (
+				tenants.map((tenant) => (
 					<li>
 						<MarkTile
 							name={tenant.data.name}
@@ -203,7 +227,8 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 	</Section> -->
 
 	{/* ------------------------------------------------------------------ */}
-	<Section tone="limestone" data-cta-section>
+	{/* Plaster, per the client 2026-08-25. Restore with `tone="limestone"`. */}
+	<Section data-cta-section>
 		<div class="cta">
 			<div>
 				<p class="pp-eyebrow cta__eyebrow">Room for one more</p>
@@ -272,10 +297,13 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 	// COLLAPSES the empty tracks, so three neighbours spread across three columns
 	// instead of sitting in three of four with a gap on the end.
 	//
-	// The 16rem floor is chosen so a 1120px container resolves to four columns —
-	// which lands four tenants and three neighbours each as a single clean row,
-	// with no orphan. Two-up at tablet, one-up on a phone. Worth rechecking if
-	// either count changes.
+	// The 20rem floor resolves a 1120px container to THREE columns: 1120 fits
+	// 3 x 320 + 2 gaps = 992, and a fourth track would need 1328. That lands six
+	// tenants as 3 + 3 and three neighbours as a single row — the same rhythm in
+	// both sections, which is the point.
+	//
+	// It was 16rem, which gave four columns. That was right when tenants numbered
+	// four; at six it would have produced a row of four over an orphan pair.
 	//
 	// `stretch` (the default) is wanted here: tiles are equal height and the cue
 	// pins to the bottom of each, so the cues line up across a row.
@@ -284,7 +312,7 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 		gap: var(--pp-space-s);
 		margin: 0;
 		padding: 0;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 	}
 
 	.cards {

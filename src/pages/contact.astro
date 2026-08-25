@@ -1,5 +1,5 @@
 ---
-import { getImage } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -26,6 +26,11 @@ import { CONTACT, MAP_EMBED_URL } from '../config/nav';
 // credit in the site's own type instead of the tile renderer's.
 import desktopMap from '../assets/maps/desktop-location.png';
 import mobileMap from '../assets/maps/mobile-location.png';
+// The Near Northwest Neighborhood building at 1005 Portage Avenue, and the
+// people of the corridor. Paired with the "Find us" heading rather than dropped
+// in decoratively: the parapet in the photograph spells the neighbourhood the
+// heading names, which is a rare case of an image proving its own caption.
+import localeImage from '../assets/contact/neighborhood.webp';
 import { ACCESS } from '../config/site';
 
 const { street, city, region, postalCode } = CONTACT.address;
@@ -81,7 +86,8 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 	</PageHero>
 
 	{/* ------------------------------------------------------------------ */}
-	<Section tone="limestone">
+	{/* Plaster, per the client 2026-08-25. Restore with `tone="limestone"`. */}
+	<Section>
 		<div class="details">
 			<div class="detail">
 				<h2 class="detail__label">Address</h2>
@@ -140,9 +146,34 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 			the button rather than to the map, so anyone navigating by heading landed
 			on a control and found the map itself unannounced.
 		*/}
-		<div class="block-head">
-			<p class="pp-eyebrow block-head__eyebrow">Find us</p>
-			<h2>In the Near Northwest Neighborhood of South Bend</h2>
+		{/*
+			Text beside one photograph — the Phase 2 layout from Suites, with a single
+			frame instead of a pair. `.block-head`'s own bottom margin would fight the
+			grid gap here, so the heading parts are used directly inside the text
+			column rather than wrapped in it.
+		*/}
+		<div class="locale">
+			<div class="locale__text">
+				<p class="pp-eyebrow block-head__eyebrow">Find us</p>
+				<h2>In the Near Northwest Neighborhood of South Bend</h2>
+				<p class="block-head__lede">The Anchor for Portage Midtown</p>
+			</div>
+
+			<figure class="locale__media">
+				{/*
+					`widths` stops at the source's own 1600px — beyond that Astro upscales.
+					At `lg` this renders about 528px wide, so 1600 covers a DPR2 display
+					with room to spare. It is the full-bleed treatment the file could NOT
+					have carried: 1120px across would have needed 2240.
+				*/}
+				<Image
+					src={localeImage}
+					alt="A large crowd gathered on the sidewalk outside the Near Northwest Neighborhood building on Portage Avenue, its name in gold lettering above a striped awning."
+					widths={[560, 840, 1120, 1600]}
+					sizes="(min-width: 1024px) 46vw, 92vw"
+					loading="lazy"
+				/>
+			</figure>
 		</div>
 
 		<div class="map" id="map-region" tabindex="-1" data-map-region>
@@ -206,7 +237,8 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
-	<Section tone="limestone" data-cta-section>
+	{/* Plaster, per the client 2026-08-25. Restore with `tone="limestone"`. */}
+	<Section data-cta-section>
 		<div class="cta">
 			<div>
 				<p class="pp-eyebrow cta__eyebrow">Still deciding?</p>
@@ -387,6 +419,80 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 	.block-head__eyebrow {
 		color: var(--pp-brick-dark);
 		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.block-head__lede {
+		margin-block-start: var(--pp-space-s);
+		color: var(--pp-ink-muted);
+		text-wrap: pretty;
+	}
+
+	// The Phase 2 layout from Suites, one frame instead of two. Stacked below `lg`
+	// so the photograph gets the full column width on a phone, where it needs it —
+	// a hundred faces at half width would be unreadable.
+	.locale {
+		display: grid;
+		gap: var(--pp-space-xl);
+		align-items: center;
+		margin-block-end: var(--pp-space-xl);
+
+		@include from('lg') {
+			grid-template-columns: 1fr 1fr;
+			gap: var(--pp-space-2xl);
+			// `stretch`, not `center`. A centred item takes its own natural height,
+			// which is exactly what stopped the photograph matching the text.
+			align-items: stretch;
+		}
+	}
+
+	.locale__text {
+		max-width: 40rem;
+	}
+
+	.locale__media {
+		margin: 0;
+
+		:global(img) {
+			display: block;
+			width: 100%;
+			height: auto;
+			border-radius: var(--pp-radius-m);
+		}
+
+		// MATCHED TO THE TEXT COLUMN — and the cost is a crop, unavoidably.
+		//
+		// The image is absolutely positioned so it contributes NO height of its own.
+		// That leaves the text as the only thing sizing the row, and the figure then
+		// stretches to whatever the text comes to. Left in flow it would keep
+		// setting the row height itself, which is the problem being solved.
+		//
+		// At `lg` the column is ~528px, so the photograph wants ~299px while the
+		// heading block comes to ~234px — about 22% has to go.
+		//
+		// `top` is a deliberate choice, not a default. The window is 78% of the
+		// frame, but the gold "Near Northwest Neighborhood" sign sits at 3–8% and
+		// the kneeling front row at 85–95% — 92% of the frame. They cannot both
+		// survive. Anchoring to the top keeps the sign, which is the whole reason
+		// this photograph belongs beside this heading; the pavement and the front
+		// row's lower halves are what pay for it. Swap to `bottom` if the people
+		// matter more than the sign.
+		//
+		// Below `lg` the columns stack and the image runs full width uncropped,
+		// where it has the room to be read properly.
+		@include from('lg') {
+			position: relative;
+			overflow: hidden;
+			border-radius: var(--pp-radius-m);
+
+			:global(img) {
+				position: absolute;
+				inset: 0;
+				height: 100%;
+				object-fit: cover;
+				object-position: center top;
+				border-radius: 0;
+			}
+		}
 	}
 
 	.map {

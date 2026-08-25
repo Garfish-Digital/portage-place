@@ -56,7 +56,7 @@ const linkProps = url
 					src={mark}
 					alt={markAlt ?? `${name} logo`}
 					widths={[160, 320, 480]}
-					sizes="160px"
+					sizes="152px"
 					loading="lazy"
 				/>
 			) : (
@@ -98,7 +98,10 @@ const linkProps = url
 		padding: var(--pp-space-m);
 		text-decoration: none;
 		color: var(--pp-ink);
-		background-color: var(--pp-raised);
+		// Plaster, per the client 2026-08-25 — was `--pp-raised`, which inverts with
+		// section tone and had turned these limestone once the section went plaster.
+		// Pinned so the card colour no longer follows the section.
+		background-color: var(--pp-plaster);
 		border: 1px solid var(--pp-rule);
 		border-radius: var(--pp-radius-m);
 	}
@@ -121,14 +124,25 @@ const linkProps = url
 		}
 	}
 
-	// Fixed HEIGHT, free width. Every mark gets the same vertical space and the
-	// same optical baseline no matter its proportions; `contain` means none of
-	// them is ever cropped or stretched.
+	// Fixed HEIGHT, free width, centred.
+	//
+	// The marks arrive hand-balanced on a shared 1200x700 canvas — every one
+	// centred to the pixel, each sized by eye within that frame so a wide wordmark
+	// doesn't tower over a tall roundel. Their INK heights therefore range 33%–77%
+	// of the canvas on purpose; that spread is the optical balancing, not a defect.
+	//
+	// So: fit the CANVAS, never the ink. Any normalisation of our own — trimming to
+	// the ink, matching ink heights — would throw that judgement away and make the
+	// wordmarks enormous. `contain` on a uniform canvas preserves it exactly.
 	.tile__mark {
 		display: flex;
 		align-items: center;
-		justify-content: flex-start;
-		block-size: 56px;
+		justify-content: center;
+		// 88px, up from 56. Every mark is now on the same 1200x700 canvas (ratio
+		// 1.714), so this height is entirely predictable: each renders 151px wide,
+		// which is 48% of a 3-up tile's 315px content box — room to spare, and the
+		// marks finally read as marks rather than favicons.
+		block-size: 88px;
 		margin-block-end: var(--pp-space-m);
 
 		:global(img) {
