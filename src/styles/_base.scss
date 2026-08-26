@@ -23,6 +23,10 @@ body {
 // only), which is deliberate — the wonky single-story `g` and swashes read as
 // artisanal-coffee-brand rather than restored-landmark. If we ever want SOFT,
 // switch the import to `full.css` at +53KB.
+//
+// Weight comes from --pp-font-display-weight, not --pp-weight-semibold. Same
+// value (600) on Fraunces; the split exists so a single-weight family cannot
+// silently trigger synthesised bold. See the token.
 h1,
 h2,
 h3,
@@ -30,7 +34,7 @@ h4,
 h5,
 h6 {
 	font-family: var(--pp-font-display);
-	font-weight: var(--pp-weight-semibold);
+	font-weight: var(--pp-font-display-weight);
 	line-height: var(--pp-leading-snug);
 	color: var(--pp-text-strong);
 	text-wrap: balance;

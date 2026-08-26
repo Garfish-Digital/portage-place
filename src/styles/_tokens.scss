@@ -21,7 +21,6 @@
 	// Surfaces — light context
 	// ---------------------------------------------------------------------------
 	--pp-plaster: #fffffa; // page background; old paper / plaster wall
-	// --pp-plaster: #f7f5f1; // page background; old paper / plaster wall
 	--pp-limestone: #ddd7cf; // alternating section background
 	--pp-limestone-deep: #d2cabf; // pressed / hovered limestone surfaces
 
@@ -113,7 +112,31 @@
 	// ---------------------------------------------------------------------------
 	// Type
 	// ---------------------------------------------------------------------------
+	// Fraunces. Two replacements were tried at the client's request on 2026-08-26
+	// and both were rejected on sight, so this is a considered choice now rather
+	// than an inherited one:
+	//
+	//   Source Serif 4  — the plain option. Also 119.5 KB latin against Fraunces'
+	//                     65.7, i.e. +54 KB on the preloaded LCP-path file.
+	//   DM Serif Display — 24.2 KB and much lighter, but a STATIC single weight
+	//                     with no opsz axis, and a display face pushed down to 24px.
+	//
+	// Client objections on record: canted stems on M/N/H, the wedge apostrophe,
+	// the doglegged f and j. Worth knowing before re-opening this — we already
+	// ship Fraunces' plainest build (`standard` = opsz + wght, no SOFT, no WONK),
+	// so none of those are settings anyone enabled and there is no dial left to
+	// turn. The choice is Fraunces or a different family.
 	--pp-font-display: 'Fraunces Variable', ui-serif, georgia, 'Times New Roman', serif;
+	/**
+	 * The display face's own weight, kept separate from --pp-weight-semibold.
+	 *
+	 * Introduced during the DM Serif Display trial, which ships only weight 400:
+	 * eleven rules were asking this face for 600, and against a single-weight font
+	 * the browser SYNTHESISES bold rather than failing loudly. Kept after the
+	 * revert because it is the right shape regardless — the display face's weight
+	 * belongs to the display face, and swapping families is now one token.
+	 */
+	--pp-font-display-weight: 600;
 	--pp-font-body: 'Public Sans Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
 	// Fluid scale: 375px → 1440px viewport. Preferred values are rem-based so

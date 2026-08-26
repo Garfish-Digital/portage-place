@@ -4,10 +4,10 @@ sortYear: 1919
 title: A Bakery Takes Root
 summary: The Busse Baking Company builds a $90,000 bread plant on Portage Avenue.
 confidence: contested
-confidenceNote: >-
-  The building's own parapet carries a 1919 datestone, which settles the year. Who
-  built it is less certain: one account has Busse erecting the plant and Ward
-  acquiring it in the early 1920s, another has Ward entering South Bend in 1919.
+# confidenceNote: >-
+#   The building's own parapet carries a 1919 datestone, which settles the year. Who
+#   built it is less certain: one account has Busse erecting the plant and Ward
+#   acquiring it in the early 1920s, another has Ward entering South Bend in 1919.
 featured: true
 beforeAfter:
   - then: ../../assets/before-after/then-1.png

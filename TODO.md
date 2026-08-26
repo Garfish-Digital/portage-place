@@ -1,2 +1,6 @@
-
-I removed the `social-actionproject.png` file. We now need to explore the idea of placing the image `/assets/contact/neighborhood.webp` on the Contact page. It would possible look good in the "block-head" on lines 144-147, similar to how the Phase 2 section is on spaces.astro, only the Contact page will have 1 image instead of two. Evaluate and report first.
+-The client wants something more plain. They are unhappy about Fraunces for the following reasons:
+-1. There is a slant on the letters M, N, H, and so on that doesn't sit right with them.
+-2. The apostrophe is rigid/smart instead of friendly.
+-3. The lowercase letters f and j have a dogleg that is unappealing.
+-I have already had to make several adjustments to stat strip in order to accommodate specific requests by the client, including the removal of two stats and a drastic reduction in size.
+-We should investigate what Fontsource's @fontsource-variable/source-serif-4 package actually ships, because this replacement is likekly going to happen.

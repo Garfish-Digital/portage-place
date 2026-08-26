@@ -4,9 +4,9 @@ sortYear: 1976
 title: The Windows Disappear
 summary: Converted to a warehouse, the building is sealed — every window bricked shut.
 confidence: contested
-confidenceNote: >-
-  Ford Distributing's arrival is dated to fall 1976 by one source and to the
-  1980s by the other.
+# confidenceNote: >-
+#   Ford Distributing's arrival is dated to fall 1976 by one source and to the
+#   1980s by the other.
 featured: true
 beforeAfter:
   - then: ../../assets/before-after/then-4.png

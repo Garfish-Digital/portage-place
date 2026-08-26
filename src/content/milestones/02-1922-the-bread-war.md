@@ -4,9 +4,9 @@ sortYear: 1922
 title: The Bread War
 summary: Ward Baking Company absorbs Busse, ending a price war South Bend still remembers.
 confidence: contested
-confidenceNote: >-
-  Sources place Ward's takeover between 1922 and 1924. A South Bend Tribune
-  article of 29 July 1924 refers to the Portage bakery as already sold to Ward.
+# confidenceNote: >-
+#   Sources place Ward's takeover between 1922 and 1924. A South Bend Tribune
+#   article of 29 July 1924 refers to the Portage bakery as already sold to Ward.
 featured: true
 figures:
   - src: ../../assets/history/ward-ad-tiptop-story.webp

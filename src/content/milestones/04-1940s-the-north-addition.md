@@ -4,8 +4,8 @@ sortYear: 1944
 title: The Building Grows North
 summary: A major addition extends the complex toward the California Avenue corner.
 confidence: contested
-confidenceNote: >-
-    Three different dates are in circulation in regards to the expansion — 1940, 1944, and 1948.
+# confidenceNote: >-
+#     Three different dates are in circulation in regards to the expansion — 1940, 1944, and 1948.
 # confidenceNote: >-
 #   Three different dates are in circulation — 1940, 1944, and 1948 — from West.SB,
 #   county assessor records, and the current owners respectively.
@@ -16,14 +16,14 @@ figures:
       roof framing over an open floor, timber and covered materials stacked
       below, a workman standing at the center.
     caption: The north addition going up, steel framing in place.
-    credit: '⚠️ Thos. L. Hickey, Inc. — permission pending, watermarked placeholder'
+    # credit: '⚠️ Thos. L. Hickey, Inc. — permission pending, watermarked placeholder'
   - src: ../../assets/history/addition-complete.jpg
     alt: >-
       Black and white photograph of the completed single-story addition on a
       corner, in dark brick with bands of glass-block windows and a tall metal
       flue, a "Ward Tip-Top Cake" sign on the building beyond.
     caption: The finished block, glass block instead of windows.
-    credit: '⚠️ Thos. L. Hickey, Inc. — permission pending, watermarked placeholder'
+    # credit: '⚠️ Thos. L. Hickey, Inc. — permission pending, watermarked placeholder'
 sources:
   - 'Tom and Kate Hickey Family History (2014) — Thos. L. Hickey, Inc. built the Ward addition c. 1940'
   - 'South Bend permit, 1945 — ~$55,000, storage/motor equipment and a one-story addition'
