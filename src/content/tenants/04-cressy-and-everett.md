@@ -5,7 +5,8 @@ type: Real Estate
 logo: ../../assets/marks/cressy-and-everett.png
 imageAlt: 'Cressy & Everett logo: the name in serif capitals beside a red roofline.'
 # url: https://www.cressyeverett.com/
-url: https://www.cressyeverett.com/agent-bio/mattcurry
+# url: https://www.cressyeverett.com/agent-bio/mattcurry
+url: https://mattcurry.cressyeverett.com/?utm_source=google-gmb-maps&utm_medium=gmb-website-button&utm_campaign=locl.io&utm_content=4c1e96d0-ca9b-47b2-a348-2b771a8a174f
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true
