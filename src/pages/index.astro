@@ -8,7 +8,11 @@ import Section from '../components/primitives/Section.astro';
 import Button from '../components/Button.astro';
 import StatStrip from '../components/StatStrip.astro';
 import UseTypeGrid from '../components/UseTypeGrid.astro';
-import BeforeAfter from '../components/BeforeAfter.astro';
+// Unused since the Then/Now pair was replaced by FloorPlan + Phase2 on
+// 2026-08-30. Kept commented rather than deleted: the client may reverse.
+// import BeforeAfter from '../components/BeforeAfter.astro';
+import FloorPlan from '../components/FloorPlan.astro';
+import Phase2 from '../components/Phase2.astro';
 
 import { PROXIMITY, ACCESS } from '../config/site';
 import { getMilestones } from '../lib/content';
@@ -18,8 +22,9 @@ import { getMilestones } from '../lib/content';
 // the brief calls for a short silent loop with a poster frame once footage lands.
 import heroImage from '../assets/heroes/home.jpg';
 import heroImageMobile from '../assets/heroes/home-mobile.jpg';
-import then2 from '../assets/before-after/then-2.png';
-import now2 from '../assets/before-after/now-2.png';
+// Restore together with <BeforeAfter> above.
+// import then2 from '../assets/before-after/then-2.png';
+// import now2 from '../assets/before-after/now-2.png';
 
 const milestones = await getMilestones();
 // const milestoneCount = milestones.length;
@@ -45,8 +50,8 @@ const milestones = await getMilestones();
 		priority
 	>
 		<Fragment slot="actions">
-			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
-			<Button variant="secondary" size="lg" href="/spaces">Find your space</Button>
+			<Button size="lg" iconEnd="lucide:arrow-right" href="/contact">Contact us</Button>
+			<Button variant="quiet" size="lg" href="/tenants" data-surface="light">Under one roof</Button>
 		</Fragment>
 	</PageHero>
 
@@ -79,36 +84,19 @@ const milestones = await getMilestones();
 	</Section>
 
 	{/* ================================================================== */}
-	{/* Then / Now — the emotional hook, one pair only */}
+	{/* Floor plan + Phase 2 — moved here from Suites, per the client 2026-08-30 */}
 	{/* ================================================================== */}
-	<Section>
-		<div class="split">
-			<div class="split__text">
-				<p class="pp-eyebrow block-head__eyebrow">A hundred years in</p>
-				<h2>Its windows were bricked shut for forty years</h2>
-				<p class="split__body">
-					When the baking stopped, the building became a warehouse and every window was filled in with brick. In 2022 the bricks came out.
-					<!-- When the baking stopped, the building became a warehouse and every window was filled in with brick. It sat empty from 2012, and six attempts to rescue it failed. In March 2022 the bricks finally came out. -->
-				</p>
-				<Button variant="quiet" href="/history" iconEnd="lucide:arrow-right">
-					Read the whole story
-					<!-- Read the whole story — {milestoneCount} chapters -->
-				</Button>
-			</div>
+	{/*
+		This replaced the Then/Now BeforeAfter pair, which the comment here used to
+		call "the emotional hook" — the bricked-shut windows were the homepage's
+		strongest story. The client asked for the plan and Phase 2 in its place.
 
-			<div class="split__media">
-				<BeforeAfter
-					then={then2}
-					now={now2}
-					thenAlt="The building before renovation: two stories of brick with every window opening filled in, under a gray winter sky."
-					nowAlt="The same elevation today: the window openings reopened and glazed, brickwork cleaned, stone trim restored."
-					thenCaption="Vacant, windows bricked in"
-					nowCaption="Restored, 2022"
-					sizes="(min-width: 1024px) 26vw, (min-width: 768px) 44vw, 92vw"
-				/>
-			</div>
-		</div>
-	</Section>
+		To reverse: restore the block from git and move these two lines back into
+		`_spaces.astro`. Both components carry their own scoped styles and image
+		imports, so nothing else has to move with them.
+	*/}
+	<FloorPlan />
+	<Phase2 />
 
 	{/* ================================================================== */}
 	{/* Location */}
@@ -177,7 +165,7 @@ const milestones = await getMilestones();
 			<p class="close__lede">
 				Tell us roughly what you're looking for — one simple email.
 			</p>
-			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
+			<Button size="lg" iconEnd="lucide:arrow-right" href="/contact">Contact us</Button>
 		</div>
 	</Section>
 </BaseLayout>

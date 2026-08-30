@@ -25,7 +25,15 @@ import '../styles/global.scss';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 // import FloatingCta from '../components/FloatingCta.astro';
-import ContactModal from '../components/ContactModal.astro';
+// ⚠️ EMAIL CAPTURE REMOVED 2026-08-30, per the client. Every CTA on the site now
+// links to /contact, where the address and phone are published as mailto:/tel:
+// links instead. Commented rather than deleted, matching FloatingCta above — the
+// component, its Netlify Forms wiring and its success panel are all intact in
+// `src/components/ContactModal.astro` if this is reversed.
+//
+// Nothing carries `data-open-contact` any more, so the modal has no opener even
+// if it is rendered. Restoring means uncommenting here AND putting a trigger back.
+// import ContactModal from '../components/ContactModal.astro';
 
 interface Props {
 	title: string;
@@ -155,7 +163,7 @@ const fullTitle = title === 'Portage Place' ? title : `${title} — Portage Plac
 		<Footer />
 
 		{/* <FloatingCta /> */}
-		<ContactModal />
+		{/* <ContactModal /> */}
 	</body>
 </html>
 

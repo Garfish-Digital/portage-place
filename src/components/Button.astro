@@ -292,9 +292,14 @@ const tagProps = href
 		//
 		// Active takes a deeper brick so the press stays distinguishable from the
 		// hover rather than landing on the same colour.
-		--btn-bg: var(--pp-ink-strong);
-		--btn-bg-hover: var(--pp-brick-dark);
-		--btn-bg-active: #52371f;
+		// Named once so the opt-out below can reuse them without restating literals.
+		--btn-quiet-bg: var(--pp-ink-strong);
+		--btn-quiet-bg-hover: var(--pp-brick-dark);
+		--btn-quiet-bg-active: #52371f;
+
+		--btn-bg: var(--btn-quiet-bg);
+		--btn-bg-hover: var(--btn-quiet-bg-hover);
+		--btn-bg-active: var(--btn-quiet-bg-active);
 		--btn-fg: var(--pp-plaster);
 		--btn-border: transparent;
 		--btn-ring: var(--pp-bronze);
@@ -305,6 +310,22 @@ const tagProps = href
 			--btn-bg-active: var(--pp-espresso-deep);
 			--btn-fg: var(--pp-plaster);
 			--btn-border: var(--pp-border-inverse);
+		}
+
+		// `data-surface="light"` keeps the light-context FILLS on a dark surface, for
+		// when a quiet button has to match another one elsewhere on the site exactly.
+		// Added 2026-08-30 for the "Under one roof" pair (home hero + Contact CTA).
+		//
+		// It deliberately does NOT restore `--btn-border: transparent`. On the hero
+		// veil an ink-strong fill is 1.39:1 against the espresso behind it — nowhere
+		// near the 3:1 SC 1.4.11 wants for a control boundary — so the border from
+		// the rule above is what keeps the button's edge findable. Every colour a
+		// visitor reads as "the button" is identical to the light-context version;
+		// the hairline is the one addition.
+		:global(.pp-on-dark) &[data-surface='light'] {
+			--btn-bg: var(--btn-quiet-bg);
+			--btn-bg-hover: var(--btn-quiet-bg-hover);
+			--btn-bg-active: var(--btn-quiet-bg-active);
 		}
 	}
 

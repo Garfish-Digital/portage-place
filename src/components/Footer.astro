@@ -1,8 +1,8 @@
 ---
-import { Icon } from 'astro-icon/components';
-import Container from './primitives/Container.astro';
-import Logo from './Logo.astro';
-import { NAV_ITEMS, CONTACT, SOCIAL, isCurrentPath } from '../config/nav';
+import { Icon } from "astro-icon/components";
+import Container from "./primitives/Container.astro";
+import Logo from "./Logo.astro";
+import { NAV_ITEMS, CONTACT, SOCIAL, isCurrentPath } from "../config/nav";
 
 const year = new Date().getFullYear();
 
@@ -13,9 +13,10 @@ const isCurrent = (href: string) => isCurrentPath(Astro.url.pathname, href);
 ---
 
 <footer class="footer pp-on-dark">
-	<Container>
-		<div class="footer__meta">
-			{/*
+  <Container>
+    <div class="footer__meta">
+      {
+        /*
 				The full lockup lives here and only here. It's the one place a visitor
 				arrives having read the page, and it's where the scroll-triggered draw
 				will go (BUILD_PLAN). `keepIds` is on for exactly one instance per page
@@ -23,415 +24,484 @@ const isCurrent = (href: string) => isCurrentPath(Astro.url.pathname, href);
 
 				The lockup's wordmark is outlined vector, so the visible name it shows
 				is invisible to assistive tech — hence the visually-hidden text.
-			*/}
-			<div class="footer__brand" data-footer-brand>
-				<Logo variant="lockup" class="footer__mark" keepIds />
-				<span class="pp-visually-hidden">Portage Place</span>
-			</div>
+			*/
+      }
+      <div class="footer__brand" data-footer-brand>
+        <Logo variant="lockup" class="footer__mark" keepIds />
+        <span class="pp-visually-hidden">Portage Place</span>
+      </div>
 
-			<nav class="footer__nav" aria-label="Footer">
-				<ul class="footer__list" role="list">
-					{
-						NAV_ITEMS.map((item) => (
-							<li>
-								<a
-									class="footer__link"
-									href={item.href}
-									aria-current={isCurrent(item.href) ? 'page' : undefined}
-								>
-									{item.label}
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</nav>
+      <nav class="footer__nav" aria-label="Footer">
+        <ul class="footer__list" role="list">
+          {
+            NAV_ITEMS.map((item) => (
+              <li>
+                <a
+                  class="footer__link"
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-			{/*
+      {
+        /*
 				Address and social sit in one column: both answer "how do I reach
 				this place", and splitting them would leave the icon orphaned in the
 				grid on desktop.
-			*/}
-			<div class="footer__reach">
-				<address class="footer__address">
-					{CONTACT.address.street}<br />
-					{CONTACT.address.city}, {CONTACT.address.region} {CONTACT.address.postalCode}
-				</address>
+			*/
+      }
+      <div class="footer__reach">
+        {
+          /*
+					Added 2026-08-30, when the client removed the contact modal. With no
+					form anywhere on the site these two links ARE the conversion path, so
+					they are real links rather than plain text — one tap opens the mail
+					client or the dialler.
 
-				<ul class="footer__social" role="list">
-					{
-						SOCIAL.map((account) => (
-							<li>
-								<a
-									class="footer__social-link"
-									href={account.href}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<Icon name={account.icon} class="footer__social-icon" aria-hidden="true" />
-									{/*
+					Inside <address> because that element is for the contact details of
+					its nearest article or document, which is exactly what these are.
+				*/
+        }
+        <address class="footer__contact">
+          <a class="footer__contact-link" href={`tel:${CONTACT.phoneHref}`}>
+            <Icon name="lucide:phone" aria-hidden="true" />
+            {CONTACT.phone}
+          </a>
+          <a class="footer__contact-link" href={`mailto:${CONTACT.email}`}>
+            <Icon name="lucide:mail" aria-hidden="true" />
+            {CONTACT.email}
+          </a>
+        </address>
+
+        <address class="footer__address">
+          {CONTACT.address.street}<br />
+          {CONTACT.address.city}, {CONTACT.address.region}
+          {CONTACT.address.postalCode}
+        </address>
+
+        <ul class="footer__social" role="list">
+          {
+            SOCIAL.map((account) => (
+              <li>
+                <a
+                  class="footer__social-link"
+                  href={account.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon
+                    name={account.icon}
+                    class="footer__social-icon"
+                    aria-hidden="true"
+                  />
+                  {/*
 										Platform is announced but not shown; the handle is both.
 										That makes the accessible name "Instagram,
 										@portage_place_sb" while the visible label stays the
 										handle alone — and keeps the visible text inside the
 										accessible name, which SC 2.5.3 requires.
 									*/}
-									<span class="pp-visually-hidden">{account.platform},</span>
-									<span class="footer__social-handle">@{account.handle}</span>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</div>
-		</div>
+                  <span class="pp-visually-hidden">{account.platform},</span>
+                  <span class="footer__social-handle">@{account.handle}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
 
-		<p class="footer__legal">
-			&copy; {year} Portage Place, South Bend, Indiana.
-		</p>
-	</Container>
+    <p class="footer__legal">
+      &copy; {year} Portage Place, South Bend, Indiana.
+    </p>
+  </Container>
 </footer>
 
-
 <script>
-	// The footer logo draws itself once — and only once per visit.
-	//
-	// Order matters here. `.can-draw` is what hides the strokes, so it must not go
-	// on until we have decided we are actually going to animate: if reduced motion
-	// is set, or the mark has already drawn this session, we never touch the
-	// element and the finished logo is what renders. That keeps "invisible" from
-	// ever being a state we can get stuck in.
-	//
-	// sessionStorage rather than a per-page flag because navigation here is
-	// cross-document (native view transitions), so every page is a fresh document
-	// and the mark would otherwise redraw on Home, then History, then Community —
-	// which starts to read as a splash screen rather than a signature.
-	const brand = document.querySelector<HTMLElement>('[data-footer-brand]');
-	const KEY = 'pp-footer-logo-drawn';
+  // The footer logo draws itself once — and only once per visit.
+  //
+  // Order matters here. `.can-draw` is what hides the strokes, so it must not go
+  // on until we have decided we are actually going to animate: if reduced motion
+  // is set, or the mark has already drawn this session, we never touch the
+  // element and the finished logo is what renders. That keeps "invisible" from
+  // ever being a state we can get stuck in.
+  //
+  // sessionStorage rather than a per-page flag because navigation here is
+  // cross-document (native view transitions), so every page is a fresh document
+  // and the mark would otherwise redraw on Home, then History, then Tenants —
+  // which starts to read as a splash screen rather than a signature.
+  const brand = document.querySelector<HTMLElement>("[data-footer-brand]");
+  const KEY = "pp-footer-logo-drawn";
 
-	const alreadyDrawn = () => {
-		try {
-			return sessionStorage.getItem(KEY) === '1';
-		} catch {
-			// Private mode and some embedded webviews throw on access. Treat that as
-			// "already drawn" so the logo is simply present.
-			return true;
-		}
-	};
+  const alreadyDrawn = () => {
+    try {
+      return sessionStorage.getItem(KEY) === "1";
+    } catch {
+      // Private mode and some embedded webviews throw on access. Treat that as
+      // "already drawn" so the logo is simply present.
+      return true;
+    }
+  };
 
-	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
 
-	if (brand && !reducedMotion && !alreadyDrawn() && 'IntersectionObserver' in window) {
-		brand.classList.add('can-draw');
+  if (
+    brand &&
+    !reducedMotion &&
+    !alreadyDrawn() &&
+    "IntersectionObserver" in window
+  ) {
+    brand.classList.add("can-draw");
 
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				if (!entry.isIntersecting) return;
-				brand.classList.add('is-drawing');
-				try {
-					sessionStorage.setItem(KEY, '1');
-				} catch {
-					/* nothing to do — the animation still runs this once */
-				}
-				observer.disconnect();
-			},
-			// A little of the plaque has to be on screen before it starts, or the
-			// sequence plays out below the fold and the visitor never sees it.
-			{ threshold: 0.4 },
-		);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        brand.classList.add("is-drawing");
+        try {
+          sessionStorage.setItem(KEY, "1");
+        } catch {
+          /* nothing to do — the animation still runs this once */
+        }
+        observer.disconnect();
+      },
+      // A little of the plaque has to be on screen before it starts, or the
+      // sequence plays out below the fold and the visitor never sees it.
+      { threshold: 0.4 },
+    );
 
-		observer.observe(brand);
-	}
+    observer.observe(brand);
+  }
 </script>
 
 <style lang="scss">
-	.footer {
-		// Was `--pp-space-section` on top to clear a CTA block, which has moved out
-		// to the pages — where it can offer a secondary action the footer never
-		// could. Near-symmetric now; the footer anchors, it doesn't sell.
-		padding-block: var(--pp-space-2xl) var(--pp-space-l);
-		// Color comes from .pp-on-dark, which remaps the semantic aliases for
-		// everything inside — the logo included, which is why it renders plaster on
-		// espresso with no variant of its own.
-	}
+  .footer {
+    // Was `--pp-space-section` on top to clear a CTA block, which has moved out
+    // to the pages — where it can offer a secondary action the footer never
+    // could. Near-symmetric now; the footer anchors, it doesn't sell.
+    padding-block: var(--pp-space-2xl) var(--pp-space-l);
+    // Color comes from .pp-on-dark, which remaps the semantic aliases for
+    // everything inside — the logo included, which is why it renders plaster on
+    // espresso with no variant of its own.
+  }
 
-	.footer__meta {
-		display: grid;
-		gap: var(--pp-space-l);
+  .footer__meta {
+    display: grid;
+    gap: var(--pp-space-l);
 
-		@include from('md') {
-			grid-template-columns: auto 1fr auto;
-			// Centred, not `start`. The plaque is ~152px tall against a 20px row of
-			// links and an ~84px address block, so top-aligning left the bottom two
-			// thirds of the footer as a ragged shelf of empty space — three things
-			// hung from a ceiling rather than one row. Centring is what makes them
-			// read as a composed row.
-			align-items: center;
-			gap: var(--pp-space-xl);
-		}
-	}
+    @include from("md") {
+      grid-template-columns: auto 1fr auto;
+      // Centred, not `start`. The plaque is ~152px tall against a 20px row of
+      // links and an ~84px address block, so top-aligning left the bottom two
+      // thirds of the footer as a ragged shelf of empty space — three things
+      // hung from a ceiling rather than one row. Centring is what makes them
+      // read as a composed row.
+      align-items: center;
+      gap: var(--pp-space-xl);
+    }
+  }
 
-	// The client's mark is designed to sit on black, so it keeps its own plaque —
-	// same construction as the header's, hairline and all.
-	//
-	// No padding: the lockup's viewBox already carries ~11% margin (the artwork
-	// spans x 63–492 of 555), so the plaque breathes without any added inset.
-	// `fit-content` because the brand is a block in a single-column grid on mobile
-	// and would otherwise stretch the plaque far past the mark.
-	.footer__brand {
-		display: block;
-		width: fit-content;
-		background-color: var(--pp-ink-strong);
-		border: 1px solid var(--pp-plaster);
-	}
+  // The client's mark is designed to sit on black, so it keeps its own plaque —
+  // same construction as the header's, hairline and all.
+  //
+  // No padding: the lockup's viewBox already carries ~11% margin (the artwork
+  // spans x 63–492 of 555), so the plaque breathes without any added inset.
+  // `fit-content` because the brand is a block in a single-column grid on mobile
+  // and would otherwise stretch the plaque far past the mark.
+  .footer__brand {
+    display: block;
+    width: fit-content;
+    background-color: var(--pp-ink-strong);
+    border: 1px solid var(--pp-plaster);
+  }
 
-	// Inherits --pp-text from .pp-on-dark, so the mark renders plaster on espresso
-	// with no variant of its own — the whole point of currentColor.
-	:global(.footer__mark) {
-		width: clamp(10.5rem, 18vw, 13rem);
-		color: var(--pp-text-strong);
-	}
+  // Inherits --pp-text from .pp-on-dark, so the mark renders plaster on espresso
+  // with no variant of its own — the whole point of currentColor.
+  :global(.footer__mark) {
+    width: clamp(10.5rem, 18vw, 13rem);
+    color: var(--pp-text-strong);
+  }
 
+  // ---------------------------------------------------------------------------
+  // The logo draw
+  // ---------------------------------------------------------------------------
+  // Measured path lengths from the lockup: both icon strokes are 405.2 user
+  // units and both rules are 91. Equal lengths mean equal durations look right
+  // with no per-path compensation — a happy accident of a symmetric mark.
+  //
+  // THE DEFAULT IS THE FINISHED LOGO. Nothing below applies until JavaScript
+  // adds `.can-draw`, because a stroke-dashoffset start state baked into the
+  // stylesheet would leave the mark simply absent if the script never ran. That
+  // is the same failure mode as the bio disclosure: a hidden default with no
+  // guaranteed path back to visible.
+  //
+  // `:global()` because the lockup is injected with set:html, so Astro's scoping
+  // cannot reach inside it. `.footer__brand` is written in this template, so it
+  // still carries this component's scope — the rules stay confined to the footer.
+  .footer__brand.can-draw {
+    opacity: 0;
 
-	// ---------------------------------------------------------------------------
-	// The logo draw
-	// ---------------------------------------------------------------------------
-	// Measured path lengths from the lockup: both icon strokes are 405.2 user
-	// units and both rules are 91. Equal lengths mean equal durations look right
-	// with no per-path compensation — a happy accident of a symmetric mark.
-	//
-	// THE DEFAULT IS THE FINISHED LOGO. Nothing below applies until JavaScript
-	// adds `.can-draw`, because a stroke-dashoffset start state baked into the
-	// stylesheet would leave the mark simply absent if the script never ran. That
-	// is the same failure mode as the bio disclosure: a hidden default with no
-	// guaranteed path back to visible.
-	//
-	// `:global()` because the lockup is injected with set:html, so Astro's scoping
-	// cannot reach inside it. `.footer__brand` is written in this template, so it
-	// still carries this component's scope — the rules stay confined to the footer.
-	.footer__brand.can-draw {
-		opacity: 0;
+    :global(#icon-right),
+    :global(#icon-left) {
+      stroke-dasharray: 406;
+      stroke-dashoffset: 406;
+    }
 
-		:global(#icon-right),
-		:global(#icon-left) {
-			stroke-dasharray: 406;
-			stroke-dashoffset: 406;
-		}
+    // Both rules run inner → outer. rule-right's path already starts at its
+    // inner end, so a positive offset draws outward. rule-left's path starts at
+    // its OUTER end, so it needs a negative offset to draw from the far end
+    // backwards — otherwise it grows inward, mirroring the wrong way.
+    :global(#rule-right) {
+      stroke-dasharray: 91;
+      stroke-dashoffset: 91;
+    }
 
-		// Both rules run inner → outer. rule-right's path already starts at its
-		// inner end, so a positive offset draws outward. rule-left's path starts at
-		// its OUTER end, so it needs a negative offset to draw from the far end
-		// backwards — otherwise it grows inward, mirroring the wrong way.
-		:global(#rule-right) {
-			stroke-dasharray: 91;
-			stroke-dashoffset: 91;
-		}
+    :global(#rule-left) {
+      stroke-dasharray: 91;
+      stroke-dashoffset: -91;
+    }
 
-		:global(#rule-left) {
-			stroke-dasharray: 91;
-			stroke-dashoffset: -91;
-		}
+    // The letters are filled outlines, so they cannot be stroke-drawn. A wipe
+    // reveals them instead — PORTAGE left to right, PLACE back the other way.
+    :global(#wordmark-portage) {
+      clip-path: inset(0 100% 0 0);
+    }
 
-		// The letters are filled outlines, so they cannot be stroke-drawn. A wipe
-		// reveals them instead — PORTAGE left to right, PLACE back the other way.
-		:global(#wordmark-portage) {
-			clip-path: inset(0 100% 0 0);
-		}
+    :global(#wordmark-place) {
+      clip-path: inset(0 0 0 100%);
+    }
+  }
 
-		:global(#wordmark-place) {
-			clip-path: inset(0 0 0 100%);
-		}
-	}
+  .footer__brand.is-drawing {
+    animation: plaque-in 400ms var(--pp-ease-out) forwards;
 
-	.footer__brand.is-drawing {
-		animation: plaque-in 400ms var(--pp-ease-out) forwards;
+    :global(#icon-right) {
+      animation: draw-line 620ms var(--pp-ease-out) 300ms forwards;
+    }
 
-		:global(#icon-right) {
-			animation: draw-line 620ms var(--pp-ease-out) 300ms forwards;
-		}
+    // Overlapped rather than sequential, so the interlock resolves as one
+    // gesture instead of two separate strokes.
+    :global(#icon-left) {
+      animation: draw-line 620ms var(--pp-ease-out) 480ms forwards;
+    }
 
-		// Overlapped rather than sequential, so the interlock resolves as one
-		// gesture instead of two separate strokes.
-		:global(#icon-left) {
-			animation: draw-line 620ms var(--pp-ease-out) 480ms forwards;
-		}
+    :global(#wordmark-portage) {
+      animation: wipe-ltr 420ms var(--pp-ease-out) 1040ms forwards;
+    }
 
-		:global(#wordmark-portage) {
-			animation: wipe-ltr 420ms var(--pp-ease-out) 1040ms forwards;
-		}
+    :global(#rule-right),
+    :global(#rule-left) {
+      animation: draw-line 340ms var(--pp-ease-out) 1380ms forwards;
+    }
 
-		:global(#rule-right),
-		:global(#rule-left) {
-			animation: draw-line 340ms var(--pp-ease-out) 1380ms forwards;
-		}
+    :global(#wordmark-place) {
+      animation: wipe-rtl 420ms var(--pp-ease-out) 1620ms forwards;
+    }
+  }
 
-		:global(#wordmark-place) {
-			animation: wipe-rtl 420ms var(--pp-ease-out) 1620ms forwards;
-		}
-	}
+  @keyframes plaque-in {
+    to {
+      opacity: 1;
+    }
+  }
 
-	@keyframes plaque-in {
-		to {
-			opacity: 1;
-		}
-	}
+  @keyframes draw-line {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
 
-	@keyframes draw-line {
-		to {
-			stroke-dashoffset: 0;
-		}
-	}
+  @keyframes wipe-ltr {
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
 
-	@keyframes wipe-ltr {
-		to {
-			clip-path: inset(0 0 0 0);
-		}
-	}
+  @keyframes wipe-rtl {
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
 
-	@keyframes wipe-rtl {
-		to {
-			clip-path: inset(0 0 0 0);
-		}
-	}
+  .footer__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pp-space-xs) var(--pp-space-m);
+    margin: 0;
+    padding: 0;
 
-	.footer__list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--pp-space-xs) var(--pp-space-m);
-		margin: 0;
-		padding: 0;
+    // Desktop only. The nav sits in the `1fr` column, so the links occupy about
+    // 376px of roughly 644px and the remaining ~270px used to pool as one gap
+    // before the address; splitting it either side centres them between the mark
+    // and the address block.
+    //
+    // Kept out of the mobile rule deliberately: below `md` the meta is a single
+    // column and the links share a left edge with the address beneath them, so
+    // centring there would break an alignment that currently works.
+    @include from("md") {
+      justify-content: center;
+    }
+  }
 
-		// Desktop only. The nav sits in the `1fr` column, so the links occupy about
-		// 376px of roughly 644px and the remaining ~270px used to pool as one gap
-		// before the address; splitting it either side centres them between the mark
-		// and the address block.
-		//
-		// Kept out of the mobile rule deliberately: below `md` the meta is a single
-		// column and the links share a left edge with the address beneath them, so
-		// centring there would break an alignment that currently works.
-		@include from('md') {
-			justify-content: center;
-		}
-	}
+  // Current-page marker, built the same way as the header's: the underline is
+  // the state, the colour lift is the emphasis.
+  //
+  // Hover and current MUST NOT resolve to the same appearance, or neither one
+  // means anything. Hover changes colour only; current changes colour AND draws
+  // the rule. That is the header's logic exactly — there, hover draws the rule
+  // and current adds white — so each state is the other plus one property.
+  //
+  // `--pp-limestone-deep` (#d2cabf) on espresso is 8.20:1, far past the 3:1 that
+  // SC 1.4.11 asks of a non-text indicator. The footer is always espresso, so
+  // unlike the header's copy of this rule there is no scrimmed-photograph case
+  // to hold up against.
+  .footer__link {
+    position: relative;
+    font-size: var(--pp-text-s);
+    color: var(--pp-limestone-deep);
+    text-decoration: none;
+    transition: color var(--pp-duration-fast) var(--pp-ease-out);
 
-	// Current-page marker, built the same way as the header's: the underline is
-	// the state, the colour lift is the emphasis.
-	//
-	// Hover and current MUST NOT resolve to the same appearance, or neither one
-	// means anything. Hover changes colour only; current changes colour AND draws
-	// the rule. That is the header's logic exactly — there, hover draws the rule
-	// and current adds white — so each state is the other plus one property.
-	//
-	// `--pp-limestone-deep` (#d2cabf) on espresso is 8.20:1, far past the 3:1 that
-	// SC 1.4.11 asks of a non-text indicator. The footer is always espresso, so
-	// unlike the header's copy of this rule there is no scrimmed-photograph case
-	// to hold up against.
-	.footer__link {
-		position: relative;
-		font-size: var(--pp-text-s);
-		color: var(--pp-limestone-deep);
-		text-decoration: none;
-		transition: color var(--pp-duration-fast) var(--pp-ease-out);
+    @include focusable;
 
-		@include focusable;
+    // -5px, where the header uses -2px. The header's links are set in the
+    // `eyebrow` mixin — small caps, which have no descenders — so a rule can sit
+    // tight under the baseline. These are sentence case, and "History" drops a
+    // `y` straight through a rule at -2px.
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block-end: -5px;
+      inset-inline: 0;
+      height: 2px;
+      background-color: var(--pp-limestone-deep);
+      scale: 0 1;
+      transform-origin: left center;
+      transition: scale var(--pp-duration-base) var(--pp-ease-out);
+    }
 
-		// -5px, where the header uses -2px. The header's links are set in the
-		// `eyebrow` mixin — small caps, which have no descenders — so a rule can sit
-		// tight under the baseline. These are sentence case, and "History" and
-		// "Community" both drop a `y` straight through a rule at -2px.
-		&::after {
-			content: '';
-			position: absolute;
-			inset-block-end: -5px;
-			inset-inline: 0;
-			height: 2px;
-			background-color: var(--pp-limestone-deep);
-			scale: 0 1;
-			transform-origin: left center;
-			transition: scale var(--pp-duration-base) var(--pp-ease-out);
-		}
+    // Colour AND rule, matching the header. The rule was built and wired to
+    // animate but nothing ever triggered it on hover — only `aria-current` did —
+    // so the underline appeared on the current page and nowhere else.
+    @include hover-capable {
+      &:hover {
+        color: var(--pp-text-strong);
+      }
 
-		// Colour AND rule, matching the header. The rule was built and wired to
-		// animate but nothing ever triggered it on hover — only `aria-current` did —
-		// so the underline appeared on the current page and nowhere else.
-		@include hover-capable {
-			&:hover {
-				color: var(--pp-text-strong);
-			}
+      &:hover::after {
+        scale: 1 1;
+      }
+    }
 
-			&:hover::after {
-				scale: 1 1;
-			}
-		}
+    &[aria-current="page"] {
+      color: var(--pp-text-strong);
 
-		&[aria-current='page'] {
-			color: var(--pp-text-strong);
+      &::after {
+        scale: 1 1;
+      }
+    }
+  }
 
-			&::after {
-				scale: 1 1;
-			}
-		}
-	}
+  .footer__reach {
+    display: grid;
+    gap: var(--pp-space-s);
+    // Otherwise the grid stretches the social row to the column width and the
+    // 44px hit area lands nowhere near the glyph.
+    justify-items: start;
+  }
 
-	.footer__reach {
-		display: grid;
-		gap: var(--pp-space-s);
-		// Otherwise the grid stretches the social row to the column width and the
-		// 44px hit area lands nowhere near the glyph.
-		justify-items: start;
-	}
+  .footer__address {
+    font-size: var(--pp-text-s);
+    font-style: normal;
+    line-height: var(--pp-leading-normal);
+    color: var(--pp-limestone-deep);
+  }
 
-	.footer__address {
-		font-size: var(--pp-text-s);
-		font-style: normal;
-		line-height: var(--pp-leading-normal);
-		color: var(--pp-limestone-deep);
-	}
+  .footer__contact {
+    display: grid;
+    gap: var(--pp-space-3xs);
+    font-style: normal;
+    justify-items: start;
+  }
 
-	.footer__social {
-		display: flex;
-		gap: var(--pp-space-2xs);
-		margin: 0;
-		padding: 0;
-	}
+  // Same construction as .footer__social-link, deliberately — these sit directly
+  // above it and any difference in size or hit area would read as a mistake.
+  .footer__contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--pp-space-2xs);
+    font-size: var(--pp-text-s);
+    text-decoration: none;
+    color: var(--pp-limestone-deep);
+    transition: color var(--pp-duration-fast) var(--pp-ease-out);
 
-	// `min-target` puts the 44px hit area on a pseudo-element (SC 2.5.8) rather
-	// than padding the link out. A padded link would push the glyph off the
-	// address's left edge — this keeps the target large and the optical
-	// alignment intact, which is the whole reason that mixin exists.
-	.footer__social-link {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--pp-space-2xs);
-		font-size: var(--pp-text-s);
-		text-decoration: none;
-		color: var(--pp-limestone-deep);
-		// color: var(--pp-text-muted);
-		transition: color var(--pp-duration-fast) var(--pp-ease-out);
+    @include min-target;
+    @include focusable;
 
-		@include min-target;
-		@include focusable;
+    @include hover-capable {
+      &:hover {
+        color: var(--pp-text-strong);
+      }
+    }
 
-		@include hover-capable {
-			&:hover {
-				color: var(--pp-text-strong);
-			}
-		}
-	}
+    :global(svg) {
+      flex: none;
+      width: 15px;
+      height: 15px;
+    }
+  }
 
-	// 20px, matching the use-type grid rather than the 24px a bare glyph wanted —
-	// beside 16px text a 24px mark reads as an icon with a caption stuck to it
-	// instead of one label.
-	.footer__social-icon {
-		flex: none;
-		width: 20px;
-		height: 20px;
-	}
+  .footer__social {
+    display: flex;
+    gap: var(--pp-space-2xs);
+    margin: 0;
+    padding: 0;
+  }
 
-	.footer__legal {
-		margin-block-start: var(--pp-space-xl);
-        text-align: center; 
-		font-size: var(--pp-text-xs);
-		color: var(--pp-text-muted);
-	}
+  // `min-target` puts the 44px hit area on a pseudo-element (SC 2.5.8) rather
+  // than padding the link out. A padded link would push the glyph off the
+  // address's left edge — this keeps the target large and the optical
+  // alignment intact, which is the whole reason that mixin exists.
+  .footer__social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--pp-space-2xs);
+    font-size: var(--pp-text-s);
+    text-decoration: none;
+    color: var(--pp-limestone-deep);
+    // color: var(--pp-text-muted);
+    transition: color var(--pp-duration-fast) var(--pp-ease-out);
+
+    @include min-target;
+    @include focusable;
+
+    @include hover-capable {
+      &:hover {
+        color: var(--pp-text-strong);
+      }
+    }
+  }
+
+  // 20px, matching the use-type grid rather than the 24px a bare glyph wanted —
+  // beside 16px text a 24px mark reads as an icon with a caption stuck to it
+  // instead of one label.
+  .footer__social-icon {
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+
+  .footer__legal {
+    margin-block-start: var(--pp-space-xl);
+    text-align: center;
+    font-size: var(--pp-text-xs);
+    color: var(--pp-text-muted);
+  }
 </style>

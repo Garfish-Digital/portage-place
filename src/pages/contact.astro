@@ -1,5 +1,5 @@
 ---
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -8,24 +8,7 @@ import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
 import { CONTACT, MAP_EMBED_URL } from '../config/nav';
 
-// Static map over Thunderforest/OSM tiles.
-//
-// ART DIRECTION, not just resizing. Two separate crops, because scaling one
-// image down does not survive the trip to a phone: the desktop artwork is 2300px
-// wide shown in roughly 350 CSS px, a 0.15x reduction that turns every street
-// label into about four pixels of noise. The mobile crop is zoomed in far enough
-// that its labels stay readable at the size they are actually displayed.
-//
-// That needs `<picture>` with `media`, which `<Image>`/`<Picture>` can't express
-// — they vary resolution and format, not artwork. Hence `getImage()` and a
-// hand-written <picture>: the browser then downloads exactly one of the two, so
-// a phone never pays for the 2 MB desktop crop.
-//
-// Attribution is NOT baked into these files. It is rendered as a caption below
-// the map, which satisfies ODbL and Thunderforest just as well and keeps the
-// credit in the site's own type instead of the tile renderer's.
-import desktopMap from '../assets/maps/desktop-location.png';
-import mobileMap from '../assets/maps/mobile-location.png';
+
 // The Near Northwest Neighborhood building at 1005 Portage Avenue, and the
 // people of the corridor. Paired with the "Find us" heading rather than dropped
 // in decoratively: the parapet in the photograph spells the neighbourhood the
@@ -35,30 +18,6 @@ import { ACCESS } from '../config/site';
 
 const { street, city, region, postalCode } = CONTACT.address;
 
-// Google Maps directions deep-link. Sends the visitor to their own map app with
-// the destination pre-filled rather than embedding a 1 MB third-party iframe that
-// sets cookies before they've done anything.
-const mapQuery = encodeURIComponent(`Portage Place, ${street}, ${city}, ${region} ${postalCode}`);
-const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
-
-// 768px is `md` in $breakpoints, and it has to stay in step with the aspect-ratio
-// switch in the style block below. If they drift, the container's shape and the
-// artwork's shape disagree and one of the two crops gets cut.
-const MAP_MEDIA = '(min-width: 768px)';
-
-// `widths` stop at each source's own width — beyond that Astro upscales, which
-// costs bytes and adds nothing. AVIF first, WebP second: these are flat-colour
-// vector renders, exactly the content AVIF handles best.
-const [desktopAvif, desktopWebp, mobileAvif, mobileWebp, mapFallback] = await Promise.all([
-	getImage({ src: desktopMap, format: 'avif', widths: [768, 1240, 1860, 2300], sizes: '70vw' }),
-	getImage({ src: desktopMap, format: 'webp', widths: [768, 1240, 1860, 2300], sizes: '70vw' }),
-	getImage({ src: mobileMap, format: 'avif', widths: [360, 720, 1006], sizes: '94vw' }),
-	getImage({ src: mobileMap, format: 'webp', widths: [360, 720, 1006], sizes: '94vw' }),
-	getImage({ src: desktopMap, format: 'webp', width: 1240 }),
-]);
-
-const mapAlt =
-	'Street map of the Near Northwest Neighborhood with Portage Place marked on Portage Avenue, between California Avenue and the St. Joseph River.';
 
 // ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
 import heroImage from '../assets/heroes/contact.jpg';
@@ -80,56 +39,76 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 		position="center 45%"
 		priority
 	>
-		<Fragment slot="actions">
-			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
-		</Fragment>
 	</PageHero>
 
 	{/* ------------------------------------------------------------------ */}
 	{/* Plaster, per the client 2026-08-25. Restore with `tone="limestone"`. */}
 	<Section>
-		<div class="details">
-			<div class="detail">
-				<h2 class="detail__label">Address</h2>
-				<address class="detail__body">
-					Portage Place<br />
-					{street}<br />
-					{city}, {region} {postalCode}
-				</address>
-			</div>
+	{/*
+		Two columns, per the client 2026-08-30: contact details left, location right.
+		Was three (Address · Getting here · Interactive map) plus the standalone
+		Email and Phone blocks added earlier the same day, which split four related
+		facts across four columns and left the phone and email looking stranded.
 
-			<div class="detail">
-				<h2 class="detail__label">Getting here</h2>
-				<ul class="access" role="list">
-					{
-						ACCESS.map((item) => (
-							<li class="access__item">
-								<Icon name="lucide:check" aria-hidden="true" />
-								<span>{item}</span>
-							</li>
-						))
-					}
-				</ul>
-			</div>
+		The type scale inverts what was here before, deliberately. Phone and email
+		are now the largest thing in the section and the street address is set at
+		the same size as the access list, because with no form on the site those two
+		links ARE the conversion path and the address is reference material.
+	*/}
+	<div class="details">
+		<div class="detail">
+			<h2 class="detail__label">Contact Information</h2>
 
-			<div class="detail">
-				<h2 class="detail__label">Interactive map</h2>
-				{/*
-					A <button>, not a link: it loads the map into the page below rather
-					than navigating away. `aria-controls` ties it to the region it changes,
-					and the script moves focus there so a keyboard user isn't left behind.
-				*/}
-				<Button
-					type="button"
-					icon="lucide:navigation"
-					aria-controls="map-region"
-					data-load-map
-				>
-					Show map
+			<p class="detail__contact">
+				<a class="detail__link" href={`tel:${CONTACT.phoneHref}`}>{CONTACT.phone}</a>
+			</p>
+			<p class="detail__contact">
+				<a class="detail__link" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+			</p>
+
+			{/* Client-supplied 2026-08-30. Same treatment as the address below it. */}
+			<p class="detail__agent">Mike Keen, Leasing Agent</p>
+
+			
+		</div>
+
+		<div class="detail">
+			<h2 class="detail__label">Location</h2>
+
+            <address class="detail__address">
+				Portage Place<br />
+				{street}<br />
+				{city}, {region} {postalCode}
+			</address>
+			<!-- <ul class="access" role="list">
+				{
+					ACCESS.map((item) => (
+						<li class="access__item">
+							<Icon name="lucide:check" aria-hidden="true" />
+							<span>{item}</span>
+						</li>
+					))
+				}
+			</ul> -->
+
+			{/*
+				An in-page anchor, not a link out. It jumps to the embedded map below
+				rather than handing off to Google Maps — the client's call 2026-08-30.
+
+				`#map-region` is a plain fragment link, so the scroll is native and
+				`_reset.scss` already disables the smooth behaviour under
+				prefers-reduced-motion. The target carries `tabindex="-1"` so focus
+				follows the jump instead of staying behind on the button, which is what
+				a keyboard or screen-reader user needs when the thing they asked for is
+				a non-interactive region.
+			*/}
+			<div class="detail__action">
+				<Button variant="quiet" href="#map-region" icon="lucide:navigation" data-scroll-to-map>
+					Get directions
 				</Button>
-				<p class="detail__hint">Click to load Google Maps</p>
 			</div>
 		</div>
+	</div>
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
@@ -138,8 +117,8 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 		{/*
 			Two-line block-head, matching the Suites floor plan — the closest analogue
 			on the site: a section whose whole content is one static artefact that
-			becomes interactive on demand. No lede, because `.map__escape` below the
-			map already carries the explanatory sentence.
+			becomes interactive on demand. No lede: the map speaks for itself and the
+			Get directions button above already carries the ask.
 
 			It also gives the map region a heading of its own. Before this the only
 			heading naming the map was "Interactive map" two sections up, attached to
@@ -176,64 +155,37 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 			</figure>
 		</div>
 
-		<div class="map" id="map-region" tabindex="-1" data-map-region>
-			{/*
-				Facade. The styled static map (Phase 4) sits here until clicked; only
-				then does the Google iframe load. Google sets third-party cookies and
-				pulls a large payload the instant it loads, so doing that to every
-				visitor who opens Contact is what this pattern avoids.
-			*/}
-			<div class="map__facade" data-map-facade>
-				{/*
-					Source order matters: the browser takes the FIRST matching <source>,
-					so the desktop crop has to be tested before the unconditional mobile
-					one. Within each crop, AVIF precedes WebP for the same reason.
+		{/*
+			⚠️ FACADE REMOVED 2026-08-30, per the client: "a typical Google map, which
+			comes default with a button to open on their phone for directions."
 
-					No `width`/`height` on the <img>, deliberately. The two crops have
-					DIFFERENT ratios (1.49 mobile, 1.70 desktop), so a single pair of
-					intrinsic dimensions would describe the wrong shape at one breakpoint
-					and let the browser infer an aspect ratio that never renders. Nothing
-					is lost: `.map` reserves the box with its own aspect-ratio and
-					`.map__static` fills it, so there is no layout shift to protect
-					against. It also keeps Astro from emitting the untouched 2 MB PNG
-					alongside the optimised variants.
-				*/}
-				<picture>
-					<source media={MAP_MEDIA} type="image/avif" srcset={desktopAvif.srcSet.attribute} sizes="70vw" />
-					<source media={MAP_MEDIA} type="image/webp" srcset={desktopWebp.srcSet.attribute} sizes="70vw" />
-					<source type="image/avif" srcset={mobileAvif.srcSet.attribute} sizes="94vw" />
-					<source type="image/webp" srcset={mobileWebp.srcSet.attribute} sizes="94vw" />
-					<img
-						src={mapFallback.src}
-						alt={mapAlt}
-						class="map__static"
-						loading="lazy"
-						decoding="async"
-					/>
-				</picture>
-				<div class="map__control">
-					<Button variant="quiet" type="button" icon="lucide:map" data-load-map>
-						Load Google Maps
-					</Button>
-				</div>
-			</div>
+			This reverses a decision BUILD_PLAN argues for explicitly. The facade held a
+			styled static map and only swapped in Google's iframe on click, because
+			Google sets third-party cookies and pulls a large payload the instant it
+			loads. That now happens for every visitor who opens Contact, whether or not
+			they wanted a map. Recorded here so it reads as a choice, not as drift.
+
+			What went with it: the Thunderforest/OSM static map and its required
+			attribution (no longer using their tiles) and the "open it in Google Maps"
+			escape link, whose job Get directions now does. The click-to-load script
+			went too; the small script at the foot of this file is a different thing —
+			it smooth-scrolls to the map and loads nothing.
+
+			⚠️ `MAP_EMBED_URL` is still the undocumented `output=embed` stopgap. It was
+			tolerable behind a click; it is now on every page load. See the note in
+			`nav.ts` for the Share → Embed URL that should replace it.
+		*/}
+		<div class="map" id="map-region" tabindex="-1">
+			<iframe
+				class="map__frame"
+				src={MAP_EMBED_URL}
+				title="Google Maps showing Portage Place, 908 Portage Avenue, South Bend, Indiana"
+				loading="lazy"
+				referrerpolicy="no-referrer-when-downgrade"
+				allowfullscreen
+			></iframe>
 		</div>
 
-		{/*
-			Required credit, not decoration. OSM's ODbL obliges attribution on a
-			produced work and Thunderforest requires their own; a caption adjacent to
-			the map satisfies both, and unlike the baked-in version it stays in Public
-			Sans and survives the eventual hand-drawn replacement.
-		*/}
-		<p class="map__credit">Maps &copy; Thunderforest, Data &copy; OpenStreetMap contributors</p>
-
-		<p class="map__escape">
-			Or <a href={mapsUrl} target="_blank" rel="noopener noreferrer">
-				open it in Google Maps
-				<Icon name="lucide:arrow-up-right" aria-hidden="true" />
-				<span class="pp-visually-hidden">(opens in a new tab)</span></a> — better if
-			you're heading here now and want it on your phone.
-		</p>
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
@@ -243,61 +195,22 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 			<div>
 				<p class="pp-eyebrow cta__eyebrow">Still deciding?</p>
 				<h2 class="cta__title">Have a look at what's here</h2>
+				{/*
+					Was "Sizes, wings and what fits where — plus the hundred-year story
+					behind the building." The first half described the Suites page, which
+					came out on 2026-08-30, and the button beside it went with it.
+				*/}
 				<p class="cta__lede">
-					Sizes, wings and what fits where — plus the hundred-year story behind the
-					building.
+					The hundred-year story behind the building.
 				</p>
 			</div>
 			<div class="cta__actions">
-				<Button variant="quiet" size="lg" href="/spaces">Find your space</Button>
 				<Button variant="quiet" size="lg" href="/history">The history</Button>
+				<Button variant="quiet" size="lg" href="/tenants">Under one roof</Button>
 			</div>
 		</div>
 	</Section>
 </BaseLayout>
-
-<script>
-	import { MAP_EMBED_URL } from '../config/nav';
-
-	// Click-to-load map. The only JS on this page, and it exists to keep Google's
-	// cookies and payload off visitors who never ask for the map.
-	const region = document.querySelector<HTMLElement>('[data-map-region]');
-	const facade = document.querySelector<HTMLElement>('[data-map-facade]');
-	const triggers = document.querySelectorAll<HTMLButtonElement>('[data-load-map]');
-
-	if (region && facade && triggers.length) {
-		let loaded = false;
-
-		const load = () => {
-			if (loaded) return;
-			loaded = true;
-
-			const frame = document.createElement('iframe');
-			frame.src = MAP_EMBED_URL;
-			// Without a title the frame is announced as an unlabeled region.
-			frame.title = 'Google Maps showing Portage Place, 908 Portage Avenue, South Bend, Indiana';
-			frame.loading = 'lazy';
-			frame.referrerPolicy = 'no-referrer-when-downgrade';
-			frame.className = 'map__frame';
-			frame.setAttribute('allowfullscreen', '');
-
-			facade.replaceWith(frame);
-
-			// The control that was clicked may now be off-screen, and the thing it
-			// changed is elsewhere on the page. Move focus to the region so a
-			// keyboard or screen-reader user lands on what they just asked for.
-			region.focus();
-
-			triggers.forEach((button) => {
-				button.disabled = true;
-				button.textContent = 'Map loaded';
-			});
-		};
-
-		triggers.forEach((button) => button.addEventListener('click', load));
-	}
-</script>
-
 <style lang="scss">
 	.intro {
 		max-width: 44rem;
@@ -325,8 +238,15 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 		display: grid;
 		gap: var(--pp-space-xl);
 
+		// Two, per the client 2026-08-30. Was `repeat(3, 1fr)`; with Email and Phone
+		// added that had become four columns of one fact each.
+		//
+		// `auto` tracks rather than `1fr`, because `1fr` fills the row and leaves
+		// `justify-content` nothing to distribute. Sizing each column to its content
+		// is what gives space-around something to space around.
 		@include from('md') {
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(2, auto);
+			justify-content: space-around;
 			gap: var(--pp-space-2xl);
 		}
 	}
@@ -338,51 +258,108 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 		margin-block-end: var(--pp-space-s);
 	}
 
-	.detail__body {
+
+	// Phone and email. Fraunces, per the client 2026-08-30 — same construction as
+	// `.detail__body` above, which is what the address used to be set in.
+	//
+	// The size is pinned rather than taken from `--pp-text-h4`. That token is
+	// `fluid(24, 29)`, so 29px only arrives at a 1440px viewport and anything
+	// narrower inspects smaller — which is the "should be larger" here. `rem()`
+	// keeps it in rem so it still respects the user's browser font-size setting.
+	// If these should grow past 29px on wide screens, `--pp-text-h3` is the token
+	// (29px → 36px across the same range).
+	.detail__contact {
 		font-family: var(--pp-font-display);
-		font-size: var(--pp-text-h4);
-		font-style: normal;
+		// Doubled from 29px, per the client 2026-08-30 — but only from `md` up.
+		//
+		// 58px flat overflows the 375px minimum viewport: `mfkeen@gmail.com` is 16
+		// characters, and Fraunces averages about half an em per character, so 16 ×
+		// 29px ≈ 464px of text in roughly 343px of container. It cannot wrap either,
+		// an email being one unbroken token. So the doubling applies where there is
+		// room for it and the phone stays legible below that.
+		font-size: rem(32);
 		line-height: var(--pp-leading-snug);
 		color: var(--pp-ink-strong);
-	}
+        
+		@include from('md') {
+            text-decoration: none;
+			font-size: rem(32);
+            font-weight: 600;
+		}
 
-	.detail__body--pending {
-		font-family: var(--pp-font-body);
-		font-size: var(--pp-text-s);
-		color: var(--pp-error);
-		font-style: italic;
-	}
+		// Belt and braces: nothing here may push the page into horizontal scroll,
+		// whatever a future address turns out to be.
+		overflow-wrap: break-word;
 
-	.detail__actions {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: var(--pp-space-s);
-		margin-block-start: var(--pp-space-m);
-	}
-
-	.detail__link {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25em;
-		font-size: var(--pp-text-s);
-		font-weight: var(--pp-weight-semibold);
-		color: var(--pp-green-link);
-		text-decoration: none;
-
-		@include focusable;
-
-		:global(svg) {
-			width: 14px;
-			height: 14px;
+		+ .detail__contact {
+			margin-block-start: var(--pp-space-3xs);
 		}
 	}
+
+	// "Mike Keen, Leasing Agent" — styled exactly as .detail__address below it,
+	// minus that block's top margin, so it reads as a caption on the email rather
+	// than a separate fact.
+	.detail__agent {
+		margin-block-start: var(--pp-space-2xs);
+		font-size: var(--pp-text-s);
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-ink);
+	}
+
+	// The address drops to the access list's size and sits below a gap, so the
+	// column reads as "act on these, and here is where it is" rather than three
+	// equal facts.
+	.detail__address {
+		margin-block-start: var(--pp-space-l);
+		font-size: var(--pp-text-s);
+		font-style: normal;
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-ink);
+	}
+
+	// Underlined rather than colour-only, so the link is distinguishable without
+	// relying on hue (SC 1.4.1), and `min-target` keeps the tap area at 44px.
+	// `inherit` so the size and face come from whichever block wraps it.
+	//
+	// ⚠️ There is a global `:where(p,li,dd,blockquote,figcaption) a` rule in the
+	// base layer that paints links `--pp-green-link` with a 35% green underline.
+	// `:where()` is zero-specificity so `color: inherit` beats it — but it does NOT
+	// set `text-decoration-color`, so without the override below the underline
+	// stays green under ink-strong text. `currentColor` makes it track whatever
+	// colour the link actually is, hover included.
+	.detail__link {
+		color: inherit;
+		// text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+		// text-decoration-thickness: 1px;
+		// text-underline-offset: 0.18em;
+        text-decoration: none;
+		transition: color var(--pp-duration-fast) var(--pp-ease-out);
+
+		@include min-target;
+		@include focusable;
+
+		@include hover-capable {
+			&:hover {
+				color: var(--pp-brick-dark);
+			}
+		}
+	}
+
+
+
 
 	.access {
 		display: grid;
 		gap: var(--pp-space-2xs);
 		margin: 0;
 		padding: 0;
+	}
+
+	// The list and the button swapped places 2026-08-30, so the gap moved with
+	// them. Mirrors .detail__address in the left column, so both columns break to
+	// their secondary content at the same point.
+	.detail__action {
+		margin-block-start: var(--pp-space-l);
 	}
 
 	.access__item {
@@ -403,7 +380,7 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 	// ---------------------------------------------------------------------------
 	// Map
 	// ---------------------------------------------------------------------------
-	// `.block-head` is NOT global — Home, Suites and Community each carry their own
+	// `.block-head` is NOT global — Home, Suites and Tenants each carry their own
 	// copy in their own scoped style block, so a page using the markup without the
 	// rules gets a completely unstyled heading. That is what happened here: with no
 	// `margin-block-end` the h2 sat directly on the map and the descender of the
@@ -466,72 +443,37 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 		}
 	}
 
+	// 16/9 on mobile, wider on desktop so the embed never becomes a tall slab in a
+	// 1120px container. These used to be the exact ratios of the two static PNGs
+	// (1006/674 and 2300/1354); with the artwork gone the box only has to be a
+	// sensible shape for Google's tiles, which crop to whatever they are given.
 	.map {
-		// Reserved before anything loads, so swapping the facade for the iframe
-		// costs no layout shift.
-		//
-		// The height is capped by the ASPECT RATIO, never by max-block-size. Pairing
-		// `aspect-ratio` with `max-block-size: 30rem` made the box resolve to a fixed
-		// 853px width (480 x 16/9) which then sat left-aligned inside a 1120px
-		// container — reading as broken alignment on every viewport above ~935px,
-		// and self-correcting below it only because the container got narrower.
-		// Widening the ratio on large screens caps the height without ever
-		// under-filling the column.
 		width: 100%;
-		// One ratio per crop, each matching its own artwork exactly, so NEITHER view
-		// is cropped and object-position never has to rescue anything. The
-		// breakpoint here must stay in step with MAP_MEDIA in the frontmatter.
-		//
-		// mobile-location.png is 1006 x 674; desktop-location.png is 2300 x 1354,
-		// which is the same 1.699 ratio as the 1240 x 730 this was written against.
-		aspect-ratio: 1006 / 674;
+		// +30% height, per the client 2026-08-30: the divisor is 9 × 1.3 = 11.7 in
+		// both crops. Google's embed has no dimension constraints — the iframe is
+		// theirs to fill and the tiles simply re-centre — so this is ours to set.
+		aspect-ratio: 16 / 11.7;
 		overflow: hidden;
-
-		@include from('md') {
-			aspect-ratio: 2300 / 1354;
-		}
+		// scrollIntoView honours scroll-margin, which is what keeps the map clear of
+		// the sticky header. `:target` in _reset.scss covers the no-JS path; this
+		// covers the smooth path, where preventDefault means :target never fires.
+		scroll-margin-block-start: var(--pp-scroll-offset, 6rem);
 		border-radius: var(--pp-radius-m);
 		background-color: var(--pp-limestone);
 
-		// tabindex="-1" makes it a focus target; the ring would otherwise be noise
-		// on a non-interactive region.
+		@include from('md') {
+			aspect-ratio: 21 / 11.7;
+		}
+
+		// tabindex="-1" makes it a focus target for the Get directions anchor; the
+		// ring would otherwise be noise on a non-interactive region.
 		&:focus {
 			outline: none;
 		}
 	}
 
-	.map__facade {
-		position: relative;
-		height: 100%;
-		border-radius: inherit;
-		overflow: hidden;
-	}
 
-	:global(.map__static) {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		// The pin is centred in both crops now, so a centred crop is the safe one —
-		// this used to be `20% 30%`, tuned for older artwork whose marker sat high
-		// and left. With each container ratio matched to its own artwork there is
-		// nothing to crop at either size; this only governs the in-between states
-		// (a ratio the media query hasn't caught up with, or a future re-crop), and
-		// centring keeps the marker the last thing lost rather than the first.
-		object-position: center;
-	}
 
-	// The trigger sits on a solid chip rather than floating on the map: a
-	// translucent control over cartography can't have a predictable contrast ratio,
-	// because the pixels behind it change with the crop.
-	.map__control {
-		position: absolute;
-		inset-block-end: var(--pp-space-s);
-		inset-inline-end: var(--pp-space-s);
-		padding: var(--pp-space-3xs);
-		background-color: var(--pp-plaster);
-		border-radius: var(--pp-radius-m);
-		box-shadow: var(--pp-shadow-m);
-	}
 
 	:global(.map__frame) {
 		display: block;
@@ -540,43 +482,8 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 		border: 0;
 	}
 
-	// Kept even once the embed loads. Google's iframe is patchy for keyboard users,
-	// and anyone actually traveling here wants the destination on their phone.
-	// Right-aligned under the map, where a baked-in tile credit would have sat —
-	// familiar position, but in Public Sans at the smallest step and in muted ink,
-	// so it satisfies the licence without competing with the escape link beneath
-	// it. `xs` on `--pp-ink-muted` is 6.84:1, comfortably past 4.5:1.
-	.map__credit {
-		margin-block-start: var(--pp-space-2xs);
-		font-size: var(--pp-text-xs);
-		color: var(--pp-ink-muted);
-		text-align: end;
-	}
 
-	.map__escape {
-		margin-block-start: var(--pp-space-s);
-		font-size: var(--pp-text-s);
-		color: var(--pp-ink-muted);
 
-		a {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.2em;
-			color: var(--pp-green-link);
-			font-weight: var(--pp-weight-semibold);
-
-			:global(svg) {
-				width: 13px;
-				height: 13px;
-			}
-		}
-	}
-
-	.detail__hint {
-		margin-block-start: var(--pp-space-2xs);
-		font-size: var(--pp-text-xs);
-		color: var(--pp-ink-muted);
-	}
 
 	// ---------------------------------------------------------------------------
 	.cta {
@@ -617,3 +524,35 @@ import heroImageMobile from '../assets/heroes/contact-mobile.jpg';
 		gap: var(--pp-space-s);
 	}
 </style>
+
+<script>
+	// Smooth scroll to the map, applied per-interaction.
+	//
+	// `_reset.scss` deliberately does NOT set `scroll-behavior: smooth` on <html>:
+	// that would hijack every in-page jump on the site, skip links included, which
+	// is disorienting for keyboard users. It says to apply it per interaction
+	// instead, and this is that — one button, nothing else on the page affected.
+	//
+	// Reduced motion takes the early return rather than a shortened animation. A
+	// long smooth scroll is precisely the vestibular trigger the media query exists
+	// for, so the native jump is the correct behaviour there, not a faster glide.
+	// The native jump still lands correctly because `:target` in the reset carries
+	// the same scroll offset the smooth path gets from `scroll-margin`.
+	const trigger = document.querySelector<HTMLAnchorElement>('[data-scroll-to-map]');
+	const region = document.querySelector<HTMLElement>('#map-region');
+
+	if (trigger && region) {
+		trigger.addEventListener('click', (event) => {
+			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+			event.preventDefault();
+			region.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+			// `preventScroll` matters: focus() would otherwise snap the page to the
+			// element instantly and cancel the animation that just started. The map is
+			// a non-interactive region, so without this the button keeps focus and a
+			// screen-reader user is left behind at the top of the page.
+			region.focus({ preventScroll: true });
+		});
+	}
+</script>

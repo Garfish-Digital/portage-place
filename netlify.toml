@@ -13,3 +13,20 @@
 
 [context.branch-deploy]
   command = "npm run build"
+
+# Netlify does not recognise the `.webmanifest` extension and was serving the
+# manifest as `application/octet-stream`. Every icon on the site gets a correct
+# type automatically — only this one file was wrong.
+#
+# It matters more than a mislabelled file usually would. Chrome decides between
+# two very different outcomes when you tap install:
+#
+#   · a WebAPK — a real app entry, appears in the app drawer/shelf, own window
+#   · a bookmark shortcut — home screen only, opens in a Chrome tab, no shelf
+#
+# A manifest it cannot confidently parse drops it to the shortcut, which is
+# exactly the "installed but nothing in the app shelf" symptom.
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"

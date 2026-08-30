@@ -1,0 +1,106 @@
+---
+/**
+ * Ground-floor plan.
+ *
+ * Extracted from `spaces.astro` on 2026-08-30, when the client asked for this
+ * section on the homepage. It is a component rather than pasted markup because
+ * `.plan` AND `.block-head` are both Astro-scoped to whichever page they sit in —
+ * moving the markup alone would have rendered it unstyled, and copying the styles
+ * too would have left two sets to keep in sync. Markup, styles and the image
+ * import travel together, so the call site is one line in either page and the
+ * move stays reversible.
+ */
+import { Image } from 'astro:assets';
+// Restore together with the figcaption below — Astro does not evaluate
+// components inside an HTML comment, so this would otherwise sit unused.
+// import { Icon } from 'astro-icon/components';
+
+import Section from './primitives/Section.astro';
+
+// ⚠️ 2021 PROPOSED PLAN — for rough-in only. Carries Kil Architecture's title
+// block; must be cropped or redrawn before anything ships. That mattered less
+// halfway down a leasing page than it does on the homepage.
+import planImage from '../assets/plans/floor-plan.png';
+---
+
+<Section>
+	<div class="block-head">
+		<p class="pp-eyebrow block-head__eyebrow">The floor plan</p>
+		<h2>Ground floor</h2>
+	</div>
+
+	{/*
+		ROUGH-IN ONLY. This becomes an interactive SVG whose <path> ids match the
+		`id` field on each unit in spaces.yaml — hover to highlight, click for
+		detail, pinch-zoom on mobile, with the list below as the accessible
+		equivalent rather than an afterthought.
+	*/}
+	<figure class="plan">
+		<Image
+			src={planImage}
+			alt="Architect's proposed ground-floor plan showing numbered retail units along the Portage Avenue frontage, warehouse and flex bays to the rear, and a block of lettered studios in the center."
+			widths={[720, 1080, 1200]}
+			sizes="(min-width: 1024px) 70vw, 94vw"
+			loading="lazy"
+		/>
+		<!-- <figcaption class="plan__caption">
+			<Icon name="lucide:triangle-alert" aria-hidden="true" />
+			<span>
+				<strong>Placeholder.</strong> Kil Architecture's <em>proposed</em> first-floor
+				plan, dated 22 September 2021 — not as-built, ground floor only, and it still
+				carries the architect's title block. Replaced before launch by a current plan,
+				redrawn as an interactive vector.
+			</span>
+		</figcaption> -->
+	</figure>
+</Section>
+
+<style lang="scss">
+	// `.block-head` is NOT global — every page that uses it carries its own copy,
+	// and so must every component. The lede variant is omitted because this
+	// section has no lede.
+	.block-head {
+		max-width: 44rem;
+		margin-block-end: var(--pp-space-xl);
+	}
+
+	.block-head__eyebrow {
+		color: var(--pp-brick-dark);
+		margin-block-end: var(--pp-space-2xs);
+	}
+
+	.plan {
+		margin: 0;
+	}
+
+	.plan :global(img) {
+		width: 100%;
+		height: auto;
+		border: 1px solid var(--pp-rule);
+		border-radius: var(--pp-radius-m);
+		background-color: #fff;
+	}
+
+	.plan__caption {
+		display: flex;
+		align-items: start;
+		gap: var(--pp-space-2xs);
+		margin-block-start: var(--pp-space-s);
+		max-width: var(--pp-measure);
+		font-size: var(--pp-text-xs);
+		line-height: var(--pp-leading-normal);
+		color: var(--pp-ink-muted);
+
+		strong {
+			color: var(--pp-error);
+		}
+
+		:global(svg) {
+			flex: none;
+			width: 15px;
+			height: 15px;
+			margin-block-start: 0.15em;
+			color: var(--pp-error);
+		}
+	}
+</style>

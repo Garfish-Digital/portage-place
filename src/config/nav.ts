@@ -46,18 +46,32 @@ export const NAV_ITEMS: NavItem[] = [
 		label: 'Home',
 		href: '/',
 	},
-	{
-		label: 'Suites',
-		href: '/spaces',
-		description: 'Floor plans, sizes, and what fits here.',
-	},
-	// Community before History, per the client 2026-08-24. Array order IS render
+	// ⚠️ REMOVED FROM THE SITE 2026-08-30, per the client: the floor plan and Phase
+	// 2 moved to the homepage and the Suites page came out. The page itself is
+	// parked at `src/pages/_spaces.astro` — Astro ignores `_`-prefixed files in
+	// `pages/`, so it emits no route while staying intact and diffable.
+	//
+	// To reverse: `git mv src/pages/_spaces.astro src/pages/spaces.astro` and
+	// uncomment this entry.
+	// {
+	// 	label: 'Suites',
+	// 	href: '/spaces',
+	// 	description: 'Floor plans, sizes, and what fits here.',
+	// },
+	// This item before History, per the client 2026-08-24. Array order IS render
 	// order for the desktop bar, the mobile panel and the footer — all three map
 	// over NAV_ITEMS — so this one edit moves every instance. Nothing else in the
 	// codebase depends on the sequence.
+	//
+	// ⚠️ Renamed from "Community" / `/community` on 2026-08-30. The route moved
+	// with the label because the site was still on the Netlify subdomain with no
+	// inbound links — free then, a permanent 301 afterwards. Note this is the ONE
+	// page whose label under-describes its contents: it runs tenants → owners →
+	// neighborhood → partners, and the first section is `#tenants`. Don't "fix"
+	// that by narrowing the page to tenants; the order is locked in BUILD_PLAN.
 	{
-		label: 'Community',
-		href: '/community',
+		label: 'Tenants',
+		href: '/tenants',
 		description: 'Tenants, owners, neighborhood, partners.',
 	},
 	{
@@ -73,26 +87,33 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 /**
- * The single conversion action. One address, one low-friction ask.
+ * How to reach the building. Address, email, phone — all client-supplied.
  *
- * Address: confirmed by the client.
+ * ⚠️ CHANGED 2026-08-30. `email` was a dev alias on garfishdigital.com, and the
+ * note here recorded `tyler@regensb.com` as the production recipient of the
+ * Netlify contact form. Both are superseded: the client removed the email
+ * capture entirely and gave `mfkeen@gmail.com` as the address to publish. There
+ * is no form on the site now, so this is not a form recipient — it is what
+ * renders, as a `mailto:`, in the footer and on Contact.
  *
- * 🚨 `email` IS A DEV ALIAS, NOT THE PRODUCTION RECIPIENT — and it is the only
- * placeholder left in this file. Production is `tyler@regensb.com`; swap it at
- * cutover.
+ * 🚩 Two things worth raising before launch rather than after:
+ *   · `tyler@regensb.com` has not been retired by anyone, it was simply not
+ *     mentioned. If both addresses are meant to receive enquiries, this file
+ *     currently publishes only one of them.
+ *   · `mfkeen@gmail.com` is a personal Gmail account, not an address on
+ *     portageplacesb.com. That is entirely the client's call, but it does mean
+ *     the MX work described in the BUILD_PLAN cutover checklist no longer has
+ *     anything on this site depending on it.
  *
- * Note the recipient is on **regensb.com**, a different domain. That does NOT
- * make the DNS cutover safe on its own: proper MX records are expected on
- * portageplacesb.com by launch, so mail records have to be replicated into
- * Netlify DNS before nameservers are flipped. See the cutover checklist in
- * BUILD_PLAN.md.
- *
- * The Netlify Forms recipient is configured in the Netlify UI, not here — this
- * constant is only for what the site itself renders or links to.
+ * `phoneHref` is the E.164 form `tel:` needs; `phone` is what a human reads.
+ * Keeping both means the displayed number can be reformatted without breaking
+ * the link, and satisfies SC 2.5.3 (the visible text stays inside the link).
  */
 export const CONTACT = {
-	/** Dev alias. Production: tyler@regensb.com */
-	email: 'testing@garfishdigital.com',
+	/** Client-supplied 2026-08-30, replacing the dev alias. */
+	email: 'mfkeen@gmail.com',
+	phone: '574-514-2096',
+	phoneHref: '+15745142096',
 	address: {
 		street: '908 Portage Avenue',
 		city: 'South Bend',

@@ -156,7 +156,7 @@ const team = defineCollection({
 });
 
 // ---------------------------------------------------------------------------
-// tenants — Community page
+// tenants — Tenants page
 // ---------------------------------------------------------------------------
 const tenants = defineCollection({
 	loader: glob({ base: './src/content/tenants', pattern: '**/*.md' }),

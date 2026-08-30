@@ -36,12 +36,12 @@ const TENANT_TOTAL = 20;
 const shown = tenants.length;
 
 // ⚠️ TEMPORARY HERO — Rob's phone shots, replaced by the professional shoot.
-import heroImage from '../assets/heroes/community.jpg';
-import heroImageMobile from '../assets/heroes/community-mobile.jpg';
+import heroImage from '../assets/heroes/tenants.jpg';
+import heroImageMobile from '../assets/heroes/tenants-mobile.jpg';
 ---
 
 <BaseLayout
-	title="Community"
+	title="Tenants"
 	description="The businesses, owners, neighbors and partners behind Portage Place — a restored 1919 bakery in South Bend's Near Northwest Neighborhood."
 >
 	<PageHero
@@ -56,16 +56,17 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 		priority
 	>
 		{/*
-			Same hero CTA as Suites, per the client 2026-08-25 — `size="lg"`, arrow,
-			`data-open-contact`. It inherits the primary variant's dark-context pairing
-			from `.hero__veil.pp-on-dark`, so it renders light-green on espresso rather
-			than the mid-green that would collapse to 2.13:1 there.
+			Was "Ask about a space" opening the contact modal; now a plain link to
+			Contact, per the client 2026-08-30. Still `size="lg"` with the arrow, and
+			it still inherits the primary variant's dark-context pairing from
+			`.hero__veil.pp-on-dark`, so it renders light-green on espresso rather than
+			the mid-green that would collapse to 2.13:1 there.
 
 			History deliberately keeps no hero CTA: its closing ask ("There is room for
 			you") only means anything after the timeline has been read.
 		*/}
 		<Fragment slot="actions">
-			<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Ask about a space</Button>
+			<Button size="lg" iconEnd="lucide:arrow-right" href="/contact">Contact us</Button>
 		</Fragment>
 	</PageHero>
 
@@ -76,7 +77,7 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 	<Section id="tenants">
 		<div class="block-head">
 			<p class="pp-eyebrow block-head__eyebrow">Tenants</p>
-			<h2>Twenty businesses, one roof</h2>
+			<h2>Several businesses under one roof</h2>
 			<p class="block-head__lede">
 				Commercial suites front Portage Avenue alongside private offices.
 			</p>
@@ -238,8 +239,7 @@ import heroImageMobile from '../assets/heroes/community-mobile.jpg';
 				</p>
 			</div>
 			<div class="cta__actions">
-				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
-				<Button variant="quiet" size="lg" href="/spaces">Find your space</Button>
+				<Button size="lg" iconEnd="lucide:arrow-right" href="/contact">Contact us</Button>
 			</div>
 		</div>
 	</Section>

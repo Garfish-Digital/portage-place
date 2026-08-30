@@ -1,5 +1,6 @@
 ---
-import { Image } from 'astro:assets';
+// Unused since FloorPlan/Phase2 were extracted — they carry their own <Image>.
+// import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -7,17 +8,13 @@ import Section from '../components/primitives/Section.astro';
 import PageHero from '../components/PageHero.astro';
 import Button from '../components/Button.astro';
 import UseTypeGrid from '../components/UseTypeGrid.astro';
+// Both extracted from this file on 2026-08-30 so the client could see them on the
+// homepage. Styles and image imports moved with them; the sections render here
+// exactly as before.
+import FloorPlan from '../components/FloorPlan.astro';
+import Phase2 from '../components/Phase2.astro';
 import { getSpaceRange, getSpaceTypes, getSpaceTypeSummary } from '../lib/content';
 import { SPACE_TYPE_ICONS, SPACE_TYPE_ICON_FALLBACK } from '../config/site';
-
-// ⚠️ 2021 PROPOSED PLAN — for rough-in only. Carries Kil Architecture's title
-// block; must be cropped or redrawn before anything ships.
-import planImage from '../assets/plans/floor-plan.png';
-
-// Phase 2 in progress, shot 2026. Evidence that "more coming" is actually
-// happening — which is the only reason these earn space on a leasing page.
-import phase2Skylight from '../assets/phase-2/skylight.jpg';
-import phase2Openings from '../assets/phase-2/openings.jpg';
 
 // Unit types to keep out of BOTH the "kinds of suites" grid and the sizes table.
 //
@@ -132,37 +129,7 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 	{/* ------------------------------------------------------------------ */}
 	{/* The plan */}
 	{/* ------------------------------------------------------------------ */}
-	<Section>
-		<div class="block-head">
-			<p class="pp-eyebrow block-head__eyebrow">The floor plan</p>
-			<h2>Ground floor</h2>
-		</div>
-
-		{/*
-			ROUGH-IN ONLY. This becomes an interactive SVG whose <path> ids match the
-			`id` field on each unit in spaces.yaml — hover to highlight, click for
-			detail, pinch-zoom on mobile, with the list below as the accessible
-			equivalent rather than an afterthought.
-		*/}
-		<figure class="plan">
-			<Image
-				src={planImage}
-				alt="Architect's proposed ground-floor plan showing numbered retail units along the Portage Avenue frontage, warehouse and flex bays to the rear, and a block of lettered studios in the center."
-				widths={[720, 1080, 1200]}
-				sizes="(min-width: 1024px) 70vw, 94vw"
-				loading="lazy"
-			/>
-			<!-- <figcaption class="plan__caption">
-				<Icon name="lucide:triangle-alert" aria-hidden="true" />
-				<span>
-					<strong>Placeholder.</strong> Kil Architecture's <em>proposed</em> first-floor
-					plan, dated 22 September 2021 — not as-built, ground floor only, and it still
-					carries the architect's title block. Replaced before launch by a current plan,
-					redrawn as an interactive vector.
-				</span>
-			</figcaption> -->
-		</figure>
-	</Section>
+	<FloorPlan />
 
 	{/* ------------------------------------------------------------------ */}
 	{/* Unit list */}
@@ -233,45 +200,7 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 	{/* ------------------------------------------------------------------ */}
 	{/* Phase 2 */}
 	{/* ------------------------------------------------------------------ */}
-	<Section>
-		<div class="phase2">
-			<div class="phase2__text">
-				<p class="pp-eyebrow block-head__eyebrow">Coming</p>
-				<h2>Phase 2 is under way</h2>
-				<p class="block-head__lede">
-					The ground floor is roughly 20,000 of the building's 56,000 square feet. The
-					basement and second floor follow, built out much the same way — so if you
-					need more room than exists today, it's worth asking.
-				</p>
-			</div>
-
-			{/*
-				Two photographs, not six. BUILD_PLAN keeps Phase 2 "mentioned, not
-				featured" — enough that a tenant needing more room knows to ask, not
-				enough to distract from what's available now. Captioned and dated so
-				nobody mistakes a construction site for a space they can lease today.
-			*/}
-			<figure class="phase2__media">
-				<div class="phase2__frames">
-					<Image
-						src={phase2Skylight}
-						alt="Interior of the Phase 2 space: a skylight over exposed timber joists and pale brick walls, with stacked lumber and buckets on the concrete floor."
-						widths={[420, 640, 900]}
-						sizes="(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw"
-						loading="lazy"
-					/>
-					<Image
-						src={phase2Openings}
-						alt="Two large openings cut through a brick pier, looking into an adjoining bay with steel columns and a timber ceiling."
-						widths={[420, 640, 900]}
-						sizes="(min-width: 1024px) 24vw, (min-width: 768px) 44vw, 92vw"
-						loading="lazy"
-					/>
-				</div>
-				<figcaption class="phase2__caption">Phase 2 in progress, 2026.</figcaption>
-			</figure>
-		</div>
-	</Section>
+	<Phase2 />
 
 	{/* ------------------------------------------------------------------ */}
 	{/* Plaster, per the client 2026-08-25. Restore with `tone="limestone"`. */}
@@ -286,7 +215,7 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 			</div>
 			<div class="cta__actions">
 				<Button size="lg" iconEnd="lucide:arrow-right" data-open-contact>Email us</Button>
-				<Button variant="quiet" size="lg" href="/community">See who's here</Button>
+				<Button variant="quiet" size="lg" href="/tenants">See who's here</Button>
 			</div>
 		</div>
 	</Section>
@@ -343,44 +272,6 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 
 	.group-label--spaced {
 		margin-block-start: var(--pp-space-xl);
-	}
-
-	// ---------------------------------------------------------------------------
-	// Plan
-	// ---------------------------------------------------------------------------
-	.plan {
-		margin: 0;
-	}
-
-	.plan :global(img) {
-		width: 100%;
-		height: auto;
-		border: 1px solid var(--pp-rule);
-		border-radius: var(--pp-radius-m);
-		background-color: #fff;
-	}
-
-	.plan__caption {
-		display: flex;
-		align-items: start;
-		gap: var(--pp-space-2xs);
-		margin-block-start: var(--pp-space-s);
-		max-width: var(--pp-measure);
-		font-size: var(--pp-text-xs);
-		line-height: var(--pp-leading-normal);
-		color: var(--pp-ink-muted);
-
-		strong {
-			color: var(--pp-error);
-		}
-
-		:global(svg) {
-			flex: none;
-			width: 15px;
-			height: 15px;
-			margin-block-start: 0.15em;
-			color: var(--pp-error);
-		}
 	}
 
 	// ---------------------------------------------------------------------------
@@ -453,46 +344,6 @@ import heroImageMobile from '../assets/heroes/spaces-mobile.jpg';
 	}
 
 	// ---------------------------------------------------------------------------
-	.phase2 {
-		display: grid;
-		gap: var(--pp-space-xl);
-		align-items: center;
-
-		@include from('lg') {
-			grid-template-columns: 1fr 1fr;
-			gap: var(--pp-space-2xl);
-		}
-	}
-
-	.phase2__text {
-		max-width: 40rem;
-	}
-
-	.phase2__media {
-		margin: 0;
-	}
-
-	.phase2__frames {
-		display: grid;
-		gap: var(--pp-space-xs);
-		grid-template-columns: 1fr 1fr;
-
-		:global(img) {
-			width: 100%;
-			height: auto;
-			aspect-ratio: 4 / 3;
-			object-fit: cover;
-			border-radius: var(--pp-radius-m);
-			background-color: var(--pp-limestone);
-		}
-	}
-
-	.phase2__caption {
-		margin-block-start: var(--pp-space-xs);
-		font-size: var(--pp-text-xs);
-		color: var(--pp-ink-muted);
-	}
-
 	.cta {
 		display: flex;
 		flex-direction: column;
