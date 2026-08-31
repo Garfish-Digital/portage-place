@@ -106,6 +106,19 @@ import heroImageMobile from '../assets/heroes/tenants-mobile.jpg';
 				))
 			}
 		</ul>
+
+		{/*
+			Right-aligned, per the client 2026-08-31. It sits at the end of the tile
+			row where "A Place for You" leaves off — that card is the invitation, this
+			is the thing to do about it, and the two read as a pair on the right edge.
+
+			Same construction as every other Contact us on the site (primary, `lg`,
+			trailing arrow), so it stays one recognisable action rather than a
+			differently-dressed variant of it.
+		*/}
+		<div class="tiles-action">
+			<Button size="lg" iconEnd="lucide:arrow-right" href="/contact">Contact us</Button>
+		</div>
 	</Section>
 
 	{/* ------------------------------------------------------------------ */}
@@ -313,6 +326,23 @@ import heroImageMobile from '../assets/heroes/tenants-mobile.jpg';
 		margin: 0;
 		padding: 0;
 		grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+	}
+
+	// `flex` rather than `text-align: end`, so the button is aligned as a box
+	// rather than as inline text — an <a> laid out inline would put its 44px hit
+	// area in a slightly different place than it appears. `text-align` is kept as
+	// a fallback for the same reason belt goes with braces: if the flex context is
+	// ever lost, the button still lands on the right rather than the left.
+	//
+	// `xl` (48px), not `l` (32px). The tile grid's own gap is `s` (16px), so 32px
+	// was only two grid gaps — close enough to the row rhythm that the button read
+	// as another item in the grid rather than an action below it. 48px is three,
+	// which is the first step that separates.
+	.tiles-action {
+		display: flex;
+		justify-content: flex-end;
+		text-align: end;
+		margin-block-start: var(--pp-space-xl);
 	}
 
 	.cards {
