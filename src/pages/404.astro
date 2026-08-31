@@ -1,0 +1,330 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/primitives/Section.astro';
+import Button from '../components/Button.astro';
+import Logo from '../components/Logo.astro';
+
+/**
+ * 404 — built from Rob's sketch (`reference/404-sketch.png`), an elevator floor
+ * directory with the missing page as the floor you have arrived at.
+ *
+ * Astro emits this to `dist/404.html`, which Netlify serves automatically for
+ * any unmatched path on a static site. No config needed — before this file
+ * existed, visitors got Netlify's own unstyled "Page Not Found".
+ *
+ * The three renamed floors are the client's wording, 2026-08-31:
+ * Amenities → Artists, Residences → Professionals, Penthouse → Restaurants.
+ */
+
+/**
+ * The directory is DECORATION, and the whole panel is `aria-hidden` because of
+ * it. Two reasons, in order:
+ *
+ *  1. The floor numbers are fictional. The building is a ground floor plus a
+ *     basement and second floor still in Phase 2 — there is no fifth floor, and
+ *     announcing one to a screen-reader user states it as fact rather than
+ *     offering it as a visual conceit.
+ *  2. It would otherwise read "404, not found" a second time, straight after the
+ *     heading has already said it.
+ *
+ * Everything a visitor actually needs — what went wrong and the way back — is in
+ * the left column, which is fully exposed.
+ */
+const FLOORS = [
+	{ code: '05', label: 'Restaurants' },
+	{ code: '04', label: 'Professionals' },
+	{ code: '03', label: 'Offices' },
+	{ code: '02', label: 'Artists' },
+	{ code: '404', label: 'Not found', here: true },
+	{ code: '01', label: 'Retail' },
+	{ code: 'G', label: 'Lobby' },
+];
+---
+
+<BaseLayout
+	title="Page not found"
+	description="That page isn't here. Portage Place is a restored 1919 bakery in South Bend's Near Northwest Neighborhood, with commercial and office space to lease."
+	noindex
+	renderHold={null}
+	chrome={false}
+>
+	<Section tone="dark" class="notfound">
+		{/*
+			The header is gone on this page, so the lockup comes back as part of the
+			composition — top-left, as drawn. It is not a link: `Return home` is the
+			way back and two controls doing the same job on a page this bare is one
+			more than the sketch has. The wordmark is outlined vector, so the visible
+			name is invisible to assistive tech — hence the hidden text.
+		*/}
+		<div class="notfound__logo">
+			<Logo variant="lockup" />
+			<span class="pp-visually-hidden">Portage Place</span>
+		</div>
+
+		<div class="notfound__grid">
+			{/* The message. The only part that carries meaning. */}
+			<div class="notfound__message">
+				<h1 class="notfound__code">
+					404
+					<span class="notfound__sub">Page not found</span>
+				</h1>
+
+				{/*
+					The sketch draws this as an outlined button. The style guide has no
+					ghost variant — "every variant has a solid fill" — so this is
+					`secondary`, which on `.pp-on-dark` is a plaster fill with espresso
+					text. It is the closest solid equivalent to the sketch's light
+					outline, and it is a real link, not a decorative box.
+				*/}
+				<Button variant="secondary" size="lg" href="/">Return home</Button>
+			</div>
+
+			{/* Decorative — see the note in the frontmatter. */}
+			<div class="notfound__directory" aria-hidden="true">
+				<ul class="floors" role="list">
+					{
+						FLOORS.map((floor) => (
+							<li class:list={['floor', floor.here && 'floor--here']}>
+								<span class="floor__code">{floor.code}</span>
+								<span class="floor__label">{floor.label}</span>
+							</li>
+						))
+					}
+				</ul>
+
+				{/*
+					Elevator controls, drawn but deliberately NOT buttons. They do
+					nothing, and a circle with a chevron in it that does nothing is a
+					trap: it invites a click, takes focus in the tab order, and returns
+					no feedback. Spans inside the aria-hidden panel instead.
+				*/}
+				<div class="controls">
+					<span class="controls__key">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+							<path d="M17 14l-5-5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+						</svg>
+					</span>
+					<span class="controls__stem"></span>
+					<span class="controls__dots">
+						<i></i><i></i><i></i><i></i>
+					</span>
+					<span class="controls__key">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+							<path d="M7 10l5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+						</svg>
+					</span>
+				</div>
+			</div>
+		</div>
+	</Section>
+</BaseLayout>
+
+<style lang="scss">
+	// `--pp-ink-strong`, not the espresso that `tone="dark"` normally paints, per
+	// the client 2026-08-31 — the sketch is near-black. `.pp-on-dark` still does
+	// the work it exists for: every semantic alias inside is already remapped, so
+	// the type, rules and button need no inverse variants of their own.
+	//
+	// Every pairing gets MORE contrast on ink-strong than it had on espresso, so
+	// nothing needed re-verifying downward:
+	//   plaster           18.46:1  (was 13.26)
+	//   ink-inverse-muted  6.96:1  (was  5.00)
+	//
+	// Full viewport now that there is no header or footer to share it with. `svh`
+	// rather than `vh` so mobile browser chrome doesn't push the page into scroll.
+	// `grid` + `align-content: center`, not flex. As a flex item the Container
+	// would size to its content instead of filling the row, and its `margin-inline:
+	// auto` would have nothing definite to centre against. Grid items stretch
+	// across the track by default, so the measure stays the same as every other
+	// page's.
+	.notfound {
+		--pp-surface: var(--pp-ink-strong);
+
+		position: relative;
+		display: grid;
+		align-content: center;
+		min-block-size: 100svh;
+	}
+
+	// The section paints the box it occupies; the body paints everything past it —
+	// overscroll rubber-banding on iOS, and the gap under a short viewport. Without
+	// this the page flashes plaster at both.
+	:global(body:has(.notfound)) {
+		background-color: var(--pp-ink-strong);
+	}
+
+	// In flow on a phone, where an absolute mark would sit on top of the numerals;
+	// pinned to the corner from `md`, which is where the sketch's proportions
+	// actually exist.
+	.notfound__logo {
+		margin-block-end: var(--pp-space-2xl);
+
+		:global(.logo) {
+			width: clamp(7rem, 16vw, 9.5rem);
+			color: var(--pp-text-strong);
+		}
+
+		@include from('md') {
+			position: absolute;
+			inset-block-start: var(--pp-space-xl);
+			inset-inline-start: var(--pp-space-xl);
+			margin-block-end: 0;
+		}
+	}
+
+	.notfound__grid {
+		display: grid;
+		gap: var(--pp-space-2xl);
+		inline-size: 100%;
+
+		@include from('lg') {
+			grid-template-columns: 1fr 1fr;
+			align-items: center;
+			gap: var(--pp-space-3xl);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Message
+	// ---------------------------------------------------------------------------
+	.notfound__message {
+		display: grid;
+		justify-items: start;
+		gap: var(--pp-space-l);
+
+		@include from('lg') {
+			justify-items: center;
+			text-align: center;
+		}
+	}
+
+	.notfound__code {
+		margin: 0;
+		font-size: clamp(4rem, 12vw, 7rem);
+		// Fraunces reads the width axis optically at this size; the tracking keeps
+		// three numerals from closing up into a single mass.
+		letter-spacing: 0.08em;
+		line-height: 1;
+		color: var(--pp-text-strong);
+	}
+
+	// Inside the <h1> so the accessible name is "404 Page not found" — one heading
+	// that says the whole thing, rather than a number with the meaning stranded in
+	// a sibling paragraph.
+	.notfound__sub {
+		@include eyebrow;
+
+		display: block;
+		margin-block-start: var(--pp-space-m);
+		font-size: var(--pp-text-s);
+		letter-spacing: var(--pp-tracking-caps);
+		color: var(--pp-ink-inverse-muted); // 5.00:1 on espresso
+	}
+
+	// ---------------------------------------------------------------------------
+	// Directory
+	// ---------------------------------------------------------------------------
+	.notfound__directory {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: var(--pp-space-l);
+	}
+
+	.floors {
+		margin: 0;
+		padding: 0;
+		// The sketch's flanking verticals. Hairlines on espresso, decorative only.
+		border-inline: 1px solid var(--pp-rule-inverse);
+		border-block: 0;
+		padding-inline: var(--pp-space-m);
+	}
+
+	.floor {
+		display: grid;
+		grid-template-columns: 3.5rem 1fr;
+		align-items: center;
+		gap: var(--pp-space-m);
+		padding-block: var(--pp-space-s);
+
+		+ .floor {
+			border-block-start: 1px solid var(--pp-rule-inverse);
+		}
+	}
+
+	.floor__code,
+	.floor__label {
+		@include eyebrow;
+
+		font-size: var(--pp-text-xs);
+		color: var(--pp-ink-inverse);
+	}
+
+	.floor__label {
+		letter-spacing: 0.22em;
+	}
+
+	// The floor you are on. Dimmed rather than highlighted — the joke is that this
+	// is the one that isn't really there.
+	.floor--here {
+		position: relative;
+
+		.floor__code,
+		.floor__label {
+			color: var(--pp-ink-inverse-muted);
+		}
+
+		// The sketch's marker dash in the left margin.
+		&::before {
+			content: '';
+			position: absolute;
+			inset-inline-start: calc(var(--pp-space-m) * -1.6);
+			inset-block-start: 50%;
+			inline-size: var(--pp-space-s);
+			block-size: 1px;
+			background-color: var(--pp-ink-inverse-muted);
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Elevator controls — decoration, not interaction
+	// ---------------------------------------------------------------------------
+	.controls {
+		display: grid;
+		justify-items: center;
+		gap: var(--pp-space-s);
+		color: var(--pp-ink-inverse-muted);
+	}
+
+	.controls__key {
+		display: grid;
+		place-items: center;
+		inline-size: 2rem;
+		block-size: 2rem;
+		border: 1px solid var(--pp-rule-inverse);
+		border-radius: 50%;
+
+		svg {
+			inline-size: 1rem;
+			block-size: 1rem;
+		}
+	}
+
+	.controls__stem {
+		inline-size: 1px;
+		block-size: var(--pp-space-xl);
+		background-color: var(--pp-rule-inverse);
+	}
+
+	.controls__dots {
+		display: grid;
+		gap: var(--pp-space-2xs);
+
+		i {
+			inline-size: 2px;
+			block-size: 2px;
+			border-radius: 50%;
+			background-color: var(--pp-ink-inverse-muted);
+		}
+	}
+</style>

@@ -1,7 +1,7 @@
 ---
 name: 'Cressy & Everett'
 category: office
-type: Real Estate
+type: Real estate agency
 logo: ../../assets/marks/cressy-and-everett.png
 imageAlt: 'Cressy & Everett logo: the name in serif capitals beside a red roofline.'
 # url: https://www.cressyeverett.com/

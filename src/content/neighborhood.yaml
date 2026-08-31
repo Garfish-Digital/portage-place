@@ -22,15 +22,30 @@
   order: 1
   placeholder: false
 
-# Dropped from the page at the client's request 2026-08-24. Kept rather than
-# deleted; uncommenting restores it, though it would need a logo and a URL to
-# match its siblings.
-# - id: botany
-#   name: The Botany Shop
-#   blurb: Directly across the street at 909 Portage Avenue.
-#   relationship: neighbor
-#   order: 4
-#   placeholder: false
+# Restored 2026-08-31 with the name, blurb, URL and mark supplied by Rob. It had
+# been dropped at the client's request 2026-08-24, when it carried no logo and no
+# URL; both now exist, which is what it was waiting on.
+#
+# ⚠️ Two things to confirm with the client:
+#   · The card is titled "Botany & Co." but its own blurb calls the business
+#     "The Botany Shop", and the entry dropped in August was "The Botany Shop"
+#     too. One of the two is the trading name; the tile should use that one.
+#   · Every sibling blurb folds in a street address ("a few doors up the corridor
+#     at 1005 Portage Avenue"). This one doesn't. The dropped entry recorded
+#     909 Portage Avenue, directly across the street — not added here, because
+#     the supplied blurb is what was supplied.
+- id: botany
+  name: Botany & Co.
+  blurb: >-
+    The Botany Shop is a plant-centered space empowering community connections
+    through local greenery and care.
+  url: https://visitbotany.co
+  logo: ../assets/marks/botany.png
+  logoAlt: >-
+    Botany & Co. logo: a serif letter P with a fern frond curving across it.
+  relationship: neighbor
+  order: 4
+  placeholder: false
 
 - id: near-northwest-neighborhood
   name: Near Northwest Neighborhood, Inc.

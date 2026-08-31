@@ -199,8 +199,8 @@ const tagProps = href
 		// component boundary, and the button would read as a faint green smudge.
 		//
 		// --pp-green-link carries it: 6.96:1 against plaster and 3.50:1 against the
-		// fill, so the edge is visible against the page AND against the button. The
-		// dark context below resets it to transparent, where the fill needs no help.
+		// fill, so the edge is visible against the page AND against the button. As
+		// of 2026-08-31 the dark context keeps it too — see below.
 		--btn-bg: var(--pp-green-on-dark);
 		--btn-bg-hover: #a9e0c0;
 		--btn-bg-active: #c2ebd3;
@@ -221,9 +221,26 @@ const tagProps = href
 			--btn-bg-active: #c2ebd3;
 			--btn-fg: var(--pp-espresso);
 			--btn-fg-hover: var(--pp-espresso);
-			// The only thing that differs from the light context now: on espresso the
-			// fill is already 6.68:1 against its surface, so it needs no edge.
-			--btn-border: transparent;
+			// A visible edge on the hero CTAs, requested 2026-08-31. This has to be
+			// stated explicitly — inheriting the light context's `--pp-green-link` does
+			// NOT work here, and the reason is a trap worth writing down:
+			//
+			//   _tokens.scss:270 —  .pp-on-dark { --pp-green-link: var(--pp-green-on-dark) }
+			//
+			// so inside any dark surface `--pp-green-link` resolves to the exact colour
+			// of this button's own fill. The border rendered, at 1.00:1 against the
+			// fill — present in the box model, invisible on screen. Confirmed by pixel-
+			// sampling a screenshot: background straight to fill, no edge pixel.
+			//
+			// `--pp-border-inverse` is the same token the quiet variant uses on dark,
+			// which is the "Under one roof" button sitting beside this one:
+			//
+			//   border vs fill  #7c7266 on #7fc79b  2.37:1  — visible inner edge
+			//   border vs veil  #7c7266 on #322f2c  2.82:1  — visible outer edge
+			//
+			// Both are below 3:1, which is fine: this edge is decorative. The boundary
+			// that satisfies SC 1.4.11 is the FILL, 6.68:1 against espresso, unchanged.
+			--btn-border: var(--pp-ink-strong);
 			--btn-ring: var(--pp-plaster);
 		}
 	}

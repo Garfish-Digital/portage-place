@@ -30,3 +30,30 @@
   for = "/site.webmanifest"
   [headers.values]
     Content-Type = "application/manifest+json"
+
+# -----------------------------------------------------------------------------
+# Redirects for routes this rebuild removed. Both were live on
+# portageplace.netlify.app, so bookmarks, history and any link the client has
+# already shared point at them.
+#
+# 301 rather than 302: these moves are permanent, and a 301 is what passes link
+# equity to the new URL. Netlify matches with and without the trailing slash, so
+# one rule per path is enough.
+#
+# `force` is not set. These paths have no file in `dist/`, so the redirect is
+# reached anyway — and leaving it off means that if either page is ever restored,
+# the real page wins instead of being shadowed by a redirect nobody remembers.
+# -----------------------------------------------------------------------------
+
+# Renamed 2026-08-30 when the client's "Community" label became "Tenants".
+[[redirects]]
+  from = "/community"
+  to = "/tenants"
+  status = 301
+
+# The Suites page came out 2026-08-30; its floor plan and Phase 2 sections moved
+# to the homepage, so that is where the content actually went.
+[[redirects]]
+  from = "/spaces"
+  to = "/"
+  status = 301

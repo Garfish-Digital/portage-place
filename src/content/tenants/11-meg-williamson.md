@@ -1,7 +1,7 @@
 ---
 name: 'Meg Williamson Architectural Production'
 category: office
-type: Luxury Architectural Photographer
+type: Luxury architectural photographer
 logo: ../../assets/marks/meg-williamson.png
 imageAlt: 'Meg Williamson Architectural Production logo: an angular MW monogram beside the name in letter-spaced capitals.'
 url: https://megwilliamsonphotography.com/

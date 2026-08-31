@@ -51,6 +51,16 @@ interface Props {
 	 * page has; pass `null` on pages without one (see the head for why).
 	 */
 	renderHold?: string | null;
+	/**
+	 * Header, footer and skip link. Set false for a standalone page that carries
+	 * its own whole composition — 404 is the only one today, built to a sketch
+	 * with the lockup in the corner and nothing else around it.
+	 *
+	 * Everything in <head> still applies, which is the reason this is a prop
+	 * rather than the 404 page hand-rolling its own <html>: fonts, tokens, meta,
+	 * favicons and the view-transition setup all stay in one place.
+	 */
+	chrome?: boolean;
 }
 
 const {
@@ -59,6 +69,7 @@ const {
 	noindex = false,
 	ogImage = '/ogImage.png',
 	renderHold = 'hero',
+	chrome = true,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
@@ -152,15 +163,16 @@ const fullTitle = title === 'Portage Place' ? title : `${title} — Portage Plac
 	</head>
 
 	<body>
-		<a class="pp-skip-link" href="#main">Skip to content</a>
+		{/* Nothing to skip past when there is no nav, so the link goes with it. */}
+		{chrome && <a class="pp-skip-link" href="#main">Skip to content</a>}
 
-		<Header />
+		{chrome && <Header />}
 
 		<main id="main" tabindex="-1">
 			<slot />
 		</main>
 
-		<Footer />
+		{chrome && <Footer />}
 
 		{/* <FloatingCta /> */}
 		{/* <ContactModal /> */}
