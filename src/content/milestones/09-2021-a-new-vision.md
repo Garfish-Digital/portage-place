@@ -30,11 +30,7 @@ what Keen has described as practically nothing.
 The idea, borrowed from Texas developer Monte Anderson, was a **collaborator
 village**: fill the building with the businesses the neighborhood itself would
 value, and let the mix emerge rather than dictating it from above. Not housing,
-which had failed six times. Not a single large tenant. Many small ones.
+which had failed six times. Not a single large tenant, but many small ones.
 
-Then the actual work started. Asbestos abatement alone ran past **$130,000**.
-Clearing out what the last occupant had left behind took somewhere between 20 and
+Then the actual work started. Clearing out what the last occupant had left behind took somewhere between 20 and
 25 forty-yard dumpsters.
-
-On **14 June 2021**, the South Bend Common Council voted unanimously to approve
-tax abatements for the project.

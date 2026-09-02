@@ -181,7 +181,27 @@ const [desktopAvif, desktopWebp, mobileAvif, mobileWebp, fallback] = await Promi
 		<Container class="hero__inner">
 			{eyebrow && <p class="pp-eyebrow hero__eyebrow">{eyebrow}</p>}
 			<h1 class="hero__title">{title}</h1>
-			{lede && <p class="hero__lede">{lede}</p>}
+			{/*
+				`lede` stays a plain string and stays ESCAPED. A `lede` slot is the way
+				to get markup — a line break, an <em> — into it.
+
+				Deliberately not `set:html={lede}`, which would have been the one-line
+				version. That turns every lede on the site into an HTML context for the
+				sake of one page's line break, and `tenants.astro`'s lede already reads
+				"wellness, & studios" — a bare ampersand that is fine as text and
+				invalid as markup. Browsers forgive it; the next one might not be
+				forgivable. The slot keeps the default safe and makes the exception
+				explicit at the call site.
+			*/}
+			{
+				Astro.slots.has('lede') ? (
+					<p class="hero__lede">
+						<slot name="lede" />
+					</p>
+				) : (
+					lede && <p class="hero__lede">{lede}</p>
+				)
+			}
 			{
 				Astro.slots.has('actions') && (
 					<div class="hero__actions">

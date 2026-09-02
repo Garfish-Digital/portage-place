@@ -38,16 +38,6 @@ and putting glass where it had been in 1919. It is the single most visible thing
 that has happened to this building in eighty years, and it is the exact reversal of
 the alteration that defined it.
 
-The money came together in pieces: **$300,000** pledged by the City Redevelopment
-Commission toward front-façade windows, a **$550,000 READI grant** in October 2022,
-a **$670,000** bank loan and a **$600,000** city loan in May 2023. The project
-budget grew from $2.75 million to **$4.2 million** as the scope of the job became
-clear.
-
 **Phase 1 opened in December 2025** — roughly **20,000 of the building's 56,000
 square feet**, now holding a coffee shop, a yarn shop, artists, wellness
-practitioners, an outreach center, and twenty private offices.
-
-Keen's word for the approach is *gentle-fication*: the people already in the
-neighborhood should be the ones who benefit from its recovery, not the ones
-displaced by it.
+practitioners, 15 studio/maker spaces, and 20 private offices.
