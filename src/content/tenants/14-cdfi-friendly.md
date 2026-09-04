@@ -11,8 +11,7 @@ category: office
 # neighbour's `blurb` through the same slot, and the neighbour tiles are all full
 # sentences — so this renders exactly as those do.
 type: >-
-  CDFI Friendly increases regional capital flow to support affordable housing,
-  small businesses, and nonprofits.
+  Community investment lender
 logo: ../../assets/marks/cdfi.png
 imageAlt: >-
   CDFI Friendly logo: "CDFI" in white on a yellow-green block beside "Friendly"

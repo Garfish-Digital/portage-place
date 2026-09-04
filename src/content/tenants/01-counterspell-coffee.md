@@ -4,7 +4,7 @@ category: commercial
 type: Coffee shop
 logo: ../../assets/marks/counterspell.png
 imageAlt: "Counterspell Cafe logo: a hand-drawn cloud enclosing the words Cloud Walking."
-url: https://cloudwalkingcoffee.com/
+url: https://cloudwalkingcoffee.com/pages/counterspell-cafe
 quote: >-
   This is a placeholder quote for the card and will need to be replaced by an actual tenant quote about the building or their experience.
 featured: true

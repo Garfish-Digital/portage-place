@@ -7,13 +7,22 @@
  * Everything lands in public/ and is committed. Re-run after any change to
  * src/assets/logo/*.svg.
  *
- * ── Two marks, split by size ────────────────────────────────────────────────
+ * ── One mark everywhere: icon.svg ───────────────────────────────────────────
  *
- * TAB FAVICON uses icon-heavy. Its stroke is 8.19% of the mark's width against
- * icon.svg's 4.27%, which at a 16px canvas is 1.31px versus 0.68px — and a
- * 0.68px stroke cannot render, it just antialiases to grey. The lockup is worse
- * still at this size: its rules are `stroke-width: 3` in a 555 viewBox, 0.54%,
- * which is 0.09px at 16px.
+ * TAB FAVICON uses icon.svg as of 2026-09-04, at the client's direction. It used
+ * icon-heavy on this argument, kept because the measurement is real:
+ *
+ *     "Its stroke is 8.19% of the mark's width against icon.svg's 4.27%, which
+ *      at a 16px canvas is 1.31px versus 0.68px — and a 0.68px stroke cannot
+ *      render, it just antialiases to grey."
+ *
+ * The trade that buys: the interlock survives at tab size instead of the two
+ * stems fusing into one bar, and the favicon finally matches the app icons. What
+ * it costs is measured below in the generated .ico — check it after any change
+ * to the mark, because sub-pixel strokes fail silently and look merely "soft".
+ *
+ * The lockup remains unusable at this size either way: its rules are
+ * `stroke-width: 3` in a 555 viewBox, 0.54%, which is 0.09px at 16px.
  *
  * APP ICONS use icon-heavy too, as of 2026-08-31. They used the full lockup, on
  * this argument, which is worth keeping because the arithmetic is right and the
@@ -56,10 +65,11 @@
  * reads through that gap. Merged, it becomes a ribbon — handsome, but a
  * different mark from the one in the header and footer.
  *
- * The 16px favicon keeps icon-heavy: there icon.svg's 0.68px stroke cannot
- * render at all, and a merged bar beats a grey smudge. App icons are an order of
- * magnitude larger — icon.svg's stroke lands near 5px at true launcher size, and
- * the gap holds at 5-6px.
+ * The 16px favicon used to keep icon-heavy for exactly this reason inverted: at
+ * that size icon.svg's stroke is sub-pixel and a merged bar beats a grey smudge.
+ * That call was reversed 2026-09-04 in favour of one consistent mark. App icons
+ * were never in question — icon.svg's stroke lands near 5px at true launcher
+ * size, and the gap holds at 5-6px.
  *
  * The SITE keeps the lockup — header, footer, OG card. This is about icons that
  * render at thumbnail size next to other apps, nothing else.
@@ -127,7 +137,7 @@ async function square(file, size, fit = SQUIRCLE, background = BLACK) {
  * an icon and resolves to black, which on a black field is nothing at all.
  */
 function faviconSvg() {
-	const src = load('icon-heavy.svg');
+	const src = load('icon.svg');
 	const viewBox = src.match(/viewBox="([^"]+)"/)[1];
 	const inner = src.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
 	const pad = 512 * (1 - SAFE * SQUIRCLE) * 0.5;
@@ -177,7 +187,7 @@ writeFileSync(join(OUT, 'favicon.svg'), faviconSvg());
 const icoSizes = [16, 32, 48];
 const icoImages = [];
 for (const size of icoSizes) {
-	icoImages.push({ size, data: await square('icon-heavy.svg', size) });
+	icoImages.push({ size, data: await square('icon.svg', size) });
 }
 writeFileSync(join(OUT, 'favicon.ico'), ico(icoImages));
 

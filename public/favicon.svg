@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" fill="#16130f"/>
-  <svg viewBox="143.0 39.0 268.5 157.0" x="26.6" y="26.6" width="458.8" height="458.8" preserveAspectRatio="xMidYMid meet">
-  <g id="icon" stroke="#ffffff" stroke-width="22" stroke-linejoin="round">
+  <svg viewBox="148.5 44.5 257.5 146.0" x="26.6" y="26.6" width="458.8" height="458.8" preserveAspectRatio="xMidYMid meet">
+  <g id="icon" stroke="#ffffff" stroke-width="11" stroke-linejoin="round">
     <path id="icon-right" d="M292.5 141.5L336 185L400.5 122L329.5 50L221.5 157.5"/>
     <path id="icon-left" d="M262 93.5L218.5 50L154 113L225 185L333 77.5"/>
   </g>
